@@ -1,0 +1,21 @@
+{
+    "name": "tayue/framework",
+	"licence": "MIT",
+    "require": {
+        "smarty/smarty": "^3.1"
+    },
+	"authors": [
+        {
+            "name": "tayueliuxiang",
+            "email": "tayueliuxiang1@sina.com"
+        }
+    ],
+	"require": {
+        "php": ">=5.5"
+    },
+   	"autoload": {
+        "psr-4": {
+            "Framework\\": "Framework/"
+        }
+    }
+}
