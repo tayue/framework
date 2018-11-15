@@ -4,6 +4,11 @@
     "require": {
         "smarty/smarty": "^3.1"
     },
+    "keywords": [
+        "tyframework",
+        "php"
+    ],
+	"type": "project",
 	"authors": [
         {
             "name": "tayueliuxiang",
