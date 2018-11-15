@@ -8,6 +8,7 @@
         "tyframework",
         "php"
     ],
+	"minimum-stability": "dev",
 	"type": "project",
 	"authors": [
         {
