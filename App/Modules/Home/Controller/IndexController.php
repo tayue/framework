@@ -16,9 +16,9 @@ class IndexController extends Controller
 
 
        //Framework::getApp()->user->display();
-      Framework::getService()->user->display();
+     // Framework::getService()->user->display();
 //var_dump(Framework::getService()->user);
-       var_dump(Framework::$container->trait_dd);
+     //  var_dump(Framework::$container->trait_dd);
          $this->assign('name','dsssdd');
          $this->display('index.html');
 
@@ -39,11 +39,11 @@ class IndexController extends Controller
    }
 
     public function __beforeAction(){
-        //$this->echo2br("__beforeAction\r\n");
+        $this->echo2br("__beforeAction\r\n");
     }
 
     public function __afterAction(){
-       // $this->echo2br("__afterAction\r\n");
+        $this->echo2br("__afterAction\r\n");
     }
 
 

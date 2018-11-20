@@ -147,10 +147,12 @@ class Route
                     $_action = Framework::$app->default_action;
                 }
             }
+            $_module && $_module = ucfirst($_module);
             $_module && Framework::$app->current_module = $_module;
+            $_controller && $_controller=ucfirst($_controller);
             $_controller && Framework::$app->current_controller = $_controller;
             $_action && Framework::$app->current_action = $_action;
-            $_module && $urlModule = ucfirst($_module);
+            $_module && $urlModule = $_module;
             $urlController = $_controller . "Controller";
             $urlAction = $_action . "Action";
             if ($projectType == 1) { //模块化

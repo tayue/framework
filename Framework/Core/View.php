@@ -76,7 +76,6 @@ class View extends Components
             $fetchFile='Error/error.html';
             $tpl=$this->smarty->fetch($fetchFile);
         }
-        Functions::createDir("e:/test");
         echo $tpl;
 
 
