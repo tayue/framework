@@ -36,7 +36,7 @@ class Route
                     if (count($pathInfo) < 3) {
                         $validate = false;
                     }
-                    list($module, $controller, $action) = $pathInfo;
+                    @list($module, $controller, $action) = $pathInfo;
                     $moduleValidate = self::validate($pattern, $module);
                     if (!$moduleValidate || !$module) {
                         $validate = false;

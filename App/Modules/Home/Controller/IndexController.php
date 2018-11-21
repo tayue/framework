@@ -12,20 +12,9 @@ use Framework\Framework;
 class IndexController extends Controller
 {
    public function indexAction(){
-//var_dump(Framework::$container);
 
-
-       //Framework::getApp()->user->display();
-     // Framework::getService()->user->display();
-//var_dump(Framework::getService()->user);
-     //  var_dump(Framework::$container->trait_dd);
-         $this->assign('name','dsssdd');
+         $this->assign('name','dsssdds');
          $this->display('index.html');
-
-
-//       $listObj = (new User())->where(['sex'=>1])->order('id ASC')->all()->toArray();
-//        print_r($listObj);
-
 
    }
 

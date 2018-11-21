@@ -9,6 +9,6 @@
 namespace Framework\Base;
 
 
-interface Object
+interface Objects
 {
 }

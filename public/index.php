@@ -23,7 +23,7 @@ function myAutoLoad($className)
 
 include_once '../App/Config/defines.php';
 $config = include_once '../App/Config/config.php';
-
+ 
 include_once VENDOR_PATH . '/autoload.php';
 
 (new Application($config))->run($config);

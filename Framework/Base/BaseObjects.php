@@ -11,7 +11,7 @@ namespace Framework\Base;
 
 use Framework\Framework;
 
-abstract class BaseObject implements Object
+abstract class BaseObjects implements Objects
 {
 
     public function __construct($config = [])

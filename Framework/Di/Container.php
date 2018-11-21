@@ -194,7 +194,7 @@ class Container extends Components
             return $reflection->newInstanceArgs($dependencies);
         }
 
-        if (!empty($dependencies) && $reflection->implementsInterface('Framework\Base\Object')) {
+        if (!empty($dependencies) && $reflection->implementsInterface('Framework\Base\Objects')) {
             // set $config as the last parameter (existing one will be overwritten)
             $dependencies[count($dependencies) - 1] = $config;
             return $reflection->newInstanceArgs($dependencies);
