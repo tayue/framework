@@ -7,7 +7,9 @@
  */
 
 use Framework\Web\Application;
+header("Content-type:text/html;charset=utf-8");
 ini_set("display_errors","On");
+date_default_timezone_set('UTC');
 error_reporting(E_ALL);
 define("BASE_DIR", dirname(__DIR__));
 spl_autoload_register('myAutoLoad', true, false);

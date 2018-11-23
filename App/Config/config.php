@@ -18,9 +18,13 @@ return [
     'current_controller' => '',
     'current_action' => '',
     'basePath' => dirname(__DIR__),
+    'log'=>[
+        'log_dir'=>dirname(__DIR__).DIRECTORY_SEPARATOR.'Log',
+        'is_display'=>true
+    ],
     'components' => [
         'tool' => [
-            'class' => Framework\Tool\Tool::className(),
+            'class' => 'Framework\Tool\Tool',
             'arr' => [1, 2, 3],
 
         ],
