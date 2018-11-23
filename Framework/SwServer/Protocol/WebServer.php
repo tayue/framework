@@ -46,6 +46,8 @@ class WebServer extends BaseServer
     {
         $this->config = array_merge($config,$this->config);
         parent::__construct($config);
+        $this->host=$this->config['host'];
+        $this->port=$this->config['port'];
         self::$isWebServer = true;
         if (isset($config['setting']) && $config['setting']) {
             $this->setting = array_merge($this->default_setting, $config['setting']);

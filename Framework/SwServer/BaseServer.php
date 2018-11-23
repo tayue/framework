@@ -60,8 +60,6 @@ abstract class BaseServer implements Protocol
 
     public function __construct($config)
     {
-        $this->host=$config['host'];
-        $this->port=$config['port'];
         // set timeZone
         self::setTimeZone();
 

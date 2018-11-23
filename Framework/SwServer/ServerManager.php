@@ -52,18 +52,19 @@ class ServerManager extends BaseServerManager
 
 
     public function registerDefaultEventCallback()
-    {
+    {   echo "___________\r\n";
+        var_dump($this->swoole_server);
         $this->swoole_server->on('Start', array($this, 'onMasterStart'));
 
-        if (is_callable(array($this->protocol, 'onConnect'))) {
-            $this->sw->on('Connect', array($this->protocol, 'onConnect'));
-        }
+//        if (is_callable(array($this->protocol, 'onConnect'))) {
+//            $this->sw->on('Connect', array($this->protocol, 'onConnect'));
+//        }
 
     }
 
     function onMasterStart($serv)
-    {
-        $this->setProcessName($this->getProcessName() . ': master -host=' . $this->host . ' -port=' . $this->port);
+    {    echo "@@@@@@@@@@\r\n";
+        $this->setProcessName($this->getProcessName() . ': master -host=' . $this->protocol->host . ' -port=' . $this->protocol->port);
         if (!empty($this->runtimeSetting['pid_file'])) {
             file_put_contents(self::$pidFile, $serv->master_pid);
         }

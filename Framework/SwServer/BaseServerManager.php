@@ -12,7 +12,7 @@ namespace Framework\SwServer;
 class BaseServerManager
 {
     public $process_name = '';
-
+    public static $pidFile;
     /**
      * 设置进程的名称
      * @param $name
