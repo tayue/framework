@@ -12,14 +12,14 @@ use Framework\Framework;
 class IndexController extends Controller
 {
    public function indexAction(){
-         var_dump($_GET);
+       var_dump($_POST);
          $this->assign('name','dsssdds');
          $this->display('index.html');
 
    }
 
     public function indexsAction(){
-
+        var_dump($_POST);
         $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
     }
 

@@ -269,7 +269,9 @@ class Route
                 $_REQUEST[$pathInfoParams[$i]] = $paramsVal;  //将pathinfo地址模式匹配获取的参数压入$_GET里作为接受的参数
             }
         }
-
+        if($request->server['request_method']=='POST'){ //POST请求
+            $_POST=$request->post;
+        }
         if (!$validate) {
             $_module = Framework::$app->default_module;
             $_controller = Framework::$app->default_controller;

@@ -23,6 +23,8 @@ class View extends Components
         $this->smarty->setCacheDir(SMARTY_CACHE_DIR);
         $smarty_template_path = rtrim(SMARTY_TEMPLATE_PATH) . '/';
         $this->smarty->setTemplateDir($smarty_template_path);
+        $this->smarty->caching = 0; //开启缓存,为flase的时侯缓存无效
+        $this->smarty->cache_lifetime = 0; //缓存时间
     }
 
     /**
@@ -63,7 +65,7 @@ class View extends Components
         $projectType=Framework::getProjectType();
         if(!$template_file) {
             $template_file = $action.$fileType;
-        }
+        }echo date("Y-m-d H:i:s");
         $filePath=SMARTY_TEMPLATE_PATH.'/'.$controller.'/'.$template_file;
         $fetchFile=$controller.'/'.$template_file;
         if($projectType){
