@@ -1,17 +1,10 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: zhjx
- * Date: 2018/11/5
- * Time: 11:19
+ * User: hdeng
+ * Date: 2018/11/26
+ * Time: 14:44
  */
-
-use Framework\Web\Application;
-header("Content-type:text/html;charset=utf-8");
-ini_set("display_errors","On");
-date_default_timezone_set('UTC');
-error_reporting(E_ALL);
-define("BASE_DIR", dirname(__DIR__));
 /*************自定义命名空间加载类**************/
 class Autoloader {
     /**
@@ -63,13 +56,9 @@ class Autoloader {
         }
     }
 }
-Autoloader::setBaseDirectory(BASE_DIR);
+
 Autoloader::register();
 
-include_once '../App/Config/defines.php';
-$config = include_once '../App/Config/config.php';
- 
-include_once VENDOR_PATH . '/autoload.php';
-
-(new Application($config))->run($config);
-
+use Server\Task\TestTask;
+$a=new TestTask();
+$a->test();

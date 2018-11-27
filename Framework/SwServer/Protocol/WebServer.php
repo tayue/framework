@@ -11,6 +11,7 @@ namespace Framework\SwServer\Protocol;
 use Framework\SwServer\BaseServer;
 use Framework\SwServer\Protocol\Protocol;
 use Framework\Tool\Log;
+use Framework\Core\Route;
 
 class WebServer extends BaseServer
 {
@@ -18,11 +19,7 @@ class WebServer extends BaseServer
     const POST_MAXSIZE = 2000000; //POST最大2M
     const DEFAULT_PORT = 9501;
     const DEFAULT_HOST = '0.0.0.0';
-
-    /**
-     * $setting
-     * @var array
-     */
+    public $fd;
     public $default_setting = [
         'reactor_num' => 1,
         'worker_num' => 1,
@@ -44,18 +41,18 @@ class WebServer extends BaseServer
 
     public function __construct($config)
     {
-        $this->config = array_merge($config,$this->config);
+        $this->config = array_merge($config, $this->config);
         parent::__construct($config);
-        $this->host=$this->config['host'];
-        $this->port=$this->config['port'];
+        $this->host = $this->config['host'];
+        $this->port = $this->config['port'];
         self::$isWebServer = true;
         if (isset($config['setting']) && $config['setting']) {
             $this->setting = array_merge($this->default_setting, $config['setting']);
-        }else{
+        } else {
             $this->setting = $this->default_setting;
         }
 
-     }
+    }
 
     public function createServer()
     {
@@ -74,7 +71,7 @@ class WebServer extends BaseServer
 
     function onStart($server)
     {
-        // TODO: Implement onStart() method.
+         echo "WebServer onStart\r\n";
     }
 
     function onConnect($server, $client_id, $from_id)
@@ -97,9 +94,23 @@ class WebServer extends BaseServer
         // TODO: Implement onShutdown() method.
     }
 
+
+    function onFinish(\swoole_server $serv, $task_id, $data)
+    {
+        echo "Task#$task_id finished, info=" . $data . PHP_EOL;
+    }
+
     function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
-        print_r($request);
+
+       $this->fd=$request->fd;
+
+       if($request->server['request_uri']){ //请求地址
+           Route::parseSwooleRouteUrl($request,$response);
+       }
+
+
+
 
     }
 

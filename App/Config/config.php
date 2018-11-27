@@ -8,6 +8,7 @@
 return [
     'id' => 'app',
     'routeRule' => 1, //1:PATHINFO 2:QUERY
+    'is_swoole_http_server'=>true,
     'project_namespace' => 'App', //1:模块化组织 2:非模块化组织
     'project_type' => 1, //1:模块化组织 2:非模块化组织
     'default_module' => 'Home', //1:PATHINFO 2:QUERY

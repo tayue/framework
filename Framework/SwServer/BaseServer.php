@@ -8,6 +8,7 @@
 
 namespace Framework\SwServer;
 
+use Framework\Core\Exception;
 use Framework\SwServer\Protocol\Protocol;
 
 abstract class BaseServer implements Protocol
@@ -44,9 +45,15 @@ abstract class BaseServer implements Protocol
      */
     public static $server;
 
-    public $host='';
+    /**
+     * $isEnableCoroutine 是否启用协程
+     * @var boolean
+     */
+    public static $isEnableCoroutine = false;
 
-    public $port='';
+    public $host = '';
+
+    public $port = '';
 
     /**
      * 设置Logger
@@ -70,8 +77,18 @@ abstract class BaseServer implements Protocol
      * getStatus 获取swoole的状态信息
      * @return   array
      */
-    public static function getStats() {
+    public static function getStats()
+    {
         return self::$server->stats();
+    }
+
+    /**
+     * isEnableCoroutine
+     * @return boolean
+     */
+    public static function canEnableCoroutine()
+    {
+        return self::$isEnableCoroutine;
     }
 
     public static function setTimeZone()
@@ -85,26 +102,25 @@ abstract class BaseServer implements Protocol
         return;
     }
 
-
-
-
-    /**
-     * clearCache 清空字节缓存
-     * @return  void
-     */
-    public static function clearCache()
-    {
-        if (function_exists('apc_clear_cache')) {
-            apc_clear_cache();
-        }
-        if (function_exists('opcache_reset')) {
-            opcache_reset();
-        }
-    }
-
     function task($task, $dstWorkerId = -1, $callback = null)
     {
-        $this->server->task($task, $dstWorkerId = -1, $callback);
+        self::$server->task($task, $dstWorkerId = -1, $callback);
+    }
+
+    function onTask(\swoole_server $server, $taskId, $fromWorkerId, $taskObj)
+    {
+        if ($taskObj) {
+            $taskObj = \Swoole\Serialize::unpack($taskObj);
+            if (is_array($taskObj)) {
+                list($classData, $params) = $taskObj;
+                list($class, $action) = $classData;
+                $class = new $class();
+                $class->$action($params);
+                unset($class);
+                unset($taskObj);
+            }
+        }              //任务投递结束返回worker进程
+        return "TaskId:{$taskId},FromWorkerId:{$fromWorkerId},Finish!";
     }
 
     function onStart($server)

@@ -12,7 +12,7 @@ use Framework\Framework;
 class IndexController extends Controller
 {
    public function indexAction(){
-
+         var_dump($_GET);
          $this->assign('name','dsssdds');
          $this->display('index.html');
 
