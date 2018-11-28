@@ -8,4 +8,5 @@
 namespace Framework\SwServer\Task\Interfaces;
 interface TaskDeliveryInterface{
     public static function asyncTask($callback,$params);
+    public static function syncTask($callback,$params,$timeout);
 }

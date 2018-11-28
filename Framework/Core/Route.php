@@ -219,6 +219,7 @@ class Route
 
     public static function parseSwooleRouteUrl(\swoole_http_request $request, \swoole_http_response $response)
     {
+        try {
         $request_uri = $request->server['request_uri'];
         $validate = true;
         $projectType = Framework::$app->project_type;
@@ -339,6 +340,7 @@ class Route
                     ob_end_clean();
                     $response->end($out1);
                 } catch (\Exception $e) {
+                    echo $e->getMessage();
                     // 方法调用发生异常后 引导到__call方法处理
                     $method = new \ReflectionMethod($classNameSpacePath, '__call');
                     $method->invokeArgs($classObject, array($urlAction, ''));
@@ -354,7 +356,10 @@ class Route
         } else {
             throw new \Exception("404");
         }
+        } catch (\Exception $e) {
+            echo $e->getMessage();
 
+        }
 
     }
 

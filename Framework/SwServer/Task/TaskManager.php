@@ -22,4 +22,10 @@ class TaskManager implements TaskManagerInterface
     public function coTask($callback,$params){
 
     }
+
+    public static function syncTask($callback, $params, $timeout)
+    {
+        $taskId=TaskDelivery::syncTask($callback, $params, $timeout);
+        return $taskId;
+    }
 }

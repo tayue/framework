@@ -7,5 +7,6 @@
  */
 namespace Framework\SwServer\Task\Interfaces;
 interface TaskManagerInterface{
-    public static function AsyncTask($callback,$params);
+    public static function asyncTask($callback,$params);
+    public static function syncTask($callback,$params,$timeout);
 }

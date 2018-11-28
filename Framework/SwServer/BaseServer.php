@@ -107,6 +107,10 @@ abstract class BaseServer implements Protocol
         self::$server->task($task, $dstWorkerId = -1, $callback);
     }
 
+    function taskwait($task,$timeOut=0.5,$dstWorkerId=-1){
+        self::$server->taskwait($task, $timeOut,$dstWorkerId);
+    }
+
     function onTask(\swoole_server $server, $taskId, $fromWorkerId, $taskObj)
     {
         if ($taskObj) {

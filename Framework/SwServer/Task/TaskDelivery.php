@@ -14,7 +14,24 @@ class TaskDelivery implements TaskDeliveryInterface
 
     public static function asyncTask($callback, $params)
     {
-       if(!ServerManager::isWorkerProcess()){
+        $callback=self::commonValidate($callback);
+        $task_id = ServerManager::getSwooleServer()->task(\Swoole\Serialize::pack([$callback, $params]));
+        unset($callback, $params);
+        return $task_id;
+   }
+
+    public static function syncTask($callback, $params,$timeout)
+    {
+        $callback=self::commonValidate($callback);
+        $task_id = ServerManager::getSwooleServer()->taskwait(\Swoole\Serialize::pack([$callback, $params]),$timeout);
+        var_dump($task_id);
+        unset($callback, $params);
+        return $task_id;
+    }
+
+
+    public static function commonValidate($callback){
+        if(!ServerManager::isWorkerProcess()){
             throw new \Exception('Please deliver task by worker process!');
         }
         if(!ServerManager::isWorkerProcess() && ServerManager::isCoContext()){
@@ -22,7 +39,7 @@ class TaskDelivery implements TaskDeliveryInterface
         }
         $callback=array_filter($callback);
         if(!is_array($callback)){
-               return false;
+            return false;
         }
         if(count($callback)!=2){
             return false;
@@ -37,12 +54,6 @@ class TaskDelivery implements TaskDeliveryInterface
         if(!$methodExists){
             throw new \Exception('no exists class method!');
         }
-        $task_id = ServerManager::getSwooleServer()->task(\Swoole\Serialize::pack([$callback, $params]));
-        unset($callable, $params, $fd);
-        return $task_id;
-
-
-
-
+        return $callback;
     }
 }

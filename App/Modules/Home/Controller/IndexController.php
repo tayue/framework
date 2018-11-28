@@ -8,7 +8,7 @@
 namespace App\Modules\Home\Controller;
 use Framework\Core\Controller;
 use App\Service\UserService;
-use Framework\Framework;
+use Framework\SwServer\Task\TaskManager;
 class IndexController extends Controller
 {
    public function indexAction(){
@@ -21,6 +21,14 @@ class IndexController extends Controller
     public function indexsAction(){
         var_dump($_POST);
         $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
+    }
+
+    public function taskAction(){
+        $time=date("Y-m-d H:i:s");
+       // $taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],[$time]);
+       // $this->echo2br("asyncTaskId:{$taskId} Finished!\r\n");
+        $taskId=TaskManager::syncTask(["Server/Task/TestTask","syncTaskTest"],[$time],12);
+        $this->echo2br("syncTaskId:{$taskId} Finished!\r\n");
     }
 
    public function init(){
