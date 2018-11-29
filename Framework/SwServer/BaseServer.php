@@ -10,6 +10,8 @@ namespace Framework\SwServer;
 
 use Framework\Core\Exception;
 use Framework\SwServer\Protocol\Protocol;
+use Framework\SwServer\Process\Interfaces\ProcessMessageInterface;
+use Framework\Tool\PluginManager;
 
 abstract class BaseServer implements Protocol
 {
@@ -18,6 +20,17 @@ abstract class BaseServer implements Protocol
      * @var null
      */
     public $config = [];
+    public $default_setting = [
+        'reactor_num' => 1,
+        'worker_num' => 4,
+        'max_request' => 1000,
+        'task_worker_num' => 4,
+        'task_tmpdir' => '/dev/shm',
+        'daemonize' => 0
+        //'log_file' => __DIR__.'/log.txt',
+        //'pid_file' => __DIR__.'/server.pid',
+    ];
+    public $setting = [];
 
     protected $log;
 
@@ -102,14 +115,6 @@ abstract class BaseServer implements Protocol
         return;
     }
 
-    function task($task, $dstWorkerId = -1, $callback = null)
-    {
-        self::$server->task($task, $dstWorkerId = -1, $callback);
-    }
-
-    function taskwait($task,$timeOut=0.5,$dstWorkerId=-1){
-        self::$server->taskwait($task, $timeOut,$dstWorkerId);
-    }
 
     function onTask(\swoole_server $server, $taskId, $fromWorkerId, $taskObj)
     {
@@ -119,12 +124,31 @@ abstract class BaseServer implements Protocol
                 list($classData, $params) = $taskObj;
                 list($class, $action) = $classData;
                 $class = new $class();
-                $class->$action($params);
+                $class->$action(...$params);
                 unset($class);
                 unset($taskObj);
             }
-        }              //任务投递结束返回worker进程
+        }
+        //任务投递结束返回worker进程
         return "TaskId:{$taskId},FromWorkerId:{$fromWorkerId},Finish!";
+    }
+
+    public function onPipeMessage(\swoole_server $server, $src_worker_id, $taskObj)
+    {
+        //processAsync
+        if ($taskObj) {
+            $taskObj = \Swoole\Serialize::unpack($taskObj);
+            $ref = new \ReflectionClass(get_class($taskObj));
+            if ($ref->implementsInterface(ProcessMessageInterface::class)) {
+                try {
+                    PluginManager::getInstance()->triggerHook($taskObj->getHook(), $taskObj->getMessageData(), $taskObj->getMessageParams());
+                } catch (\Throwable $throwable) {
+                    echo $throwable->getMessage();
+                }
+                return;
+            }
+            unset($ref, $taskObj);
+        }
     }
 
     function onStart($server)

@@ -272,7 +272,9 @@ class Route
         }
         if($request->server['request_method']=='POST'){ //POST请求
             $_POST=$request->post;
+            $_REQUEST=array_merge($_REQUEST,$_POST);
         }
+
         if (!$validate) {
             $_module = Framework::$app->default_module;
             $_controller = Framework::$app->default_controller;

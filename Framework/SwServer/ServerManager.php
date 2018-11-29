@@ -34,7 +34,11 @@ class ServerManager extends BaseServerManager
     public function setProtocol(\Framework\SwServer\Protocol\Protocol $protocol)
     {
         $this->protocol = $protocol;
+    }
 
+    public function getProtocol()
+    {
+       return  $this->protocol ;
     }
 
 
@@ -93,6 +97,10 @@ class ServerManager extends BaseServerManager
         if (is_callable(array($this->protocol, 'onTask'))) {
             $this->swoole_server->on('Task', array($this->protocol, 'onTask'));
             $this->swoole_server->on('Finish', array($this->protocol, 'onFinish'));
+        }
+
+        if (is_callable(array($this->protocol, 'onPipeMessage'))) {
+            $this->swoole_server->on('pipeMessage', array($this->protocol, 'onPipeMessage'));
         }
 
 

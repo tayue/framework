@@ -7,25 +7,33 @@
  */
 
 namespace Framework\SwServer\Task;
+
 use Framework\SwServer\Task\Interfaces\TaskManagerInterface;
 use Framework\SwServer\Task\TaskDelivery;
 
 class TaskManager implements TaskManagerInterface
 {
 
-    public static function asyncTask($callback,$params)
+    public static function asyncTask($callback, ...$params)
     {
-        $taskId=TaskDelivery::asyncTask($callback,$params);
+        $taskId = TaskDelivery::asyncTask($callback, ...$params);
         return $taskId;
     }
 
-    public function coTask($callback,$params){
+    public function coTask($callback, $params)
+    {
 
     }
 
-    public static function syncTask($callback, $params, $timeout)
+    public static function syncTask($callback, $timeout, ...$params)
     {
-        $taskId=TaskDelivery::syncTask($callback, $params, $timeout);
+        $taskId = TaskDelivery::syncTask($callback, $timeout, ...$params);
+        return $taskId;
+    }
+
+    public static function processAsyncTask($callback, ...$params)
+    {
+        $taskId = TaskDelivery::processAsyncTask($callback, ...$params);
         return $taskId;
     }
 }
