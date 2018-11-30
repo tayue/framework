@@ -9,7 +9,7 @@
 namespace Framework\SwServer;
 use Framework\Framework;
 use Swoole\Coroutine as SwCoroutine;
-use Framework\SwServer\Sw;
+use Framework\SwServer\Table\TableManager;
 
 abstract class BaseServerManager
 {
@@ -109,6 +109,25 @@ abstract class BaseServerManager
         }
         return false;
 
+    }
+
+    /**
+     * setWorkersPid 记录worker对应的进程worker_pid与worker_id的映射
+     * @param    $worker_id
+     * @param    $worker_pid
+     */
+    public static function setWorkersPid($worker_id, $worker_pid) {
+        $workers_pid = self::getWorkersPid();
+        $workers_pid[$worker_id] = $worker_pid;
+        TableManager::set('table_workers_pid', 'workers_pid', ['workers_pid'=>json_encode($workers_pid)]);
+    }
+
+    /**
+     * getWorkersPid 获取线上的实时的进程worker_pid与worker_id的映射
+     * @return
+     */
+    public static function getWorkersPid() {
+        return json_decode(TableManager::get('table_workers_pid', 'workers_pid', 'workers_pid'), true);
     }
 
 

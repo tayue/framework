@@ -12,14 +12,20 @@ use Framework\Core\Exception;
 use Framework\SwServer\Protocol\Protocol;
 use Framework\SwServer\Process\Interfaces\ProcessMessageInterface;
 use Framework\Tool\PluginManager;
+use Framework\SwServer\Table\TableManager;
 
 abstract class BaseServer implements Protocol
 {
+    const DEFAULT_PORT = 9501;
+    const DEFAULT_HOST = '0.0.0.0';
     /**
      * $config
      * @var null
      */
-    public $config = [];
+    public $config = [
+        'host' => self::DEFAULT_HOST,
+        'port' => self::DEFAULT_PORT,
+   ];
     public $default_setting = [
         'reactor_num' => 1,
         'worker_num' => 4,
@@ -64,9 +70,36 @@ abstract class BaseServer implements Protocol
      */
     public static $isEnableCoroutine = false;
 
-    public $host = '';
+    /**
+     * $_tasks 实时内存表保存数据,所有worker共享
+     * @var null
+     */
+    public static $_table_tasks = [
+        // 循环定时器内存表
+        'table_ticker' => [
+            // 每个内存表建立的行数
+            'size' => 4,
+            // 字段
+            'fields' => [
+                ['tick_tasks', 'string', 8096]
+            ]
+        ],
+        // 一次性定时器内存表
+        'table_after' => [
+            'size' => 4,
+            'fields' => [
+                ['after_tasks', 'string', 8096]
+            ]
+        ],
+        //$_workers_pids 记录映射进程worker_pid和worker_id的关系
+        'table_workers_pid' => [
+            'size' => 1,
+            'fields' => [
+                ['workers_pid', 'string', 512]
+            ]
+        ],
+    ];
 
-    public $port = '';
 
     /**
      * 设置Logger
@@ -80,10 +113,30 @@ abstract class BaseServer implements Protocol
 
     public function __construct($config)
     {
+        $config && $this->config = array_merge($this->config, $config);
         // set timeZone
         self::setTimeZone();
 
 
+    }
+
+    /**
+     * createTables 默认创建定时器任务的内存表
+     * @return  void
+     */
+    public function createTables()
+    {
+        if (!isset($this->config['table']) || !is_array($this->config['table'])) {
+            $this->config['table'] = [];
+        }
+
+        if (isset($this->config['open_table_tick_task']) && $this->config['open_table_tick_task'] == true) {
+            $tables = array_merge(self::$_table_tasks, $this->config['table']);
+        } else {
+            $tables = $this->config['table'];
+        }
+        //create table
+        TableManager::createTable($tables);
     }
 
     /**
@@ -104,12 +157,12 @@ abstract class BaseServer implements Protocol
         return self::$isEnableCoroutine;
     }
 
-    public static function setTimeZone()
+    public function setTimeZone()
     {
         // 默认
         $timezone = 'PRC';
-        if (isset(static::$config['time_zone'])) {
-            $timezone = static::$config['time_zone'];
+        if (isset($this->config['time_zone'])) {
+            $timezone = $this->config['time_zone'];
         }
         date_default_timezone_set($timezone);
         return;

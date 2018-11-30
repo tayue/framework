@@ -9,9 +9,7 @@
 namespace Framework\SwServer;
 
 use Framework\SwServer\Protocol\WebServer;
-use Framework\SwServer\BaseServerManager;
-use Framework\SwServer\Sw;
-
+use Framework\Tool\PluginManager;
 
 class ServerManager extends BaseServerManager
 {
@@ -21,8 +19,6 @@ class ServerManager extends BaseServerManager
     const TYPE_WEB_SOCKET_SERVER = 'WEB_SOCKET_SERVER';
     public $protocol;
     public $config;
-
-
     public static $isWebServer = false;
     public static $serviceType;
 
@@ -38,7 +34,7 @@ class ServerManager extends BaseServerManager
 
     public function getProtocol()
     {
-       return  $this->protocol ;
+        return $this->protocol;
     }
 
 
@@ -63,7 +59,7 @@ class ServerManager extends BaseServerManager
             case self::TYPE_WEB_SOCKET_SERVER;
                 break;
         }
-        Sw::$server=self::$server;
+        Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
     }
 
@@ -81,10 +77,10 @@ class ServerManager extends BaseServerManager
         $this->swoole_server->on('Start', array($this, 'onMasterStart'));
         $this->swoole_server->on('Shutdown', array($this, 'onMasterStop'));
         $this->swoole_server->on('ManagerStop', array($this, 'onManagerStop'));
-
+        //注册进程任务
+        PluginManager::getInstance()->registerClassHook('ProcessAsyncTask', 'Framework/SwServer/Task/ProcessAsyncTask', 'onPipeMessage');
         $this->swoole_server->on('WorkerStart', array($this, 'onWorkerStart'));
-        if (is_callable(array($this->protocol, 'WorkerStop')))
-        {
+        if (is_callable(array($this->protocol, 'WorkerStop'))) {
             $this->swoole_server->on('WorkerStop', array($this->protocol, 'WorkerStop'));
         }
         if (is_callable(array($this->protocol, 'onConnect'))) {
@@ -126,8 +122,6 @@ class ServerManager extends BaseServerManager
         if (method_exists($this->protocol, 'onMasterStart')) {
             $this->protocol->onMasterStart($serv);
         }
-
-        var_dump(self::$pidFile);
     }
 
     function onMasterStop($serv)
@@ -157,9 +151,8 @@ class ServerManager extends BaseServerManager
         }
     }
 
-    function getsw(){
-        return $this->swoole_server;
-    }
+
+
 
 
 }

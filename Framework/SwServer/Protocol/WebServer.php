@@ -17,22 +17,13 @@ class WebServer extends BaseServer
 {
     const SOFTWARE = "TayueWebServer";
     const POST_MAXSIZE = 2000000; //POST最大2M
-    const DEFAULT_PORT = 9501;
-    const DEFAULT_HOST = '0.0.0.0';
+
     public $fd;
-
-
-
-    public $config = [
-        'host' => self::DEFAULT_HOST,
-        'port' => self::DEFAULT_PORT,
-
-    ];
 
 
     public function __construct($config)
     {
-        $this->config = array_merge($config, $this->config);
+
         parent::__construct($config);
         $this->host = $this->config['host'];
         $this->port = $this->config['port'];
@@ -59,10 +50,14 @@ class WebServer extends BaseServer
         return self::$server;
     }
 
+    public function onMasterStart(){
+
+
+    }
 
     function onStart($server)
     {
-         echo "WebServer onStart\r\n";
+        echo "WebServer onStart\r\n";
     }
 
     function onConnect($server, $client_id, $from_id)
@@ -94,13 +89,11 @@ class WebServer extends BaseServer
     function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
 
-       $this->fd=$request->fd;
+        $this->fd = $request->fd;
 
-       if($request->server['request_uri']){ //请求地址
-           Route::parseSwooleRouteUrl($request,$response);
-       }
-
-
+        if ($request->server['request_uri']) { //请求地址
+            Route::parseSwooleRouteUrl($request, $response);
+        }
 
 
     }

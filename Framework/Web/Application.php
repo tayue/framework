@@ -13,7 +13,7 @@ use Framework\Core\View;
 use Framework\Core\Route;
 use Framework\Tool\Log;
 use Framework\SwServer\ServerManager;
-use Framework\Tool\PluginManager;
+
 class Application extends \Framework\Base\Application
 {
    public function run($config){
@@ -23,7 +23,6 @@ class Application extends \Framework\Base\Application
        Log::getInstance()->setConfig(['log_dir'=>$config['log']['log_dir']]);
        Log::getInstance()->put("hello world",'error');
        if($config['is_swoole_http_server']){ //用swoole服务器启动
-           PluginManager::getInstance()->registerClassHook('ProcessAsyncTask','Server/Task/ProcessAsyncTask','onPipeMessage');
            $sm=ServerManager::getInstance();
            $sm->createServer($config);
            $sm->start();

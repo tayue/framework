@@ -20,13 +20,13 @@ class IndexController extends Controller
    }
 
     public function indexsAction(){
-        PluginManager::getInstance()->registerFuncHook('ProcessAsyncTaskFunc',function ($a,$b){
-            return $a+$b;
-        });
-
-        PluginManager::getInstance()->triggerHook('ProcessAsyncTask',9,4);
-        //var_dump($_POST);
-        //var_dump($_REQUEST);
+//        PluginManager::getInstance()->registerFuncHook('ProcessAsyncTaskFunc',function ($a,$b){
+//            return $a+$b;
+//        });
+//
+//        PluginManager::getInstance()->triggerHook('ProcessAsyncTask',9,4);
+        var_dump($_POST);
+        var_dump($_REQUEST);
         //$this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
     }
 
