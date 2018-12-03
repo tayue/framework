@@ -25,7 +25,7 @@ abstract class BaseServer implements Protocol
     public $config = [
         'host' => self::DEFAULT_HOST,
         'port' => self::DEFAULT_PORT,
-   ];
+    ];
     public $default_setting = [
         'reactor_num' => 1,
         'worker_num' => 4,
@@ -37,7 +37,6 @@ abstract class BaseServer implements Protocol
         //'pid_file' => __DIR__.'/server.pid',
     ];
     public $setting = [];
-
     protected $log;
 
     /**
@@ -114,10 +113,53 @@ abstract class BaseServer implements Protocol
     public function __construct($config)
     {
         $config && $this->config = array_merge($this->config, $config);
+        (isset($config['setting']) && is_array($config['setting'])) && $config['setting'] = $this->setting = array_merge($this->default_setting, $config['setting']);
         // set timeZone
-        self::setTimeZone();
+        $this->setTimeZone();
+        $this->createTables();
+        self::checkSapiEnv();
+        self::enableCoroutine();
+    }
 
+    /**
+     * checkSapiEnv 判断是否是cli模式启动
+     * @return void
+     */
+    public static function checkSapiEnv()
+    {
+        // Only for cli.
+        if (php_sapi_name() != 'cli') {
+            throw new \Exception("only run in command line mode \n", 1);
+        }
+    }
 
+    /**
+     * enableCoroutine
+     * @return
+     */
+    public static function enableCoroutine()
+    {
+        if (version_compare(swoole_version(), '4.0.0', '>')) {
+            self::$isEnableCoroutine = true;
+            return;
+        } else {
+            // 低于4.0版本不能使用协程
+            self::$isEnableCoroutine = false;
+            return;
+        }
+
+    }
+
+    /**
+     * isUseSsl 判断是否使用ssl加密
+     * @return   boolean
+     */
+    protected function isUseSsl()
+    {
+        if (isset($this->config['ssl_cert_file']) && isset($this->config['ssl_key_file'])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -129,7 +171,6 @@ abstract class BaseServer implements Protocol
         if (!isset($this->config['table']) || !is_array($this->config['table'])) {
             $this->config['table'] = [];
         }
-
         if (isset($this->config['open_table_tick_task']) && $this->config['open_table_tick_task'] == true) {
             $tables = array_merge(self::$_table_tasks, $this->config['table']);
         } else {

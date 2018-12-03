@@ -6,5 +6,6 @@
  * Time: 13:13
  */
 return [
+'open_table_tick_task'=>true,
 
 ];

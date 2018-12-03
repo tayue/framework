@@ -10,6 +10,7 @@ use Framework\Core\Controller;
 use App\Service\UserService;
 use Framework\SwServer\Task\TaskManager;
 use Framework\Tool\PluginManager;
+use Framework\SwServer\ServerManager;
 class IndexController extends Controller
 {
    public function indexAction(){
@@ -25,9 +26,9 @@ class IndexController extends Controller
 //        });
 //
 //        PluginManager::getInstance()->triggerHook('ProcessAsyncTask',9,4);
-        var_dump($_POST);
-        var_dump($_REQUEST);
-        //$this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
+
+         var_dump(ServerManager::$app);
+       // $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
     }
 
     public function taskAction(){

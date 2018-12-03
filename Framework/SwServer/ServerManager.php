@@ -10,6 +10,7 @@ namespace Framework\SwServer;
 
 use Framework\SwServer\Protocol\WebServer;
 use Framework\Tool\PluginManager;
+use Framework\Web\Application;
 
 class ServerManager extends BaseServerManager
 {
@@ -18,9 +19,9 @@ class ServerManager extends BaseServerManager
     const TYPE_WEB_SERVER = 'WEB_SERVER';
     const TYPE_WEB_SOCKET_SERVER = 'WEB_SOCKET_SERVER';
     public $protocol;
-    public $config;
     public static $isWebServer = false;
     public static $serviceType;
+    public static $tables = [];
 
     private function __construct()
     {
@@ -40,9 +41,9 @@ class ServerManager extends BaseServerManager
 
     public function createServer($config)
     {
-        $this->config = $config;
-        if (isset($this->config['main_server']) && $this->config['main_server']) {
-            self::$serviceType = $this->config['main_server'];
+        self::$config = $config;
+        if (isset(self::$config['main_server']) && self::$config['main_server']) {
+            self::$serviceType = self::$config['main_server'];
         } else {
             self::$serviceType = self::TYPE_WEB_SERVER;
         }
@@ -52,7 +53,7 @@ class ServerManager extends BaseServerManager
                 break;
             case self::TYPE_WEB_SERVER;
                 self::$isWebServer = true;
-                $this->protocol = new WebServer($this->config);
+                $this->protocol = new WebServer(self::$config);
                 $this->swoole_server = $this->protocol->createServer();
                 self::$server = $this->swoole_server;
                 break;
@@ -66,9 +67,6 @@ class ServerManager extends BaseServerManager
 
     public function registerDefaultEventCallback()
     {
-        $this->swoole_server->on('ManagerStart', function ($serv) {
-            $this->setProcessName($this->getProcessName() . ': manager');
-        });
         if (self::$isWebServer) {
             $this->swoole_server->on('Request', array($this->protocol, 'onRequest'));
         } else {
@@ -76,9 +74,10 @@ class ServerManager extends BaseServerManager
         }
         $this->swoole_server->on('Start', array($this, 'onMasterStart'));
         $this->swoole_server->on('Shutdown', array($this, 'onMasterStop'));
+        $this->swoole_server->on('ManagerStart', function ($serv) {
+            $this->setProcessName($this->getProcessName() . ': manager');
+        });
         $this->swoole_server->on('ManagerStop', array($this, 'onManagerStop'));
-        //注册进程任务
-        PluginManager::getInstance()->registerClassHook('ProcessAsyncTask', 'Framework/SwServer/Task/ProcessAsyncTask', 'onPipeMessage');
         $this->swoole_server->on('WorkerStart', array($this, 'onWorkerStart'));
         if (is_callable(array($this->protocol, 'WorkerStop'))) {
             $this->swoole_server->on('WorkerStop', array($this->protocol, 'WorkerStop'));
@@ -89,7 +88,6 @@ class ServerManager extends BaseServerManager
         if (is_callable(array($this->protocol, 'onClose'))) {
             $this->swoole_server->on('Close', array($this->protocol, 'onClose'));
         }
-
         if (is_callable(array($this->protocol, 'onTask'))) {
             $this->swoole_server->on('Task', array($this->protocol, 'onTask'));
             $this->swoole_server->on('Finish', array($this->protocol, 'onFinish'));
@@ -98,8 +96,6 @@ class ServerManager extends BaseServerManager
         if (is_callable(array($this->protocol, 'onPipeMessage'))) {
             $this->swoole_server->on('pipeMessage', array($this->protocol, 'onPipeMessage'));
         }
-
-
     }
 
     public function start()
@@ -115,8 +111,8 @@ class ServerManager extends BaseServerManager
     function onMasterStart($serv)
     {
         $this->setProcessName($this->getProcessName() . ': master -host=' . $this->protocol->host . ' -port=' . $this->protocol->port);
-        if (!empty($this->config['pid_file'])) {
-            file_put_contents($this->config['pid_file'], $serv->master_pid);
+        if (!empty(self::$config['pid_file'])) {
+            file_put_contents(self::$config['pid_file'], $serv->master_pid);
         }
         self::$pidFile = $serv->master_pid;
         if (method_exists($this->protocol, 'onMasterStart')) {
@@ -126,7 +122,7 @@ class ServerManager extends BaseServerManager
 
     function onMasterStop($serv)
     {
-        if (!empty($this->config['pid_file'])) {
+        if (!empty(self::$config['pid_file'])) {
             unlink(self::$pidFile);
         }
         if (method_exists($this->protocol, 'onMasterStop')) {
@@ -134,25 +130,26 @@ class ServerManager extends BaseServerManager
         }
     }
 
-    function onWorkerStart($serv, $worker_id)
+    function onWorkerStart($server, $worker_id)
     {
+        echo "" . date("Y-m-d H:i:s") . " onWorkerStart\r\n";
         self::clearCache();
-
-        if ($worker_id >= $serv->setting['worker_num']) {
+        // 记录主进程加载的公共files,worker重启不会在加载的
+        self::getIncludeFiles();
+        // 记录worker的进程worker_pid与worker_id的映射
+        self::setWorkersPid($worker_id, $server->worker_pid);
+        if ($worker_id >= $server->setting['worker_num']) {
             $this->setProcessName($this->getProcessName() . ': task');
         } else {
             $this->setProcessName($this->getProcessName() . ': worker');
         }
         if (method_exists($this->protocol, 'onStart')) {
-            $this->protocol->onStart($serv, $worker_id);
+            $this->protocol->onStart($server, $worker_id);
         }
         if (method_exists($this->protocol, 'onWorkerStart')) {
-            $this->protocol->onWorkerStart($serv, $worker_id);
+            $this->protocol->onWorkerStart($server, $worker_id);
         }
     }
-
-
-
 
 
 }

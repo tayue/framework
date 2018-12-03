@@ -12,12 +12,13 @@ use Framework\SwServer\BaseServer;
 use Framework\SwServer\Protocol\Protocol;
 use Framework\Tool\Log;
 use Framework\Core\Route;
+use Framework\Web\Application;
+use Framework\SwServer\ServerManager;
 
 class WebServer extends BaseServer
 {
-    const SOFTWARE = "TayueWebServer";
-    const POST_MAXSIZE = 2000000; //POST最大2M
 
+    const POST_MAXSIZE = 2000000; //POST最大2M
     public $fd;
 
 
@@ -50,7 +51,8 @@ class WebServer extends BaseServer
         return self::$server;
     }
 
-    public function onMasterStart(){
+    public function onMasterStart()
+    {
 
 
     }
@@ -58,6 +60,13 @@ class WebServer extends BaseServer
     function onStart($server)
     {
         echo "WebServer onStart\r\n";
+    }
+
+    function onWorkerStart($server, $worker_id)
+    {
+        //初始化应用层
+        ServerManager::$app=(new Application($this->config));
+        ServerManager::$app->run($this->config);
     }
 
     function onConnect($server, $client_id, $from_id)

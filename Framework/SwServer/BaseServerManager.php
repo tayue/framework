@@ -7,7 +7,6 @@
  */
 
 namespace Framework\SwServer;
-use Framework\Framework;
 use Swoole\Coroutine as SwCoroutine;
 use Framework\SwServer\Table\TableManager;
 
@@ -16,7 +15,10 @@ abstract class BaseServerManager
     public $process_name = 'Tayue Server Framwork';
     public static $pidFile;
     public static $server;
+    public static $app;
     public $swoole_server;
+    public static $config;
+
 
     /**
      * 设置进程的名称
@@ -128,6 +130,46 @@ abstract class BaseServerManager
      */
     public static function getWorkersPid() {
         return json_decode(TableManager::get('table_workers_pid', 'workers_pid', 'workers_pid'), true);
+    }
+
+
+    /**
+     * setWorkerUserGroup 设置worker进程的工作组，默认是root
+     * @param  string $worker_user
+     */
+    public static function setWorkerUserGroup($worker_user=null) {
+        if(!isset(static::$config['user'])) {
+            if($worker_user) {
+                $userInfo = posix_getpwnam($worker_user);
+                if($userInfo) {
+                    posix_setuid($userInfo['uid']);
+                    posix_setgid($userInfo['gid']);
+                }
+            }
+        }
+    }
+
+    /**
+     * getIncludeFiles 获取woker启动前已经加载的文件
+     * @param   string $dir
+     * @return   void
+     */
+    public static function getIncludeFiles($dir='Http') {
+
+        if(isset(static::$config['log'])) {
+            $path = static::$config['log']['log_dir'];
+            $dir = strtolower($dir);
+            $filePath = $path.DIRECTORY_SEPARATOR.$dir.'/includes.txt';
+        }else {
+            $dir = ucfirst($dir);
+            $filePath = __DIR__.'/../'.$dir.'/includes.json';
+        }
+        $includes = get_included_files();
+        if(is_file($filePath)) {
+            @unlink($filePath);
+        }
+        @file_put_contents($filePath,var_export($includes,true));
+        @chmod($filePath,0766);
     }
 
 
