@@ -13,17 +13,13 @@ use Framework\Core\Db;
 
 use Framework\Core\Route;
 use Framework\Tool\Log;
-use Framework\SwServer\ServerManager;
 use Framework\Tool\PluginManager;
 
 class Application extends \Framework\Base\Application
 {
     public function run($config)
     {
-        //$this->registerErrorHandler();
         Db::setConfig($config['components']['db']['config']);
-        Log::getInstance()->setConfig(['log_dir' => $config['log']['log_dir']]);
-        Log::getInstance()->put("hello world", 'error');
         if (!$config['is_swoole_http_server']) {
             Route::parseRouteUrl();
         }else{//用swoole服务器启动

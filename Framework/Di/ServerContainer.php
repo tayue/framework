@@ -30,7 +30,9 @@ class ServerContainer
 
     function getAllowKeys(array $allowKeys = [])
     {
-
+        if($allowKeys){
+            $this->allowKeys=array_merge($this->allowKeys,$allowKeys);
+        }
         return $this->allowKeys;
 
     }

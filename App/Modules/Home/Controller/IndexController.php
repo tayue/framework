@@ -27,7 +27,7 @@ class IndexController extends Controller
 //
 //        PluginManager::getInstance()->triggerHook('ProcessAsyncTask',9,4);
         echo $a;
-       new sss();
+       new \App\Modules\Home\Controller\sss();
 
          var_dump(ServerManager::$app);
        // $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
@@ -47,6 +47,10 @@ class IndexController extends Controller
         //TaskManager::processAsyncTask(["Server/Task/TestTask","asyncTaskTest"],$a,$b,$c);
        // $taskId=TaskManager::syncTask(["Server/Task/TestTask","syncTaskTest"],[$time],13);
         $this->echo2br("syncTaskId:{$taskId} Finished!\r\n");
+    }
+
+    public function ddAction(){
+        echo "ddddd";
     }
 
    public function init(){

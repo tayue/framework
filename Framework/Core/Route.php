@@ -16,7 +16,7 @@ class Route
 
 
     //地址路由解析 有两种模式一种是pathInfo一种是query_string模式
-    public static function parseRouteUrl($isSwHttpServer = false)
+    public static function parseRouteUrl()
     {
         try {
             $validate = true;
@@ -189,13 +189,13 @@ class Route
                                 $afterActionMethod->invoke($classObject);
                             }
                         }
-                    } catch (\Exception $e) {
+                    } catch (\ReflectionException $e) {
                         // 方法调用发生异常后 引导到__call方法处理
                         $method = new \ReflectionMethod($classNameSpacePath, '__call');
                         $method->invokeArgs($classObject, array($urlAction, ''));
                     } catch (\Throwable $t) {
                         $msg = 'Fatal error: ' . $t->getMessage() . ' on ' . $t->getFile() . ' on line ' . $t->getLine();
-                        // 触发错误异常
+                         // 触发错误异常
                         throw new \Exception($msg, 1);
                     }
                 } else {
@@ -206,8 +206,7 @@ class Route
             }
         } catch (\Exception $e) {
             // 方法调用发生异常后 引导到__call方法处理
-            $method = new \ReflectionMethod($classNameSpacePath, '__call');
-            $method->invokeArgs($classObject, array($urlAction, ''));
+            throw new \Exception($e->getMessage(), 1);
         }
     }
 
