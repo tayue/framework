@@ -8,12 +8,14 @@
 
 namespace Framework\SwServer\Protocol;
 
+use Framework\Core\Exception;
 use Framework\SwServer\BaseServer;
 use Framework\SwServer\Protocol\Protocol;
 use Framework\Tool\Log;
 use Framework\Core\Route;
 use Framework\Web\Application;
 use Framework\SwServer\ServerManager;
+use Framework\Core\error\CustomerError;
 
 class WebServer extends BaseServer
 {
@@ -29,6 +31,7 @@ class WebServer extends BaseServer
         $this->host = $this->config['host'];
         $this->port = $this->config['port'];
         self::$isWebServer = true;
+        $this->setSwooleSockType();
         if (isset($config['setting']) && $config['setting']) {
             $this->setting = array_merge($this->default_setting, $config['setting']);
         } else {
@@ -97,14 +100,15 @@ class WebServer extends BaseServer
 
     function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
+        try {
+            $this->fd = $request->fd;
+            if ($request->server['request_uri']) { //请求地址
+                Route::parseSwooleRouteUrl($request, $response);
+            }
+        } catch (\Throwable $t) {
+            CustomerError::writeErrorLog($t);
 
-        $this->fd = $request->fd;
-
-        if ($request->server['request_uri']) { //请求地址
-            Route::parseSwooleRouteUrl($request, $response);
         }
-
-
     }
 
 

@@ -26,6 +26,8 @@ class IndexController extends Controller
 //        });
 //
 //        PluginManager::getInstance()->triggerHook('ProcessAsyncTask',9,4);
+        echo $a;
+       new sss();
 
          var_dump(ServerManager::$app);
        // $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");

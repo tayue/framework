@@ -20,6 +20,7 @@ class Application extends \Framework\Base\Application
 {
     public function run($config)
     {
+        //$this->registerErrorHandler();
         Db::setConfig($config['components']['db']['config']);
         Log::getInstance()->setConfig(['log_dir' => $config['log']['log_dir']]);
         Log::getInstance()->put("hello world", 'error');

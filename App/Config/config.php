@@ -21,7 +21,7 @@ return [
     'basePath' => dirname(__DIR__),
     'log'=>[
         'log_dir'=>dirname(__DIR__).DIRECTORY_SEPARATOR.'Log',
-        'is_display'=>true
+        'is_display'=>false
     ],
     'components' => [
         'tool' => [

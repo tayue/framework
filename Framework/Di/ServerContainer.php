@@ -15,7 +15,8 @@ class ServerContainer
     private $container = [];
     private $allowKeys = [
         'ProcessAsyncTask',
-        'ProcessAsyncTaskFunc'
+        'ProcessAsyncTaskFunc',
+        'CustomerError'
     ];
 
     private function __construct(){}

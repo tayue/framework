@@ -8,6 +8,7 @@
 
 namespace Framework\Core\log;
 
+use Framework\Core\Exception;
 use Framework\Tool\Tool;
 
 class Log
@@ -28,7 +29,7 @@ class Log
 
 
     public $config = [
-        'is_display' => true,
+        'is_display' => false,
         'level' => self::INFO,
         'log_file' => 'Log.log'
     ];
@@ -48,22 +49,27 @@ class Log
 
     function put($msg, $level = self::INFO)
     {
-        if ($this->config['is_display']) {
-            echo $this->format($msg, $level);
-        } else { //写入到日志里面
-            $log_dir = $this->config['log_dir']; //日志目录
-            if (!is_dir($log_dir)) {
-                $is_dir = Tool::createDir($log_dir);
-                if (!$is_dir) {
-                    throw new Exception("目录{$log_dir}创建失败!!");
+        try {
+            if ($this->config['is_display']) {
+                echo $this->format($msg, $level);
+            } else { //写入到日志里面
+                $log_dir = $this->config['log_dir']; //日志目录
+                if (!$log_dir) {
+                    throw new Exception("请设置日志目录!");
                 }
-
+                if (!is_dir($log_dir)) {
+                    $res = Tool::createDir($log_dir);
+                    if (!$res) {
+                        throw new Exception("目录{$log_dir}创建失败!!");
+                    }
+                }
                 $logFilePath = $log_dir . DIRECTORY_SEPARATOR . date("Y_m_d_") . $this->config['log_file'];
                 $msg = $this->format($msg, $level);
                 $msg = $msg . "\r\n";
                 file_put_contents($logFilePath, $msg, FILE_APPEND);
             }
-
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
 
     }
@@ -74,7 +80,7 @@ class Log
             $level = $this->level;
         }
         $dateFormatStr = "[Y-m-d H:i:s]";
-        return date($dateFormatStr . "\t{$this->levelInfo[$level]}\t{$msg}");
+        return date($dateFormatStr) . "\t{$this->levelInfo[$level]}\t{$msg}";
 
     }
 }

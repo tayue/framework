@@ -11,7 +11,8 @@ use Framework\Di\Container;
 use Framework\Di\ComponentLoader;
 use Framework\Di\ServiceLoader;
 use Framework\Framework;
-
+use Framework\Di\ServerContainer;
+use Framework\Core\error\CustomerError;
 abstract class Application extends ComponentLoader
 {
     public function __construct($config)
@@ -27,12 +28,39 @@ abstract class Application extends ComponentLoader
     {
       if(isset($config['timeZone']))
       $this->setTimeZone($config['timeZone']);
-
+      //$this->setErrorObject($config);
     }
 
     public function setTimeZone($value)
     {
         date_default_timezone_set($value);
+    }
+
+    public function setErrorObject($config)
+    {
+        if(!ServerContainer::getInstance()->get('CustomerError')){
+            $ce=new CustomerError();
+            if(class_exists(get_class($ce))){
+                ServerContainer::getInstance()->set('CustomerError',$ce);
+            }
+        }
+    }
+
+    protected function registerErrorHandler()
+    {
+        ini_set("display_errors", "On");
+        error_reporting(E_ALL | E_STRICT);
+        $CustomerErrorObject=ServerContainer::getInstance()->get('CustomerError');
+        $methodgGeneralError = array($CustomerErrorObject, 'generalError');
+        if(is_callable($methodgGeneralError,true)){
+            echo "__aa__";
+            set_error_handler([get_class($CustomerErrorObject),'generalError']);
+        }
+        $methodFatalError = array($CustomerErrorObject, 'fatalError');//
+        if(is_callable($methodFatalError,true)){
+           register_shutdown_function([get_class($CustomerErrorObject),'fatalError']);
+        }
+
     }
 
 

@@ -99,6 +99,20 @@ abstract class BaseServer implements Protocol
         ],
     ];
 
+    /**
+     * setSwooleSockType 设置socket的类型
+     */
+    protected  function setSwooleSockType() {
+        if(isset($this->setting['swoole_process_mode']) && $this->setting['swoole_process_mode'] == SWOOLE_BASE) {
+            self::$swoole_process_mode = SWOOLE_BASE;
+        }
+
+        if(self::isUseSsl()) {
+            self::$swoole_socket_type = SWOOLE_SOCK_TCP | SWOOLE_SSL;
+        }
+        return;
+    }
+
 
     /**
      * 设置Logger

@@ -8,9 +8,12 @@
 
 namespace Framework\SwServer;
 
+use Framework\Core\Exception;
 use Framework\SwServer\Protocol\WebServer;
 use Framework\Tool\PluginManager;
 use Framework\Web\Application;
+use Framework\Core\error\CustomerError;
+use Framework\Core\log\Log;
 
 class ServerManager extends BaseServerManager
 {
@@ -41,6 +44,9 @@ class ServerManager extends BaseServerManager
 
     public function createServer($config)
     {
+
+        $this->setErrorObject();
+        $this->registerErrorHandler();
         self::$config = $config;
         if (isset(self::$config['main_server']) && self::$config['main_server']) {
             self::$serviceType = self::$config['main_server'];
@@ -62,7 +68,9 @@ class ServerManager extends BaseServerManager
         }
         Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
-    }
+        (isset(self::$config['log']) && self::$config['log']) && Log::getInstance()->setConfig(self::$config['log']);
+
+   }
 
 
     public function registerDefaultEventCallback()
@@ -136,8 +144,11 @@ class ServerManager extends BaseServerManager
         self::clearCache();
         // 记录主进程加载的公共files,worker重启不会在加载的
         self::getIncludeFiles();
+        // 启动时提前加载文件
+        self::startInclude();
         // 记录worker的进程worker_pid与worker_id的映射
         self::setWorkersPid($worker_id, $server->worker_pid);
+
         if ($worker_id >= $server->setting['worker_num']) {
             $this->setProcessName($this->getProcessName() . ': task');
         } else {

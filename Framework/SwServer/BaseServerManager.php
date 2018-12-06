@@ -9,6 +9,8 @@
 namespace Framework\SwServer;
 use Swoole\Coroutine as SwCoroutine;
 use Framework\SwServer\Table\TableManager;
+use Framework\Di\ServerContainer;
+use Framework\Core\error\CustomerError;
 
 abstract class BaseServerManager
 {
@@ -170,6 +172,95 @@ abstract class BaseServerManager
         }
         @file_put_contents($filePath,var_export($includes,true));
         @chmod($filePath,0766);
+    }
+
+
+    /**
+     * startInclude 设置需要在workerstart启动时加载的配置文件
+     * @param  array  $includes
+     * @return   void
+     */
+    public static function startInclude() {
+        $includeFiles = isset(static::$config['include_files']) ? static::$config['include_files'] : [];
+        if($includeFiles) {
+            foreach($includeFiles as $filePath) {
+                include_once $filePath;
+            }
+        }
+    }
+
+    public function setErrorObject($config=[])
+    {
+        if(!ServerContainer::getInstance()->get('CustomerError')){
+            $ce=new CustomerError();
+            if(class_exists(get_class($ce))){
+                ServerContainer::getInstance()->set('CustomerError',$ce);
+            }
+        }
+    }
+
+    protected function registerErrorHandler()
+    {
+        ini_set("display_errors", "On");
+        error_reporting(E_ALL | E_STRICT);
+        $CustomerErrorObject=ServerContainer::getInstance()->get('CustomerError');
+        $methodgGeneralError = array($CustomerErrorObject, 'generalError');
+        if(is_callable($methodgGeneralError,true)){
+            set_error_handler([get_class($CustomerErrorObject),'generalError']);
+        }
+        $methodFatalError = array($CustomerErrorObject, 'fatalError');
+        if(is_callable($methodFatalError,true)){
+           register_shutdown_function([get_class($CustomerErrorObject),'fatalError']);
+        }
+    }
+
+    function handleFatal()
+    {
+        $error = error_get_last();
+        if (isset($error['type']))
+        {
+            switch ($error['type'])
+            {
+                case E_ERROR :
+                case E_PARSE :
+                case E_CORE_ERROR :
+                case E_COMPILE_ERROR :
+                    $message = $error['message'];
+                    $file = $error['file'];
+                    $line = $error['line'];
+                    $log = "$message ($file:$line)\nStack trace:\n";
+                    $trace = debug_backtrace();
+                    foreach ($trace as $i => $t)
+                    {
+                        if (!isset($t['file']))
+                        {
+                            $t['file'] = 'unknown';
+                        }
+                        if (!isset($t['line']))
+                        {
+                            $t['line'] = 0;
+                        }
+                        if (!isset($t['function']))
+                        {
+                            $t['function'] = 'unknown';
+                        }
+                        $log .= "#$i {$t['file']}({$t['line']}): ";
+                        if (isset($t['object']) and is_object($t['object']))
+                        {
+                            $log .= get_class($t['object']) . '->';
+                        }
+                        $log .= "{$t['function']}()\n";
+                    }
+                    if (isset($_SERVER['REQUEST_URI']))
+                    {
+                        $log .= '[QUERY] ' . $_SERVER['REQUEST_URI'];
+                    }
+                    error_log($log);
+
+                default:
+                    break;
+            }
+        }
     }
 
 
