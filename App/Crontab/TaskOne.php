@@ -29,15 +29,15 @@ class TaskOne extends AbstractCronTask
         return __CLASS__;
     }
 
-    public static function setParams(...$argvParams){
+    public static function setParams($argvParams){
         return self::$params=$argvParams;
     }
 
     public static function run($argvParams)
     {
          var_dump($argvParams);
-        // TODO: Implement run() method.
-        // 定时任务处理逻辑
-        var_dump('run once per hour');
+         $time=date("Y-m-d H:i:s");
+         // 定时任务处理逻辑
+        echo '['.$time.'] run once per minutes '."\r\n";
     }
 }

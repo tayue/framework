@@ -22,7 +22,7 @@ class CronRunner extends AbstratProcess
     {
         $this->tasks = $this->getArgs();
         $this->cronProcess();
-        TimerCallbak::loop(10 * 1000, function () {
+        TimerCallbak::loop(29 * 1000, function () {
             $this->cronProcess();
         });
     }
@@ -41,8 +41,8 @@ class CronRunner extends AbstratProcess
             $nextRunTime = CronExpression::factory($cronRule)->getNextRunDate();
             $distanceTime = $nextRunTime->getTimestamp() - time();
             if ($distanceTime < 30) {
-                TimerCallbak::delay($distanceTime * 1000, function () use ($class,$method,$params) {
-                    TaskManager::processAsyncTask([$class, $method],$params);
+                TimerCallbak::delay($distanceTime * 1000, function () use ($class, $method, $params) {
+                    TaskManager::processAsyncTask([$class, $method], $params);
                 });
             }
         }

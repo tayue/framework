@@ -16,7 +16,7 @@ class Crontab
     /*
      * 同名任务会被覆盖
      */
-    function addTask(string $cronTaskClass,String $method,...$params): Crontab
+    function addTask(string $cronTaskClass,String $method,$params): Crontab
     {
         try{
             $ref = new \ReflectionClass($cronTaskClass);

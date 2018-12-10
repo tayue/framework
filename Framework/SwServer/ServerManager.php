@@ -50,7 +50,8 @@ class ServerManager extends BaseServerManager
         //注册进程任务
         PluginManager::getInstance()->registerClassHook('ProcessAsyncTask', 'Framework/SwServer/Task/ProcessAsyncTask', 'onPipeMessage');
         // 开始一个定时任务计划
-        Crontab::getInstance()->addTask(TaskOne::class,'run',11,11);
+        $time=date("Y-m-d H:i:s");
+        Crontab::getInstance()->addTask(TaskOne::class,'run',['date'=>$time]);
         $this->setErrorObject();
         $this->registerErrorHandler();
         self::$config = $config;
