@@ -22,9 +22,6 @@ class Application extends \Framework\Base\Application
         Db::setConfig($config['components']['db']['config']);
         if (!$config['is_swoole_http_server']) {
             Route::parseRouteUrl();
-        }else{//用swoole服务器启动
-            //注册进程任务
-            PluginManager::getInstance()->registerClassHook('ProcessAsyncTask', 'Framework/SwServer/Task/ProcessAsyncTask', 'onPipeMessage');
         }
 
 

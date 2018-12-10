@@ -18,9 +18,13 @@ class ProcessAsyncTask
         $controllerInstance = new \ReflectionClass($classNameSpacePath);
         if ($controllerInstance->hasMethod($method)) {
             $classMethod = new \ReflectionMethod($classNameSpacePath, $method);
-            if ($classMethod->isPublic() && !$classMethod->isStatic()) {
+            if ($classMethod->isPublic()) {
                 try {
-                    $classObject->$method(...$processObjectParams);
+                    if ($classMethod->isStatic()) {
+                        $classObject::$method(...$processObjectParams);
+                    } else {
+                        $classObject->$method(...$processObjectParams);
+                    }
                 } catch (\Exception $e) {
                     throw new \Exception($e->getMessage(), 2);
                 } catch (\Throwable $t) {

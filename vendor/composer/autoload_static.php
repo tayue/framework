@@ -10,9 +10,33 @@ class ComposerStaticInit9cc504050150b1fcd7f086ccef501a83
         'f084d01b0a599f67676cffef638aa95b' => __DIR__ . '/..' . '/smarty/smarty/libs/bootstrap.php',
     );
 
+    public static $prefixLengthsPsr4 = array (
+        'F' => 
+        array (
+            'Framework\\' => 10,
+        ),
+        'C' => 
+        array (
+            'Cron\\' => 5,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Framework\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Framework',
+        ),
+        'Cron\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron',
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9cc504050150b1fcd7f086ccef501a83::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9cc504050150b1fcd7f086ccef501a83::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

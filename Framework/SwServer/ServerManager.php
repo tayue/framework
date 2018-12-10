@@ -14,6 +14,9 @@ use Framework\Tool\PluginManager;
 use Framework\Web\Application;
 use Framework\Core\error\CustomerError;
 use Framework\Core\log\Log;
+use Framework\SwServer\Crontab\Crontab;
+use App\Crontab\TaskOne;
+use Framework\SwServer\Process\ProcessManager;
 
 class ServerManager extends BaseServerManager
 {
@@ -44,7 +47,10 @@ class ServerManager extends BaseServerManager
 
     public function createServer($config)
     {
-
+        //注册进程任务
+        PluginManager::getInstance()->registerClassHook('ProcessAsyncTask', 'Framework/SwServer/Task/ProcessAsyncTask', 'onPipeMessage');
+        // 开始一个定时任务计划
+        Crontab::getInstance()->addTask(TaskOne::class,'run',11,11);
         $this->setErrorObject();
         $this->registerErrorHandler();
         self::$config = $config;
@@ -68,6 +74,7 @@ class ServerManager extends BaseServerManager
         }
         Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
+        ProcessManager::getInstance()->addProcess('CronRunner',\Framework\SwServer\Crontab\CronRunner::class,true,Crontab::getInstance()->getTasks());
         (isset(self::$config['log']) && self::$config['log']) && Log::getInstance()->setConfig(self::$config['log']);
 
    }

@@ -24,7 +24,7 @@ class ProcessMessage implements ProcessMessageInterface
             $isHasHook = PluginManager::getInstance()->hasHook($hook);
             if ($isHasHook) {
                 $this->hook = $hook;
-            }else{
+            } else {
                 throw new \Exception("Hook Not Exists !");
             }
         }

@@ -34,7 +34,6 @@ abstract class Application extends ComponentLoader
         (isset($config['log']) && $config['log']) && Log::getInstance()->setConfig($config['log']);
         $this->setErrorObject();
         $this->registerErrorHandler();
-        //$this->setErrorObject($config);
     }
 
     public function setTimeZone($value)

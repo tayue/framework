@@ -1,8 +1,9 @@
 {
     "name": "tayue/framework",
-	"licence": "MIT",
+	 
     "require": {
-        "smarty/smarty": "^3.1"
+        "smarty/smarty": "^3.1",
+        "mtdowling/cron-expression": "dev-master"
     },
     "keywords": [
         "tyframework",
@@ -16,10 +17,7 @@
             "email": "tayueliuxiang1@sina.com"
         }
     ],
-	"require": {
-        "php": ">=5.5"
-    },
-   	"autoload": {
+  "autoload": {
         "psr-4": {
             "Framework\\": "Framework/"
         }
