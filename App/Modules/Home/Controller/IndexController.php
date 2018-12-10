@@ -11,6 +11,7 @@ use App\Service\UserService;
 use Framework\SwServer\Task\TaskManager;
 use Framework\Tool\PluginManager;
 use Framework\SwServer\ServerManager;
+use Framework\SwServer\Process\ProcessManager;
 class IndexController extends Controller
 {
    public function indexAction(){
@@ -21,15 +22,21 @@ class IndexController extends Controller
    }
 
     public function indexsAction(){
+
+        $pid=$_GET['pid'];
+        $pa=ProcessManager::getInstance()->getProcessByPid($pid);
+        ProcessManager::getInstance()->writeByProcessName('CronRunner','hello CronRunner');
+
+        var_dump($pa);
 //        PluginManager::getInstance()->registerFuncHook('ProcessAsyncTaskFunc',function ($a,$b){
 //            return $a+$b;
 //        });
 //
 //        PluginManager::getInstance()->triggerHook('ProcessAsyncTask',9,4);
-        echo $a;
-       new \App\Modules\Home\Controller\sss();
-
-         var_dump(ServerManager::$app);
+//        echo $a;
+//       new \App\Modules\Home\Controller\sss();
+//
+//         var_dump(ServerManager::$app);
        // $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
     }
 

@@ -86,9 +86,11 @@ class ProcessManager
      */
     public static function getProcessByPid(int $pid)
     {
+        $processKeys = array_keys(self::$processList);
         $table = TableManager::getTable('table_process_map');
-        foreach ($table as $key => $item) {
-            if ($item['pid'] == $pid) {
+        foreach ($processKeys as $key) {
+            $itemPid = $table->get($key, 'pid');
+            if ($itemPid == $pid) {
                 return self::$processList[$key];
             }
         }

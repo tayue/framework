@@ -82,26 +82,22 @@ abstract class AbstratProcess
         TableManager::getTable('table_process_map')->set(
             md5($this->processName), ['pid' => $this->swooleProcess->pid]
         );
-
         if (extension_loaded('pcntl')) {
             pcntl_async_signals(true);
         }
-
         Process::signal(SIGTERM, function () use ($process) {
             $this->onShutDown();
             TableManager::getTable('table_process_map')->del(md5($this->processName));
             swoole_event_del($process->pipe);
             $this->swooleProcess->exit(0);
         });
-
         if ($this->async) {
             swoole_event_add($this->swooleProcess->pipe, function () {
                 $msg = $this->swooleProcess->read(64 * 1024);
                 $this->onReceive($msg);
             });
         }
-
-        $this->swooleProcess->name('php-addSelfProcess:' . $this->getProcessName());
+        $this->swooleProcess->name('customerProcess:' . $this->getProcessName());
         $this->run($this->swooleProcess);
     }
 

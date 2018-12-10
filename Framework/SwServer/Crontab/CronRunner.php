@@ -29,7 +29,7 @@ class CronRunner extends AbstratProcess
 
     public function onShutDown()
     {
-        // TODO: Implement onShutDown() method.
+        echo __CLASS__."::onShutDown()\r\n";
     }
 
 
@@ -50,6 +50,7 @@ class CronRunner extends AbstratProcess
 
     public function onReceive($str, ...$args)
     {
-        // TODO: Implement onReceive() method.
+        echo __CLASS__."::onReceive()\r\n";
+         var_dump($str,$args);
     }
 }
