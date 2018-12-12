@@ -31,6 +31,14 @@ class TaskDelivery implements TaskDeliveryInterface
         return $task_id;
     }
 
+    public static function coTask($callback, $timeout, ...$params)
+    {
+        $callback = self::commonValidate($callback);
+        $task_id = ServerManager::getSwooleServer()->taskCo(array(\Swoole\Serialize::pack([$callback, $params])), $timeout);
+        unset($callback, $params);
+        return $task_id;
+    }
+
 
     public static function commonValidate($callback)
     {

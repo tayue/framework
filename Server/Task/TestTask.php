@@ -4,6 +4,7 @@ namespace Server\Task;
 use Framework\Core\Exception;
 use Framework\SwServer\Task\TaskManager;
 use Framework\Framework;
+use Swoole\Coroutine as co;
 class TestTask
 {
     public $name="TestTask";
@@ -14,10 +15,13 @@ class TestTask
     }
 
     public function asyncTaskTest($a,$b,$c){
-        sleep(5);
-        $cd=$a+$b+$c;
-        $time=date("Y-m-d H:i:s ");
-        echo $time.$cd."\r\n";
+
+            $cd=$a+$b+$c;
+            $time=date("Y-m-d H:i:s ");
+            echo $time.$cd."\r\n";
+
+
+
 
     }
 

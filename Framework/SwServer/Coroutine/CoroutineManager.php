@@ -12,10 +12,17 @@
 namespace Framework\SwServer\Coroutine;
 
 use Framework\SwServer\BaseServer;
+use Swoole\Coroutine as SwCoroutine;
+use Framework\Tool\Tool;
 
 class CoroutineManager {
 
-	use \Framework\Traits\SingletonTrait;
+    use \Framework\Traits\SingletonTrait;
+
+
+    private static $tid = -1;
+
+    private static $idMap = [];
 
 	/**
 	 * coroutine_id的前缀
@@ -107,4 +114,80 @@ class CoroutineManager {
 		}
 		return null;
 	}
+
+    /**
+     * Get the current coroutine ID,
+     * Return null when running in non-coroutine context
+     *
+     * @return int|null
+     */
+    public static function id()
+    {
+        $cid = SwCoroutine::getuid();
+        if ($cid !== -1) {
+            return $cid;
+        }
+
+        return self::$tid;
+    }
+
+    /**
+     * Get the top coroutine ID,
+     * Return null when running in non-coroutine context
+     *
+     * @return int|null
+     */
+    public static function tid()
+    {
+        $id = self::id();
+        return self::$idMap[$id] ?? $id;
+    }
+
+    /**
+     * Create a coroutine
+     *
+     * @param callable $cb
+     *
+     * @return bool
+     */
+    public static function create(callable $cb)
+    {
+        $tid = self::tid();
+        return SwCoroutine::create(function () use ($cb, $tid) {
+            $id = SwCoroutine::getuid();
+            self::$idMap[$id] = $tid;
+            Tool::call($cb);
+        });
+    }
+
+    /**
+     * Suspend a coroutine
+     *
+     * @param string $corouindId
+     */
+    public static function suspend($corouindId)
+    {
+        SwCoroutine::suspend($corouindId);
+    }
+
+    /**
+     * Resume a coroutine
+     *
+     * @param string $coroutineId
+     */
+    public static function resume($coroutineId)
+    {
+        SwCoroutine::resume($coroutineId);
+    }
+
+    public static function getIdMap(){
+        return self::$idMap;
+    }
+
+
+
+
+
+
+
 }

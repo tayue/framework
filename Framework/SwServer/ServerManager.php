@@ -77,9 +77,6 @@ class ServerManager extends BaseServerManager
         $this->registerDefaultEventCallback();
         ProcessManager::getInstance()->addProcess('CronRunner',\Framework\SwServer\Crontab\CronRunner::class,true,Crontab::getInstance()->getTasks());
 
-
-       // var_dump($p);
-       // var_dump($pa);
         (isset(self::$config['log']) && self::$config['log']) && Log::getInstance()->setConfig(self::$config['log']);
 
    }
