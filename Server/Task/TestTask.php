@@ -15,7 +15,7 @@ class TestTask
     }
 
     public function asyncTaskTest($a,$b,$c){
-
+            var_dump(($a."=>".$b."=>".$c));
             $cd=$a+$b+$c;
             $time=date("Y-m-d H:i:s ");
             echo $time.$cd."\r\n";

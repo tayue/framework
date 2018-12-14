@@ -87,7 +87,7 @@ class IndexController extends Controller
         $c = 3;
         //$taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
         // $taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
-        $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 5, $a, $b, $c + 1);
+        $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 2,$a, $b, $c );
         var_dump($taskId1);
         //TaskManager::processAsyncTask(["Server/Task/TestTask","asyncTaskTest"],$a,$b,$c);
         // $taskId=TaskManager::syncTask(["Server/Task/TestTask","syncTaskTest"],[$time],13);
