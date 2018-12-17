@@ -16,7 +16,7 @@ use Framework\SwServer\ServerManager;
 use Framework\SwServer\Process\ProcessManager;
 use Framework\SwServer\Coroutine\CoroutineManager;
 use Swoole\Coroutine as co;
-
+use Framework\SwServer\Pool\MysqlPoolManager;
 
 class IndexController extends Controller
 {
@@ -30,29 +30,52 @@ class IndexController extends Controller
 
     public function indexsAction()
     {
-//       $cid= CoroutineManager::getInstance()->getCoroutineId();
-//
-        $cid1 = CoroutineManager::getInstance()->getCoroutineId();
-//        var_dump($cid,$cid1);
-        // 当前协程id
-        $cid1 = $cid2 = $ss = '';
-        $cid = CoroutineManager::id();
-        CoroutineManager::create(function () use (&$ss, &$cid, &$cid1, &$cid2) {
-            $cid1 = CoroutineManager::id();
-            echo "$cid=>$cid1\r\n";
-            CoroutineManager::create(function () use (&$ss, &$cid, &$cid1, &$cid2) {
+        echo "dddd";
 
-                $cid2 = CoroutineManager::id();
-                $ss = "$cid=>$cid1=>$cid2\r\n";
-                echo $ss . "\r\n";
-            });
+        go(function () {
+            //从池子中获取一个实例
+            try {
+                $pool = MysqlPoolManager::getInstance();
+                $mysql = $pool->get();
+                if ($mysql) {
+                    $result = $mysql->query("select * from user", 2);
+                    print_r($result);
+                    // \Swoole\Coroutine::sleep(10); //sleep 10秒,模拟耗时操作
+                    MysqlPoolManager::getInstance()->put($mysql);
+                }
+                echo "Current Use Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
         });
 
-        var_dump($cid, $cid1, $cid2, $ss);
-        // 当前运行上下文ID, 协程环境中，顶层协程ID; 任务中，当前任务taskid; 自定义进程中，当前进程ID(pid)
-        $tid = CoroutineManager::tid();
-        //echo "{$cid1}##\r\n";
-        echo "tid:{$tid}\r\n";
+
+        // $a=new MysqlPoolManager(array());
+        // var_dump($a);
+//       $cid= CoroutineManager::getInstance()->getCoroutineId();
+//
+        //   $cid1 = CoroutineManager::getInstance()->getCoroutineId();
+//        var_dump($cid,$cid1);
+        // 当前协程id
+//        $cid1 = $cid2 = $ss = '';
+//        $cid = CoroutineManager::id();
+//        CoroutineManager::create(function () use (&$ss, &$cid, &$cid1, &$cid2) {
+//            $cid1 = CoroutineManager::id();
+//            echo "$cid=>$cid1\r\n";
+//            CoroutineManager::create(function () use (&$ss, &$cid, &$cid1, &$cid2) {
+//
+//                $cid2 = CoroutineManager::id();
+//                $ss = "$cid=>$cid1=>$cid2\r\n";
+//                echo $ss . "\r\n";
+//            });
+//        });
+//
+//        var_dump($cid, $cid1, $cid2, $ss);
+//        // 当前运行上下文ID, 协程环境中，顶层协程ID; 任务中，当前任务taskid; 自定义进程中，当前进程ID(pid)
+//        $tid = CoroutineManager::tid();
+//        //echo "{$cid1}##\r\n";
+//        echo "tid:{$tid}\r\n";
 
 //        $res=CoroutineManager::getIdMap();
 //        var_dump($res);
@@ -87,7 +110,7 @@ class IndexController extends Controller
         $c = 3;
         //$taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
         // $taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
-        $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 2,$a, $b, $c );
+        $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 2, $a, $b, $c);
         var_dump($taskId1);
         //TaskManager::processAsyncTask(["Server/Task/TestTask","asyncTaskTest"],$a,$b,$c);
         // $taskId=TaskManager::syncTask(["Server/Task/TestTask","syncTaskTest"],[$time],13);

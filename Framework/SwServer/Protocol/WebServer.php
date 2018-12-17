@@ -101,6 +101,12 @@ class WebServer extends BaseServer
     function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
         try {
+            //浏览器会自动发起这个请求，这也是很多人碰到的一个问题：
+            //为什么我浏览器打开网站，收到了两个请求?
+            if ($request->server['path_info'] == '/favicon.ico') {
+                $response->end('');
+                return;
+            }
             $this->fd = $request->fd;
             if ($request->server['request_uri']) { //请求地址
                 Route::parseSwooleRouteUrl($request, $response);
