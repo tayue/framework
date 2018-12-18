@@ -8,8 +8,6 @@
 
 namespace Framework\SwServer\Pool;
 
-use think\Exception;
-
 class PoolBase implements Pool
 {
     public $pool;
@@ -25,7 +23,8 @@ class PoolBase implements Pool
         if (empty($this->pool)) {
             $this->config = $config;
             $this->pool = new \Swoole\Coroutine\Channel($config['pool_size']);
-            $this->initPool($this->config['pool_size']);
+            $poolSize = (isset($this->config['pool_size']) && $this->config['pool_size']) ? $this->config['pool_size'] : 5;
+            $this->initPool($poolSize);
         }
     }
 
@@ -50,15 +49,15 @@ class PoolBase implements Pool
     public function get()
     {
         try {
-            $mysql = $this->pool->pop($this->config['pool_get_timeout']);
-            if (false === $mysql) {
-                throw new \RuntimeException("get mysql timeout, all mysql connection is used");
+            $resource = $this->pool->pop($this->config['pool_get_timeout']);
+            if (false === $resource) {
+                throw new \Exception("get resource timeout, all resource connection is used");
             }
         } catch (\Exception $e) {
             echo $e->getMessage();
             return false;
         }
-        return $mysql;
+        return $resource;
     }
 
 
@@ -78,9 +77,9 @@ class PoolBase implements Pool
                 $res = $this->checkConnection();
                 if ($res == false) {
                     //连接失败，抛弃常
-                    throw new RuntimeException("failed to connect mysql server.");
+                    throw new Exception("failed to connect resource server.");
                 } else {
-                    //mysql连接存入channel
+                    //resource连接存入channel
                     $this->put($res);
                 }
             }

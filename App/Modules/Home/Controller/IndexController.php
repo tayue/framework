@@ -17,6 +17,7 @@ use Framework\SwServer\Process\ProcessManager;
 use Framework\SwServer\Coroutine\CoroutineManager;
 use Swoole\Coroutine as co;
 use Framework\SwServer\Pool\MysqlPoolManager;
+use Framework\SwServer\Pool\RedisPoolManager;
 
 class IndexController extends Controller
 {
@@ -37,13 +38,34 @@ class IndexController extends Controller
             try {
                 $pool = MysqlPoolManager::getInstance();
                 $mysql = $pool->get();
+                var_dump($mysql);
                 if ($mysql) {
                     $result = $mysql->query("select * from user", 2);
-                    print_r($result);
+                   // print_r($result);
                     // \Swoole\Coroutine::sleep(10); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($mysql);
                 }
-                echo "Current Use Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . PHP_EOL;
+                echo "Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        });
+
+        go(function () {
+            //从池子中获取一个实例
+            try {
+                $pool = RedisPoolManager::getInstance();
+                $redis = $pool->get();
+                var_dump($redis);
+                if ($redis) {
+                    $result = $redis->set('name','tayue');
+                    $result1 = $redis->get('name');
+                    var_dump($result,$result1);
+                    // \Swoole\Coroutine::sleep(10); //sleep 10秒,模拟耗时操作
+                    RedisPoolManager::getInstance()->put($redis);
+                }
+                echo "Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . PHP_EOL;
 
             } catch (\Exception $e) {
                 echo $e->getMessage();
