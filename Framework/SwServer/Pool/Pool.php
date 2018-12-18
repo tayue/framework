@@ -10,8 +10,9 @@ namespace Framework\SwServer\Pool;
 
 interface Pool
 {
-    public function initPool($poolSize = 10);
-    public function get();
+    public function initPool();
+    public function get($timeout);
     public function put($data);
     public function getLength();
+    public function createResource();
 }
