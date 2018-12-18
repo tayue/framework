@@ -86,7 +86,10 @@ class PoolBase implements Pool
         return $this->pool->length();
     }
 
-
+    /**
+     * @return mixed
+     * @desc 获取当前连接数
+     */
     public function getCurrentConnectionNums(){
         return $this->currentConnectionNum;
     }
