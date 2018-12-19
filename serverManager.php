@@ -22,39 +22,6 @@ $serverConfig = include_once './App/Config/server.php';
 $config = array_merge($config, $serverConfig);
 include_once VENDOR_PATH . '/autoload.php';
 
-function initCheck()
-{
-    if (version_compare(phpversion(), '7.0.0', '<')) {
-        die("php version must >= 7.0.0");
-    }
-    if (version_compare(swoole_version(), '1.9.15', '<')) {
-        die("swoole version must >= 1.9.15");
-    }
-}
-
-function opCacheClear()
-{
-    if (function_exists('apc_clear_cache')) {
-        apc_clear_cache();
-    }
-    if (function_exists('opcache_reset')) {
-        opcache_reset();
-    }
-}
-
-function commandParser()
-{
-    global $argv;
-    $command = isset($argv[1]) ? $argv[1] : null;
-    $server = isset($argv[2]) ? $argv[2] : null;
-    return ['command' => $command, 'server' => $server];
-}
-
-//if ($config['is_swoole_http_server']) { //用swoole服务器启动
-//    $sm = ServerManager::getInstance();
-//    $sm->createServer($config);
-//    $sm->start();
-//}
 
 function help($command)
 {
@@ -85,34 +52,17 @@ function help($command)
 
 function startServer($server)
 {
+    global $config;
     opCacheClear();
     global $argv;
     switch (strtolower($server)) {
         case 'http':
             {
-                $path = START_DIR_ROOT . '/protocol/http';
-                if (!is_dir($path)) {
-                    @mkdir($path, 0777, true);
-                }
-                $config_file = $path . '/config.php';
-                if (!file_exists($config_file)) {
-                    copy(SCORE_DIR_ROOT . '/score/Http/config.php', $config_file);
-                }
 
-                $event_server_file = $path . '/HttpServer.php';
-                if (!file_exists($event_server_file)) {
-                    copy(SCORE_DIR_ROOT . '/score/EventServer/HttpServer.php', $event_server_file);
-                }
+                $sm = ServerManager::getInstance();
+                $sm->createServer($config);
+                $sm->start();
 
-                $config = include $config_file;
-
-                if (isset($argv[3]) && ($argv[3] == '-d' || $argv[3] == '-D')) {
-
-                    $config['setting']['daemonize'] = true;
-                }
-
-                $http = new \protocol\http\HttpServer($config);
-                $http->start();
                 break;
             }
         default:
@@ -123,4 +73,59 @@ function startServer($server)
     return;
 }
 
+function initCheck()
+{
+    if (version_compare(phpversion(), '7.0.0', '<')) {
+        die("php version must >= 7.0.0");
+    }
+    if (version_compare(swoole_version(), '1.9.15', '<')) {
+        die("swoole version must >= 1.9.15");
+    }
+}
 
+function opCacheClear()
+{
+    if (function_exists('apc_clear_cache')) {
+        apc_clear_cache();
+    }
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+    }
+}
+
+function commandParser()
+{
+    global $argv;
+    $command = isset($argv[1]) ? $argv[1] : null;
+    $server = isset($argv[2]) ? $argv[2] : null;
+    return ['command' => $command, 'server' => $server];
+}
+
+function commandHandler()
+{
+    $command = commandParser();
+    if (isset($command['server']) && $command['server'] != 'help') {
+        switch ($command['command']) {
+            case "start":
+                {
+                    startServer($command['server']);
+                    break;
+                }
+            case 'stop':
+                {
+                    stopServer($command['server']);
+                    break;
+                }
+            case 'help':
+            default:
+                {
+                    help($command['command']);
+                }
+        }
+    } else {
+        help($command['command']);
+    }
+}
+
+initCheck();
+commandHandler();
