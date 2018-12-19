@@ -58,7 +58,6 @@ class PoolBase implements Pool
         try {
             if ($this->pool->isEmpty()) { //剩余资源数为空
                 if ($this->currentConnectionNum < $this->max) { //当前资源连接数小于最大连接数时可以继续创建资源
-                    echo "create Resource\r\n";
                     $resourceData = $this->createResource();
                     $this->currentConnectionNum++;
                 } else {
