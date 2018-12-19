@@ -17,6 +17,8 @@ use Framework\Core\log\Log;
 use Framework\SwServer\Crontab\Crontab;
 use App\Crontab\TaskOne;
 use Framework\SwServer\Process\ProcessManager;
+use Framework\SwServer\Pool\MysqlPoolManager;
+use Framework\SwServer\Pool\RedisPoolManager;
 
 class ServerManager extends BaseServerManager
 {
@@ -157,11 +159,12 @@ class ServerManager extends BaseServerManager
         self::startInclude();
         // 记录worker的进程worker_pid与worker_id的映射
         self::setWorkersPid($worker_id, $server->worker_pid);
-
         if ($worker_id >= $server->setting['worker_num']) {
             $this->setProcessName($this->getProcessName() . ': task');
         } else {
             $this->setProcessName($this->getProcessName() . ': worker');
+            MysqlPoolManager::getInstance()->clearSpaceResources();
+            RedisPoolManager::getInstance()->clearSpaceResources();
         }
         if (method_exists($this->protocol, 'onStart')) {
             $this->protocol->onStart($server, $worker_id);

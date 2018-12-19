@@ -52,7 +52,7 @@ class PoolBase implements Pool
      * @return mixed
      * @desc 获取一个连接，当超时，返回一个异常
      */
-    public function get($timeout='')
+    public function get($timeout = '')
     {
         $timeout = $timeout ? $timeout : $this->config['pool_get_timeout'];
         try {
@@ -90,7 +90,8 @@ class PoolBase implements Pool
      * @return mixed
      * @desc 获取当前连接数
      */
-    public function getCurrentConnectionNums(){
+    public function getCurrentConnectionNums()
+    {
         return $this->currentConnectionNum;
     }
 
@@ -126,7 +127,8 @@ class PoolBase implements Pool
                 if (!$this->pool->isEmpty()) {
                     $obj = $this->pool->pop(0.001);
                     $last_used_time = $obj['last_used_time'];
-                    if ($this->currentConnectionNum > $this->min && (time() - $last_used_time > $this->spaceTime)) {//回收
+                    $diffTimes = time() - $last_used_time;
+                    if ($this->currentConnectionNum > $this->min && ($diffTimes > $this->spaceTime)) {//回收
                         $this->currentConnectionNum--;
                     } else {
                         array_push($list, $obj);
@@ -138,8 +140,8 @@ class PoolBase implements Pool
             foreach ($list as $eachResourceData) {
                 $this->put($eachResourceData);
             }
-            $currentResourceLength1 = $this->getLength();
-            echo "------End Colletion Idle Connections[{$currentResourceLength1}]------" . PHP_EOL;
+            $currentResourceLength = $this->getLength();
+            echo "------End Colletion Idle Connections[{$currentResourceLength}]------" . PHP_EOL;
         });
     }
 

@@ -31,15 +31,13 @@ class IndexController extends Controller
 
     public function indexsAction()
     {
-        echo "dddd";
-
-        go(function () {
+      go(function () {
             //从池子中获取一个实例
             try {
-                $pool = MysqlPoolManager::getInstance();
-                $resourceData = $pool->get(5);
+                $resourceData = MysqlPoolManager::getInstance()->get(5);
                 if ($resourceData) {
                     $result = $resourceData['resource']->query("select * from user", 2);
+                    print_r($result);
                     \Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($resourceData);
                 }
@@ -49,26 +47,24 @@ class IndexController extends Controller
                 echo $e->getMessage();
             }
         });
-//die('f');
-//        go(function () {
-//            //从池子中获取一个实例
-//            try {
-//                $pool = RedisPoolManager::getInstance();
-//                $redis = $pool->get();
-//                var_dump($redis);
-//                if ($redis) {
-//                    $result = $redis->set('name','tayue');
-//                    $result1 = $redis->get('name');
-//                    var_dump($result,$result1);
-//                    // \Swoole\Coroutine::sleep(10); //sleep 10秒,模拟耗时操作
-//                    RedisPoolManager::getInstance()->put($redis);
-//                }
-//                echo "Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . PHP_EOL;
-//
-//            } catch (\Exception $e) {
-//                echo $e->getMessage();
-//            }
-//        });
+
+        go(function () {
+            //从池子中获取一个实例
+            try {
+                $resourceData = RedisPoolManager::getInstance()->get(5);
+                if ($resourceData) {
+                    $result = $resourceData['resource']->set('name', 'tayue');
+                    $result1 = $resourceData['resource']->get('name');
+                    var_dump($result, $result1);
+                    \Swoole\Coroutine::sleep(4);
+                    RedisPoolManager::getInstance()->put($resourceData);
+                }
+                echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        });
 
 
         // $a=new MysqlPoolManager(array());

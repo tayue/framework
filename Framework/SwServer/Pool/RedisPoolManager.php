@@ -21,8 +21,10 @@ class RedisPoolManager extends PoolBase
         'timeout' => 1.5,
         'database' => 1,
         'password' => '', //密码
-        'pool_size' => '5',     //连接池大小
-        'pool_get_timeout' => 1, //当在此时间内未获得到一个连接，会立即返回。（表示所有的连接都已在使用中）
+        'space_time'=>100,
+        'mix_pool_size' => 2,     //最小连接池大小
+        'max_pool_size' => 10,    //最大连接池大小
+        'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
     ];
 
     public function checkConnection()
