@@ -8,11 +8,9 @@
 
 namespace Framework\SwServer;
 
-use Framework\Core\Exception;
+
 use Framework\SwServer\Protocol\WebServer;
 use Framework\Tool\PluginManager;
-use Framework\Web\Application;
-use Framework\Core\error\CustomerError;
 use Framework\Core\log\Log;
 use Framework\SwServer\Crontab\Crontab;
 use App\Crontab\TaskOne;
@@ -51,9 +49,7 @@ class ServerManager extends BaseServerManager
     {
         //注册进程任务
         PluginManager::getInstance()->registerClassHook('ProcessAsyncTask', 'Framework/SwServer/Task/ProcessAsyncTask', 'onPipeMessage');
-        // 开始一个定时任务计划
-        $time=date("Y-m-d H:i:s");
-        Crontab::getInstance()->addTask(TaskOne::class,'run',['date'=>$time]);
+        $this->crontabTasks();
         $this->setErrorObject();
         $this->registerErrorHandler();
         self::$config = $config;
@@ -172,6 +168,12 @@ class ServerManager extends BaseServerManager
         if (method_exists($this->protocol, 'onWorkerStart')) {
             $this->protocol->onWorkerStart($server, $worker_id);
         }
+    }
+
+    public function crontabTasks(){
+        // 开始一个定时任务计划
+        $time=date("Y-m-d H:i:s");
+        Crontab::getInstance()->addTask(TaskOne::class,'run',['date'=>$time]);
     }
 
 

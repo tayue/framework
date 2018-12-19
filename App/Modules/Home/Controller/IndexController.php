@@ -38,7 +38,7 @@ class IndexController extends Controller
                 if ($resourceData) {
                     $result = $resourceData['resource']->query("select * from user", 2);
                     print_r($result);
-                    \Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
+                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($resourceData);
                 }
                 echo "[".date('Y-m-d H:i:s')."] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength().",currentNum:".MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
@@ -48,6 +48,7 @@ class IndexController extends Controller
             }
         });
 
+
         go(function () {
             //从池子中获取一个实例
             try {
@@ -55,8 +56,7 @@ class IndexController extends Controller
                 if ($resourceData) {
                     $result = $resourceData['resource']->set('name', 'tayue');
                     $result1 = $resourceData['resource']->get('name');
-                    var_dump($result, $result1);
-                    \Swoole\Coroutine::sleep(4);
+                    //\Swoole\Coroutine::sleep(4);
                     RedisPoolManager::getInstance()->put($resourceData);
                 }
                 echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
