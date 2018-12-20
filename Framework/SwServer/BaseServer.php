@@ -23,8 +23,6 @@ abstract class BaseServer implements Protocol
      * @var null
      */
     public $config = [
-        'host' => self::DEFAULT_HOST,
-        'port' => self::DEFAULT_PORT,
     ];
     public $default_setting = [
         'reactor_num' => 1,
@@ -33,8 +31,6 @@ abstract class BaseServer implements Protocol
         'task_worker_num' => 4,
         'task_tmpdir' => '/dev/shm',
         'daemonize' => 0
-        //'log_file' => __DIR__.'/log.txt',
-        //'pid_file' => __DIR__.'/server.pid',
     ];
     public $setting = [];
     protected $log;
@@ -102,12 +98,13 @@ abstract class BaseServer implements Protocol
     /**
      * setSwooleSockType 设置socket的类型
      */
-    protected  function setSwooleSockType() {
-        if(isset($this->setting['swoole_process_mode']) && $this->setting['swoole_process_mode'] == SWOOLE_BASE) {
+    protected function setSwooleSockType()
+    {
+        if (isset($this->setting['swoole_process_mode']) && $this->setting['swoole_process_mode'] == SWOOLE_BASE) {
             self::$swoole_process_mode = SWOOLE_BASE;
         }
 
-        if(self::isUseSsl()) {
+        if (self::isUseSsl()) {
             self::$swoole_socket_type = SWOOLE_SOCK_TCP | SWOOLE_SSL;
         }
         return;
@@ -126,8 +123,12 @@ abstract class BaseServer implements Protocol
 
     public function __construct($config)
     {
-        $config && $this->config = array_merge($this->config, $config);
-        (isset($config['setting']) && is_array($config['setting'])) && $config['setting'] = $this->setting = array_merge($this->default_setting, $config['setting']);
+        $this->config = $config;
+        if (isset($config['server']['setting']) && $config['server']['setting']) {
+            $this->setting = array_merge($this->default_setting, $config['server']['setting']);
+        } else {
+            $this->setting = $this->default_setting;
+        }
         // set timeZone
         $this->setTimeZone();
         $this->createTables();

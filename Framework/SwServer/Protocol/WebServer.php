@@ -8,9 +8,7 @@
 
 namespace Framework\SwServer\Protocol;
 
-use Framework\Core\Exception;
 use Framework\SwServer\BaseServer;
-use Framework\SwServer\Protocol\Protocol;
 use Framework\Tool\Log;
 use Framework\Core\Route;
 use Framework\Web\Application;
@@ -26,23 +24,14 @@ class WebServer extends BaseServer
 
     public function __construct($config)
     {
-
         parent::__construct($config);
-        $this->host = $this->config['host'];
-        $this->port = $this->config['port'];
         self::$isWebServer = true;
         $this->setSwooleSockType();
-        if (isset($config['setting']) && $config['setting']) {
-            $this->setting = array_merge($this->default_setting, $config['setting']);
-        } else {
-            $this->setting = $this->default_setting;
-        }
-
     }
 
     public function createServer()
     {
-        self::$server = new \swoole_http_server($this->config['host'], $this->config['port'], self::$swoole_process_mode, self::$swoole_socket_type);
+        self::$server = new \swoole_http_server($this->config['server']['listen_address'], $this->config['server']['listen_port'], self::$swoole_process_mode, self::$swoole_socket_type);
         self::$server->set($this->setting);
         Log::getInstance()->setConfig($this->config);
         $this->setLogger(Log::getInstance());
@@ -68,7 +57,7 @@ class WebServer extends BaseServer
     function onWorkerStart($server, $worker_id)
     {
         //初始化应用层
-        ServerManager::$app=(new Application($this->config));
+        ServerManager::$app = (new Application($this->config));
         ServerManager::$app->run($this->config);
     }
 

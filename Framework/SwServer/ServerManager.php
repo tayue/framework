@@ -53,8 +53,8 @@ class ServerManager extends BaseServerManager
         $this->setErrorObject();
         $this->registerErrorHandler();
         self::$config = $config;
-        if (isset(self::$config['main_server']) && self::$config['main_server']) {
-            self::$serviceType = self::$config['main_server'];
+        if (isset(self::$config['server']['server_type']) && self::$config['server']['server_type']) {
+            self::$serviceType = self::$config['server']['server_type'];
         } else {
             self::$serviceType = self::TYPE_WEB_SERVER;
         }
@@ -74,7 +74,6 @@ class ServerManager extends BaseServerManager
         Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
         ProcessManager::getInstance()->addProcess('CronRunner',\Framework\SwServer\Crontab\CronRunner::class,true,Crontab::getInstance()->getTasks());
-
         (isset(self::$config['log']) && self::$config['log']) && Log::getInstance()->setConfig(self::$config['log']);
 
    }
@@ -125,9 +124,9 @@ class ServerManager extends BaseServerManager
 
     function onMasterStart($serv)
     {
-        $this->setProcessName($this->getProcessName() . ': master -host=' . $this->protocol->host . ' -port=' . $this->protocol->port);
-        if (!empty(self::$config['pid_file'])) {
-            file_put_contents(self::$config['pid_file'], $serv->master_pid);
+        $this->setProcessName($this->getProcessName() . ': master -host=' . self::$config['server']['listen_address'] . ' -port=' . self::$config['server']['listen_port']);
+        if (!empty(self::$config['server']['pid_file'])) {
+            file_put_contents(self::$config['server']['pid_file'], $serv->master_pid);
         }
         self::$pidFile = $serv->master_pid;
         if (method_exists($this->protocol, 'onMasterStart')) {
@@ -137,8 +136,8 @@ class ServerManager extends BaseServerManager
 
     function onMasterStop($serv)
     {
-        if (!empty(self::$config['pid_file'])) {
-            unlink(self::$pidFile);
+        if (!empty(self::$config['server']['pid_file'])) {
+            @unlink(self::$pidFile);
         }
         if (method_exists($this->protocol, 'onMasterStop')) {
             $this->protocol->onMasterStop($serv);
@@ -155,6 +154,8 @@ class ServerManager extends BaseServerManager
         self::startInclude();
         // 记录worker的进程worker_pid与worker_id的映射
         self::setWorkersPid($worker_id, $server->worker_pid);
+        // 设置worker工作的进程组
+        self::setWorkerUserGroup(self::$config['server']['www_user']);
         if ($worker_id >= $server->setting['worker_num']) {
             $this->setProcessName($this->getProcessName() . ': task');
         } else {

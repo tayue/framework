@@ -7,6 +7,21 @@
  */
 return [
     'open_table_tick_task' => true,
+    'server'=>[
+        'pid_file'=>ROOT_PATH.'/Data/pid.pid',
+        'server_type'=>'WEB_SERVER',
+        'listen_address'=>'192.168.99.88',
+        'listen_port'=>9501,
+        'www_user'=>'root',
+        'setting'=>[
+            'reactor_num' => 1,
+            'worker_num' => 4,
+            'max_request' => 1000,
+            'task_worker_num' => 4,
+            'task_tmpdir' => '/dev/shm',
+            'daemonize' => 0
+        ]
+    ],
     'mysql_pool' => [
         'host' => '192.168.99.88',   //数据库ip
         'port' => 3306,          //数据库端口
