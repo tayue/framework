@@ -8,6 +8,7 @@
 
 use Framework\Web\Application;
 use Framework\SwServer\ServerManager;
+use Framework\SwServer\Inotify\Daemon;
 
 header("Content-type:text/html;charset=utf-8");
 ini_set("display_errors", "On");
@@ -21,7 +22,7 @@ $config = include_once './App/Config/config.php';
 $serverConfig = include_once './App/Config/server.php';
 $config = array_merge($config, $serverConfig);
 include_once VENDOR_PATH . '/autoload.php';
-
+date_default_timezone_set('PRC');
 
 function help($command)
 {
@@ -94,7 +95,7 @@ function reloadServer($param)
 {
     global $config;
     $all = false;
-    if ($param=='all') {
+    if ($param == 'all') {
         $all = true;
     }
     $pidFile = $config['server']['pid_file'];
@@ -113,7 +114,7 @@ function reloadServer($param)
             return;
         }
         swoole_process::kill($pid, $sig);
-        echo "send server reload command at " . date("y-m-d h:i:s") . "\n";
+        echo "send server reload command at " . date("y-m-d H:i:s") . "\n";
     } else {
         echo "PID file does not exist, please check whether to run in the daemon mode!\n";
     }
@@ -124,7 +125,7 @@ function stopServer($param)
 {
     global $config;
     $force = false;
-    if($param=='force'){
+    if ($param == 'force') {
         $force = true;
     }
     $pidFile = $config['server']['pid_file'];
@@ -145,7 +146,7 @@ function stopServer($param)
         while (true) {
             usleep(1000);
             if (!swoole_process::kill($pid, 0)) {
-                echo "server stop at " . date("y-m-d h:i:s") . "\n";
+                echo "server stop at " . date("y-m-d H:i:s") . "\n";
                 if (is_file($pidFile)) {
                     @unlink($pidFile);
                 }
@@ -163,6 +164,26 @@ function stopServer($param)
         echo "PID file does not exist, please check whether to run in the daemon mode!\n";
         return false;
     }
+
+}
+
+function monitor($param)
+{
+    global $config;
+    if ($param == '-d' || $param == '-D') {
+        swoole_process::daemon(true, false);
+    }
+    $pid = posix_getpid();
+    $monitor_port = $config['inotify']['monitorPort'];
+    $monitor_pid_file = DATA_PATH . '/monitor' . $monitor_port . '.pid';
+    @file_put_contents($monitor_pid_file, $pid);
+    $monitor_process_name = (isset($config['monitorProcessName']) && !empty($config['monitorProcessName'])) ? $config['monitorProcessName'] : 'php-inotify-swoole-server';
+    // 设置当前进程的名称
+    cli_set_process_title($monitor_process_name . '-' . $monitor_port);
+    // 创建进程服务实例
+    $daemon = new Daemon($config);
+    // 启动
+    $daemon->run();
 
 }
 
@@ -196,8 +217,7 @@ function commandHandler()
 {
     global $argv;
     $commandList = $argv;
-    print_r($commandList);
-    $paramCommand='';
+    $paramCommand = '';
     array_shift($commandList);
     $mainCommand = array_shift($commandList);
     $commandList && $paramCommand = array_shift($commandList);
@@ -216,6 +236,12 @@ function commandHandler()
             case 'reload':
                 {
                     reloadServer($paramCommand);
+                    break;
+                }
+            case 'monitor':
+                {
+                    monitor($paramCommand);
+                    break;
                 }
             case 'help':
             default:

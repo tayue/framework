@@ -36,5 +36,14 @@ return [
         'max_pool_size' => 10,    //最大连接池大小
         'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
     ],
+    'inotify'=>[
+        'afterNSeconds' => 3,
+        'isOnline' => false,
+        'monitorPort' => 9501,
+        'monitorPath' => '/home/wwwroot/default/framework',
+        'logFilePath' => dirname(__DIR__).DIRECTORY_SEPARATOR.'Log'.DIRECTORY_SEPARATOR.'inotify.log',
+        'monitorProcessName' => 'php-inotify-swoole-server',
+        'reloadFileTypes' => ['.php','.html','.js'],
+    ]
 
 ];

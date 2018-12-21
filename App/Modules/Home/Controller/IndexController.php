@@ -18,13 +18,15 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use Swoole\Coroutine as co;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
+use Framework\SwServer\Inotify\Daemon;
 
 class IndexController extends Controller
 {
     public function indexAction()
     {
         var_dump($_POST);
-        $this->assign('name', 'dsssdds');
+
+        $this->assign('name', 'hello world1 !!!');
         $this->display('index.html');
 
     }

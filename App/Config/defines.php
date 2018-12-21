@@ -2,6 +2,7 @@
 define('APP_NAME','App');
 define('APP_PATH',dirname(__DIR__));
 define('ROOT_PATH',dirname(APP_PATH));
+define('DATA_PATH',ROOT_PATH.'/Data');
 define('CONFIG_PATH',APP_PATH.'/Config');
 define('VENDOR_PATH',ROOT_PATH.'/vendor');
 
