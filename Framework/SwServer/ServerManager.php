@@ -10,6 +10,7 @@ namespace Framework\SwServer;
 
 
 use Framework\SwServer\Protocol\WebServer;
+use Framework\SwServer\Protocol\WebSocketServer;
 use Framework\Tool\PluginManager;
 use Framework\Core\log\Log;
 use Framework\SwServer\Crontab\Crontab;
@@ -26,6 +27,7 @@ class ServerManager extends BaseServerManager
     const TYPE_WEB_SOCKET_SERVER = 'WEB_SOCKET_SERVER';
     public $protocol;
     public static $isWebServer = false;
+    public static $isWebSocketServer = false;
     public static $serviceType;
     public static $tables = [];
 
@@ -65,18 +67,21 @@ class ServerManager extends BaseServerManager
             case self::TYPE_WEB_SERVER;
                 self::$isWebServer = true;
                 $this->protocol = new WebServer(self::$config);
-                $this->swoole_server = $this->protocol->createServer();
-                self::$server = $this->swoole_server;
                 break;
             case self::TYPE_WEB_SOCKET_SERVER;
+                self::$isWebServer = true;
+                self::$isWebSocketServer=true;
+                $this->protocol = new WebSocketServer(self::$config);
                 break;
         }
+        $this->swoole_server = $this->protocol->createServer();
+        self::$server = $this->swoole_server;
         Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
-        ProcessManager::getInstance()->addProcess('CronRunner',\Framework\SwServer\Crontab\CronRunner::class,true,Crontab::getInstance()->getTasks());
+        ProcessManager::getInstance()->addProcess('CronRunner', \Framework\SwServer\Crontab\CronRunner::class, true, Crontab::getInstance()->getTasks());
         (isset(self::$config['log']) && self::$config['log']) && Log::getInstance()->setConfig(self::$config['log']);
 
-   }
+    }
 
 
     public function registerDefaultEventCallback()
@@ -85,6 +90,9 @@ class ServerManager extends BaseServerManager
             $this->swoole_server->on('Request', array($this->protocol, 'onRequest'));
         } else {
             $this->swoole_server->on('Receive', array($this->protocol, 'onReceive'));
+        }
+        if(self::$isWebSocketServer){
+            $this->swoole_server->on('Message', array($this->protocol, 'onMessage'));
         }
         $this->swoole_server->on('Start', array($this, 'onMasterStart'));
         $this->swoole_server->on('Shutdown', array($this, 'onMasterStop'));
@@ -171,10 +179,11 @@ class ServerManager extends BaseServerManager
         }
     }
 
-    public function crontabTasks(){
+    public function crontabTasks()
+    {
         // 开始一个定时任务计划
-        $time=date("Y-m-d H:i:s");
-        Crontab::getInstance()->addTask(TaskOne::class,'run',['date'=>$time]);
+        $time = date("Y-m-d H:i:s");
+        Crontab::getInstance()->addTask(TaskOne::class, 'run', ['date' => $time]);
     }
 
 

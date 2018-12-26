@@ -26,7 +26,7 @@ class IndexController extends Controller
     {
         var_dump($_POST);
 
-        $this->assign('name', 'hello world1 !!!');
+        $this->assign('name', 'My Name Is Server !!!');
         $this->display('index.html');
 
     }
@@ -137,7 +137,39 @@ class IndexController extends Controller
 
     public function ddAction()
     {
-        echo "ddddd";
+//        $s = new \SphinxClient;
+//        $s->setServer("localhost", 9312);
+//        $s->setMatchMode(SPH_MATCH_ANY);
+//        $s->setMaxQueryTime(3);
+//
+//        $result = $s->query("test");
+
+        $sphinx = new \SphinxClient;
+        $sphinx->setServer("localhost", 9312);
+
+        $sphinx->SetArrayResult(true);
+        $sphinx->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $sphinx->SetSelect("*");
+        $sphinx->ResetFilters();
+        //$sphinx->SetFilter('product_id', array(14001949));
+        $query = " @amazon_item_name 'Universal'"; //@amazon_item_name  备注（amazon_item_name） 是索引列的字段
+        $result = $sphinx->query($query,"blog");	//星号为所有索引源
+        var_dump($result);
+        echo '<pre>';
+        print_r($result);
+        $count=$result['total'];		//查到的结果条数
+        $time=$result['time'];			//耗时
+        $arr=$result['matches'];		//结果集
+        $id='';
+        for($i=0;$i<$count;$i++){
+            $id.=$arr[$i]['id'].',';
+        }
+        $id=substr($id,0,-1);			//结果集的id字符串
+
+
+echo '<pre>';
+        print_r($arr);
+        echo $id;
     }
 
     public function init()
