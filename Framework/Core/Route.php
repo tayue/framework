@@ -9,11 +9,12 @@
 namespace Framework\Core;
 
 use Framework\Framework;
-use Psy\Exception\FatalErrorException;
-
+use Framework\SwServer\Common\ProtocolCommon;
+use Framework\SwServer\WebSocket\WST;
 class Route
 {
 
+    public static $routeCacheFileMap;
 
     //地址路由解析 有两种模式一种是pathInfo一种是query_string模式
     public static function parseRouteUrl()
@@ -195,7 +196,7 @@ class Route
                         $method->invokeArgs($classObject, array($urlAction, ''));
                     } catch (\Throwable $t) {
                         $msg = 'Fatal error: ' . $t->getMessage() . ' on ' . $t->getFile() . ' on line ' . $t->getLine();
-                         // 触发错误异常
+                        // 触发错误异常
                         throw new \Exception($msg, 1);
                     }
                 } else {
@@ -364,6 +365,58 @@ class Route
             throw new \Exception($t->getMessage(), 1);
         }
 
+    }
+
+    //解析服务类地址路由
+    public static function parseServiceMessageRouteUrl($callable, $params)
+    {
+        try {
+            $errorMessage = '';
+            list($service, $operate) = $callable;
+            $service = str_replace('/', '\\', $service);
+            $serviceInstance = new $service();
+            $serviceInstance->mixedParams = $params;
+            $isExists = self::checkClass($service);
+            if ($isExists) {
+                if (method_exists($serviceInstance, $operate)) {
+                    $serviceInstance->$operate($params);
+                } else {
+                    $errorMessage = "Service:{$service},Operate:{$operate},Is Not Found !!";
+                    ProtocolCommon::sender(WST::getApp()->fd, $errorMessage);
+                }
+
+            } else {
+                throw new \Exception("404");
+                $errorMessage = "Service:{$service} Class Is Not Found !!";
+                ProtocolCommon::sender(WST::getApp()->fd, $errorMessage, 0);
+            }
+
+        } catch (\Exception $e) {
+            ProtocolCommon::sender(WST::getApp()->fd, $e->getMessage(), $e->getCode());
+            throw new \Exception($e->getMessage(), 1);
+        } catch (\Throwable $t) {
+            ProtocolCommon::sender(WST::getApp()->fd, $t->getMessage(), $t->getCode());
+            throw new \Exception($t->getMessage(), 1);
+        }
+
+    }
+
+
+    /**
+     * checkClass 检查请求实例文件是否存在
+     * @param  string $class
+     * @return boolean
+     */
+    public static function checkClass($class)
+    {
+        $path = str_replace('\\', '/', $class);
+        $path = trim($path, '/');
+        $file = ROOT_PATH . DIRECTORY_SEPARATOR . $path . '.php';
+        if (is_file($file)) {
+            self::$routeCacheFileMap[$class] = true;
+            return true;
+        }
+        return false;
     }
 
 

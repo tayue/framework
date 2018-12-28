@@ -5,22 +5,34 @@
  * Date: 2018/12/28
  * Time: 9:30
  */
+
 namespace App\WebSocket\User;
+
+use Framework\SwServer\Coroutine\CoroutineModel;
 use Framework\SwServer\WebSocket\WST;
 use Framework\SwServer\Base\BaseServerEvent;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Task\TaskManager;
+
 class CheckService extends BaseServerEvent
 {
-  public function test($params){
-        $this->testTask();
-        var_dump($params,$this->mixedParams);
-        $db=WST::$app->db;
-        print_r($db);
+    public function test($params)
+    {
+
+        $user = CoroutineModel::getInstance('App/WebSocket/Model/User', []);
+
+        var_dump(count(WST::$app));
+        var_dump(WST::getApp()->coroutine_id);
+        var_dump(CoroutineModel::$_model_instances);
+        echo "websocket message \r\n";
+        var_dump("coroutine_id:" . WST::getApp()->coroutine_id . ",fd:" . WST::getApp()->fd);
+        $db = WST::getApp()->db;
+
         return ['test'];
     }
 
-    public function testPool(){
+    public function testPool()
+    {
         go(function () {
             //从池子中获取一个实例
             try {
@@ -31,7 +43,7 @@ class CheckService extends BaseServerEvent
                     //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($resourceData);
                 }
-                echo "[".date('Y-m-d H:i:s')."] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength().",currentNum:".MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
 
             } catch (\Exception $e) {
                 echo $e->getMessage();
@@ -39,12 +51,11 @@ class CheckService extends BaseServerEvent
         });
     }
 
-    public function testTask(){
+    public function testTask()
+    {
         $a = 111;
         $b = 2;
         $c = 3;
-        //$taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
-        // $taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
         $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 2, $a, $b, $c);
         var_dump($taskId1);
     }

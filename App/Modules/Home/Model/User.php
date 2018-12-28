@@ -11,5 +11,7 @@ use Framework\Core\Model;
 
 class User extends Model
 {
+     public function test(){
 
+     }
 }

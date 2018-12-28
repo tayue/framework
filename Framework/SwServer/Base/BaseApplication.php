@@ -14,19 +14,18 @@ use Framework\Core\log\Log;
 use Framework\SwServer\WebSocket\WST;
 use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\SwServer\ServerManager;
-use Framework\SwServer\Common\ProtocolCommon;
+use Framework\Core\Route;
 
 class BaseApplication extends BaseObjects
 {
     public $fd;
-    public static $routeCacheFileMap;
     public $coroutine_id;
 
     public function __construct($config)
     {
-        $this->preInit($config);
-        WST::$app = $this;
         $this->coroutine_id = CoroutineManager::getInstance()->getCoroutineId();
+        $this->preInit($config);
+        $this->setApp();
 
     }
 
@@ -36,7 +35,6 @@ class BaseApplication extends BaseObjects
         $this->setErrorObject();
         $this->registerErrorHandler();
         $this->initComponents();
-
     }
 
     public function setTimeZone($value)
@@ -70,30 +68,18 @@ class BaseApplication extends BaseObjects
     }
 
 
-    public function ping(string $operate) {
-        if(strtolower($operate) == 'ping') {
+    public function ping(string $operate)
+    {
+        if (strtolower($operate) == 'ping') {
             return true;
         }
         return false;
     }
 
-    /**
-     * checkClass 检查请求实例文件是否存在
-     * @param  string  $class
-     * @return boolean
-     */
-    public function checkClass($class) {
-        $path = str_replace('\\', '/', $class);
-        $path = trim($path, '/');
-        $file = ROOT_PATH.DIRECTORY_SEPARATOR.$path.'.php';
-        if(is_file($file)) {
-            self::$routeCacheFileMap[$class] = true;
-            return true;
-        }
-        return false;
-    }
 
-    public function parseRoute($messageData){
+    public function parseRoute($messageData)
+    {
+
         // worker进程
         if ($this->isWorkerProcess()) {
             $recv = array_values(json_decode($messageData, true));
@@ -116,43 +102,27 @@ class BaseApplication extends BaseObjects
         }
         // 控制器实例
         if ($callable && $params) {
-            $this->parseServiceMessageRouteUrl($callable, $params);
+            Route::parseServiceMessageRouteUrl($callable, $params);
         }
+        WST::destroy();
     }
 
-    public function parseServiceMessageRouteUrl($callable, $params)
+    public function setApp()
     {
-        try {
-            $errorMessage = '';
-            list($service, $operate) = $callable;
-            $service = str_replace('/', '\\', $service);
-            $serviceInstance = new $service();
-            $serviceInstance->mixedParams = $params;
-            $isExists = $this->checkClass($service);
-            if ($isExists) {
-                if (method_exists($serviceInstance, $operate)) {
-                    $serviceInstance->$operate($params);
-                } else {
-                    $errorMessage = "Service:{$service},Operate:{$operate},Is Not Found !!";
-                    ProtocolCommon::sender($this->fd, $errorMessage);
-                }
-
-            } else {
-                throw new \Exception("404");
-                $errorMessage = "Service:{$service} Class Is Not Found !!";
-                ProtocolCommon::sender($this->fd, $errorMessage, 0);
-            }
-
-        } catch (\Exception $e) {
-            ProtocolCommon::sender($this->fd, $e->getMessage(), $e->getCode());
-            throw new \Exception($e->getMessage(), 1);
-        } catch (\Throwable $t) {
-            ProtocolCommon::sender($this->fd, $t->getMessage(), $t->getCode());
-            throw new \Exception($t->getMessage(), 1);
+        $cid = -1;
+        if ($this->coroutine_id) {
+            $cid = $this->coroutine_id;
+        } else {
+            $cid = CoroutineManager::getInstance()->getCoroutineId();
+        }
+        if ($cid) {
+            WST::$app[$cid] = $this;
+        } else {
+            WST::$app = $this;
         }
 
     }
 
 
-    use \Framework\Traits\ComponentTrait,\Framework\Traits\ServerTrait;
+    use \Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait;
 }
