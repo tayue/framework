@@ -7,8 +7,11 @@
  */
 
 namespace Framework\SwServer\Protocol;
+
 use Framework\Tool\Log;
 use Swoole\WebSocket\Server as websocket_server;
+use Framework\Core\Route;
+use Framework\SwServer\Base\Application;
 
 class WebSocketServer extends WebServer implements WebsocketProtocol
 {
@@ -29,38 +32,38 @@ class WebSocketServer extends WebServer implements WebsocketProtocol
 
     /**
      * onMessage 接受信息并处理信息
-     * @param    object  $server
-     * @param    object  $frame
+     * @param    object $server
+     * @param    object $frame
      * @return   void
      */
-    public function onMessage($server, $frame) {
+    public function onMessage($server, $frame)
+    {
         $fd = $frame->fd;
-        $data = $frame->data;
+        $messageData = $frame->data;
         $opcode = $frame->opcode;
         $finish = $frame->finish;
         // 数据接收是否完整
-        if($finish) {
+        if ($finish) {
             // utf-8文本数据
-            if($opcode == WEBSOCKET_OPCODE_TEXT) {
-                echo $data;
-                var_dump($data);
-                var_dump(json_decode($data,true));
-                $serverMessage="serverMessages:==>".$data;
-                $msg=[
-                    'code'=>200,
-                    'data'=>$data
-                ];
-                $msg=\json_encode($msg);
-                $server->push($frame->fd, $msg);
-             }else if($opcode == WEBSOCKET_OPCODE_BINARY) {
+            if ($opcode == WEBSOCKET_OPCODE_TEXT) {
+                $app = new Application($this->config);
+                $app->run($fd, $messageData);
+//                $msg = [
+//                    'code' => 200,
+//                    'data' => $messageData
+//                ];
+//                $msg = json_encode($msg);
+//
+//                $server->push($frame->fd, $msg);
+            } else if ($opcode == WEBSOCKET_OPCODE_BINARY) {
                 // TODO 二进制数据
 
-            }else if($opcode == 0x08) {
+            } else if ($opcode == 0x08) {
                 // TODO 关闭帧
 
             }
 
-        }else {
+        } else {
             // 断开连接
             $server->close();
         }
@@ -70,7 +73,7 @@ class WebSocketServer extends WebServer implements WebsocketProtocol
     public function onOpen($server, $request)
     {
         echo "server#{$server->worker_pid}: handshake success with fd#{$request->fd}\n";
-        var_dump($server->exist($request->fd), $server->getClientInfo($request->fd));
+        //var_dump($server->exist($request->fd), $server->getClientInfo($request->fd));
     }
 
     function onClose($server, $client_id, $from_id)

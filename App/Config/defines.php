@@ -6,6 +6,12 @@ define('DATA_PATH',ROOT_PATH.'/Data');
 define('CONFIG_PATH',APP_PATH.'/Config');
 define('VENDOR_PATH',ROOT_PATH.'/vendor');
 
+// 定义服务协议常量
+defined('SWOOLE_HTTP') or define('SWOOLE_HTTP', 'http');
+defined('SWOOLE_WEBSOCKET') or define('SWOOLE_WEBSOCKET', 'websocket');
+defined('SWOOLE_TCP') or define('SWOOLE_TCP', 'tcp');
+defined('SWOOLE_UDP') or define('SWOOLE_UDP', 'udp');
+
 
 // 日志目录
 define('LOG_PATH',APP_PATH.'/Log');

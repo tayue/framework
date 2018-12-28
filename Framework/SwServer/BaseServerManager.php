@@ -108,14 +108,14 @@ abstract class BaseServerManager
     {
         // websocket
         if (static::$server instanceof \Swoole\WebSocket\Server) {
-            return SWOOLEFY_WEBSOCKET;
+            return SWOOLE_WEBSOCKET;
         } else if (static::$server instanceof \Swoole\Http\Server) {
-            return SWOOLEFY_HTTP;
+            return SWOOLE_HTTP;
         } else if (static::$server instanceof \Swoole\Server) {
             if (self::$swoole_socket_type == SWOOLE_SOCK_UDP) {
-                return SWOOLEFY_UDP;
+                return SWOOLE_UDP;
             }
-            return SWOOLEFY_TCP;
+            return SWOOLE_TCP;
         }
         return false;
 

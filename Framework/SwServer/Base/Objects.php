@@ -6,7 +6,7 @@
  * Time: 11:24
  */
 
-namespace Framework\Base;
+namespace Framework\SwServer\Base;
 
 
 interface Objects

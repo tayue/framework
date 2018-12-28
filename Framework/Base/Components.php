@@ -9,7 +9,7 @@
 namespace Framework\Base;
 
 
-abstract class Components extends BaseObjects
+abstract class Components extends BaseObject
 {
     public function __get($name)
     {
