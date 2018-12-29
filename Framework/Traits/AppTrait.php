@@ -26,7 +26,7 @@ trait AppTrait
     {
         if ($coroutine_id) {
             $cid = $coroutine_id;
-        } else {
+        } else { 
             $cid = ServerManager::getInstance()->coroutine_id;
         }
         if (!$cid) {
