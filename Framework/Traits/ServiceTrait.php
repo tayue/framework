@@ -60,7 +60,7 @@ trait ServiceTrait
         } else {
             return $this->_singletons[$this->_services[$com_alias_name]];
         }
-        return;
+        return false;
     }
 
 
@@ -113,6 +113,16 @@ trait ServiceTrait
     public function getServices()
     {
         return $this->_services;
+    }
+
+    public function getService($alias_name)
+    {
+        if (isset($this->_components[$alias_name])) {
+            return $this->_singletons[$this->_components[$alias_name]];
+        } else if (in_array($alias_name, array_keys(ServerManager::$config['services']))) {
+            return $this->createServiceObject($alias_name, ServerManager::$config['services'][$alias_name]);
+        }
+        return false;
     }
 
 

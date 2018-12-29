@@ -20,27 +20,30 @@ abstract class BaseObject implements Objects
     }
 
 
-
     public function __get($name)
     {
-        if (isset($this->_services[$name]) && !isset($this->$name)) {
-            if (is_object($this->_singletons[$this->_services[$name]])) {
-                return $this->_singletons[$this->_services[$name]];
-            } else {
-                $this->clearService($name);
-                return false;
-            }
-        } else if ($this->_components[$name] && !isset($this->$name)) {
-            if (is_object($this->_singletons[$this->_components[$name]])) {
-                return $this->_singletons[$this->_components[$name]];
+        if($this->$name){
+            return $this->$name;
+        }
+        if (isset($this->_components[$name])) {
+            $componentObject = $this->getComponent($name);
+            if ($componentObject) {
+                return $componentObject;
             } else {
                 $this->clearComponent($name);
                 return false;
             }
+        } else if (isset($this->_services[$name])) {
+            $serviceObject = $this->getService($name);
+            if ($serviceObject) {
+                return $serviceObject;
+            } else {
+                $this->clearService($name);
+                return false;
+            }
         }
-        return $this->$name;
-    }
 
+    }
 
 
     public function __isset($name)

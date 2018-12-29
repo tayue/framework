@@ -25,7 +25,7 @@ class IndexController extends Controller
     public function indexAction()
     {
         var_dump($_POST);
-
+        ServerManager::getApp();
         $this->assign('name', 'My Name Is Server !!!');
         $this->display('index.html');
 

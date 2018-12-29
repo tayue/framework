@@ -28,7 +28,7 @@ class BaseServerApplication extends BaseObject
     {
         $this->setErrorObject();
         $this->registerErrorHandler();
-  }
+    }
 
     public function init()
     {
@@ -41,7 +41,6 @@ class BaseServerApplication extends BaseObject
         ServerManager::configure(ServerManager::$app[$this->coroutine_id], ServerManager::$config);
         $this->initComponents();
         $this->initServices();
-        file_put_contents("./text.txt", var_export(ServerManager::$app, true));
     }
 
     public function setTimeZone($value)

@@ -61,7 +61,7 @@ trait ComponentTrait
         } else {
             return $this->_singletons[$this->_components[$com_alias_name]];
         }
-        return;
+        return false;
     }
 
 
@@ -117,7 +117,15 @@ trait ComponentTrait
         return $this->_components;
     }
 
-
+    public function getComponent($alias_name)
+    {
+        if (isset($this->_components[$alias_name])) {
+            return $this->_singletons[$this->_components[$alias_name]];
+        } else if (in_array($alias_name, array_keys(ServerManager::$config['components']))) {
+            return $this->createComponentObject($alias_name, ServerManager::$config['components'][$alias_name]);
+        }
+        return false;
+    }
 
 
 }

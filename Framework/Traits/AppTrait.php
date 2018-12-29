@@ -24,9 +24,13 @@ trait AppTrait
      */
     public static function getApp($coroutine_id = null)
     {
-        $cid = CoroutineManager::getInstance()->getCoroutineId();
         if ($coroutine_id) {
             $cid = $coroutine_id;
+        } else {
+            $cid = ServerManager::getInstance()->coroutine_id;
+        }
+        if (!$cid) {
+            $cid = CoroutineManager::getInstance()->getCoroutineId();
         }
         if (isset(self::$app[$cid])) {
             return self::$app[$cid];
