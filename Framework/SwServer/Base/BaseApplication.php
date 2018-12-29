@@ -16,22 +16,25 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\SwServer\ServerManager;
 use Framework\Core\Route;
 
-class BaseApplication extends BaseObjects
+class BaseApplication extends BaseObject
 {
     public $fd;
     public $coroutine_id;
+    public $config;
 
     public function __construct($config)
     {
+        $this->config = $config;
         $this->coroutine_id = CoroutineManager::getInstance()->getCoroutineId();
-        $this->preInit($config);
+        $this->preInit();
         $this->setApp();
 
     }
 
-    public function preInit($config)
+    public function preInit()
     {
-        (isset($config['log']) && $config['log']) && Log::getInstance()->setConfig($config['log']);
+        $this->setTimeZone($this->config['timeZone']);
+        (isset($this->config['log']) && $this->config['log']) && Log::getInstance()->setConfig($this->config['log']);
         $this->setErrorObject();
         $this->registerErrorHandler();
         $this->initComponents();
@@ -122,7 +125,6 @@ class BaseApplication extends BaseObjects
         }
 
     }
-
 
     use \Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait;
 }

@@ -135,6 +135,10 @@ class IndexController extends Controller
         $this->echo2br("syncTaskId:{$taskId1} Finished!\r\n");
     }
 
+    public function dateAction(){
+        echo date("Y-m-d H:i:s");
+    }
+
     public function ddAction()
     {
 //        $s = new \SphinxClient;

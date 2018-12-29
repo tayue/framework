@@ -21,7 +21,7 @@ use Framework\SwServer\Pool\RedisPoolManager;
 
 class ServerManager extends BaseServerManager
 {
-    use \Framework\Traits\SingletonTrait;
+    use \Framework\Traits\SingletonTrait, \Framework\Traits\AppTrait;
     const TYPE_SERVER = 'SERVER';
     const TYPE_WEB_SERVER = 'WEB_SERVER';
     const TYPE_WEB_SOCKET_SERVER = 'WEB_SOCKET_SERVER';
@@ -30,6 +30,8 @@ class ServerManager extends BaseServerManager
     public static $isWebSocketServer = false;
     public static $serviceType;
     public static $tables = [];
+    public static $serverApp;
+
 
     private function __construct()
     {

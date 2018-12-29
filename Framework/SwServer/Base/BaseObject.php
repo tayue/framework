@@ -9,7 +9,7 @@
 namespace Framework\SwServer\Base;
 
 
-abstract class BaseObjects implements Objects
+abstract class BaseObject implements Objects
 {
 
     public static function className()

@@ -19,14 +19,15 @@ class CoroutineModel
 
     /**
      * getInstance 获取model的单例
-     * @param   string  $class  类命名空间
+     * @param   string $class 类命名空间
      * @return  object
      */
-    public static function getInstance(string $class = '', ...$args) {
+    public static function getInstance(string $class = '', ...$args)
+    {
         $cid = CoroutineManager::getInstance()->getCoroutineId();
-        $class = str_replace('/','\\', $class);
-        $class = trim($class,'\\');
-        if(isset(static::$_model_instances[$cid][$class]) && is_object(static::$_model_instances[$cid][$class])) {
+        $class = str_replace('/', '\\', $class);
+        $class = trim($class, '\\');
+        if (isset(static::$_model_instances[$cid][$class]) && is_object(static::$_model_instances[$cid][$class])) {
             return static::$_model_instances[$cid][$class];
         }
         static::$_model_instances[$cid][$class] = new $class(...$args);
@@ -37,9 +38,9 @@ class CoroutineModel
      * removeInstance 删除某个协程下的所有创建的model实例
      * @return boolean
      */
-    public static function removeInstance() {
-        $cid = CoroutineManager::getInstance()->getCoroutineId();
-        if(isset(static::$_model_instances[$cid])) {
+    public static function removeInstance($cid)
+    {
+        if (isset(static::$_model_instances[$cid])) {
             unset(static::$_model_instances[$cid]);
         }
         return true;

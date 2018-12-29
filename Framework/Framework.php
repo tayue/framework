@@ -10,7 +10,6 @@ namespace Framework;
 
 class Framework
 {
-    use \Framework\Traits\ContainerTrait;
     public static $container;
     public static $app;
     public static $service;

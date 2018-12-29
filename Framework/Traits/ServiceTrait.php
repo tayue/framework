@@ -10,37 +10,36 @@ namespace Framework\Traits;
 
 use Framework\SwServer\ServerManager;
 
-trait ComponentTrait
+trait ServiceTrait
 {
-    private $_components = [];
-
-    public function setComponents($components)
+   private $_services = [];
+   public function setServices($services)
     {
-        foreach ($components as $id => $component) {
-            $this->createComponentObject($id, $component);
+        foreach ($services as $id => $service) {
+            $this->createServiceObject($id, $service);
         }
     }
 
     /**
-     * coreComponents 定义核心组件
+     * coreServices 定义核心服务
      * @return   array
      */
-    public function coreComponents()
+    public function coreServices()
     {
         return [];
     }
 
     /**
-     * creatObject 创建组件对象
+     * creatObject 创建服务对象
      * @param    string $com_alias_name 组件别名
      * @param    array $defination 组件定义类
      * @return   array
      */
 
-    public function createComponentObject(string $com_alias_name = null, array $defination = [])
+    public function createServiceObject(string $com_alias_name = null, array $defination = [])
     {
         // 动态创建公用组件
-        if (!isset($this->_components[$com_alias_name])) {
+        if (!isset($this->_services[$com_alias_name])) {
             if (isset($defination['class'])) {
                 $class = $defination['class'];
                 if (!isset($this->_singletons[$class])) {
@@ -50,27 +49,27 @@ trait ComponentTrait
                         unset($defination['constructor']);
                     }
                     $this->registerObject($com_alias_name, $defination, $params);
-                    $this->_components[$com_alias_name] = $class;
+                    $this->_services[$com_alias_name] = $class;
                     return $this->_singletons[$class];
                 } else {
                     return $this->_singletons[$class];
                 }
             } else {
-                throw new \Exception("component:" . $com_alias_name . 'must be set class', 1);
+                throw new \Exception("service:" . $com_alias_name . 'must be set class', 1);
             }
         } else {
-            return $this->_singletons[$this->_components[$com_alias_name]];
+            return $this->_singletons[$this->_services[$com_alias_name]];
         }
         return;
     }
 
 
     /**
-     * clearComponent
-     * @param    string|array $component_alias_name
+     * clearService
+     * @param    string|array $service_alias_name
      * @return   boolean
      */
-    public function clearComponent($com_alias_name = null)
+    public function clearService($com_alias_name = null)
     {
         if (!is_null($com_alias_name) && is_string($com_alias_name)) {
             $com_alias_name = (array)$com_alias_name;
@@ -80,41 +79,40 @@ trait ComponentTrait
             return false;
         }
         foreach ($com_alias_name as $alias_name) {
-            unset($this->_singletons[$this->_components[$alias_name]]);
-            unset($this->_components[$alias_name]);
+            unset($this->_singletons[$this->_services[$alias_name]]);
+            unset($this->_services[$alias_name]);
         }
         return true;
     }
 
-
-    public function initComponents()
+    public function initServices()
     {
         // 配置文件初始化创建公用对象
-        $coreComponents = $this->coreComponents();
-        $components = array_merge($coreComponents, ServerManager::$config['components']);
-        foreach ($components as $com_name => $component) {
+        $coreServices = $this->coreServices();
+        $services = array_merge($coreServices, ServerManager::$config['services']);
+        foreach ($services as $com_name => $service) {
             // 存在直接跳过
-            if (isset($this->_components[$com_name])) {
+            if (isset($this->_services[$com_name])) {
                 continue;
             }
-            if (isset($component['class']) && $component['class'] != '') {
+            if (isset($service['class']) && $service['class'] != '') {
                 $params = [];
-                if (isset($component['constructor'])) {
-                    $params = $component['constructor'];
-                    unset($component['constructor']);
+                if (isset($service['constructor'])) {
+                    $params = $service['constructor'];
+                    unset($service['constructor']);
                 }
-                $defination = $component;
-                $this->registerObject($com_name, $defination, $params);
-                $this->_components[$com_name] = $component['class'];
+                $defination = $service;
+                $this->createServiceObject($com_name, $defination, $params);
+                $this->_services[$com_name] = $service['class'];
             }
         }
         return $this->_singletons;
     }
 
 
-    public function getComponents()
+    public function getServices()
     {
-        return $this->_components;
+        return $this->_services;
     }
 
 

@@ -11,10 +11,10 @@ namespace Framework\SwServer\Protocol;
 use Framework\SwServer\BaseServer;
 use Framework\Tool\Log;
 use Framework\Core\Route;
-use Framework\Web\Application;
+use Framework\SwServer\ServerApplication;
 use Framework\SwServer\ServerManager;
 use Framework\Core\error\CustomerError;
-
+use Framework\SwServer\Coroutine\CoroutineManager;
 
 class WebServer extends BaseServer
 {
@@ -58,8 +58,8 @@ class WebServer extends BaseServer
     function onWorkerStart($server, $worker_id)
     {
         //初始化应用层
-        ServerManager::$app = (new Application($this->config));
-        ServerManager::$app->run($this->config);
+        $app=new ServerApplication($this->config);
+        ServerManager::$serverApp=\swoole_serialize::pack($app);
     }
 
     function onConnect($server, $client_id, $from_id)
@@ -91,19 +91,19 @@ class WebServer extends BaseServer
     function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
         try {
-            //浏览器会自动发起这个请求，这也是很多人碰到的一个问题：
-            //为什么我浏览器打开网站，收到了两个请求?
             if ($request->server['path_info'] == '/favicon.ico') {
                 $response->end('');
                 return;
             }
             $this->fd = $request->fd;
             if ($request->server['request_uri']) { //请求地址
-                Route::parseSwooleRouteUrl($request, $response);
+                $serverApp=\swoole_serialize::unpack(ServerManager::$serverApp);
+                $serverApp->run($request,$response);
+
             }
+            ServerManager::destroy();
         } catch (\Throwable $t) {
             CustomerError::writeErrorLog($t);
-
         }
     }
 

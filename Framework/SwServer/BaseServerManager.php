@@ -18,10 +18,9 @@ abstract class BaseServerManager
     public $process_name = 'Tayue Server Framwork';
     public static $pidFile;
     public static $server;
-    public static $app;
     public $swoole_server;
     public static $config;
-
+    public $coroutine_id;
 
     /**
      * 设置进程的名称
@@ -221,6 +220,14 @@ abstract class BaseServerManager
         if (is_callable($methodFatalError, true)) {
             register_shutdown_function([get_class($CustomerErrorObject), 'fatalError']);
         }
+    }
+
+    public static function configure(&$object, $properties)
+    {
+        foreach ($properties as $name => $value) {
+            $object->$name = $value;
+        }
+        return $object;
     }
 
 

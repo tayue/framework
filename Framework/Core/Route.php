@@ -10,7 +10,10 @@ namespace Framework\Core;
 
 use Framework\Framework;
 use Framework\SwServer\Common\ProtocolCommon;
+use Framework\SwServer\ServerManager;
 use Framework\SwServer\WebSocket\WST;
+use Framework\SwServer\Coroutine\CoroutineManager;
+
 class Route
 {
 
@@ -221,15 +224,16 @@ class Route
     public static function parseSwooleRouteUrl(\swoole_http_request $request, \swoole_http_response $response)
     {
         try {
+            $msg='';
             $request_uri = $request->server['request_uri'];
             $validate = true;
-            $projectType = Framework::$app->project_type;
+            $projectType = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->project_type;
             $pattern = '/^[0-9a-zA-Z]+$/'; //验证一些参数
             $paramsValPattern = '/[^0-9a-zA-Z]/'; //验证地址参数值(除了字符以外的任意参数)
-            $appNameSpace = Framework::$app->project_namespace;
+            $appNameSpace = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->project_namespace;
             $_module = $_controller = $_action = '';
             //如果使用了pathinfo的模式的话用pathinfo模式去解析url地址的参数
-            if (Framework::$app->routeRule != 1) {
+            if (ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->routeRule != 1) {
                 $validate = false;
             }
             $pathInfo = explode('/', trim($request_uri, '/'));
@@ -258,9 +262,9 @@ class Route
                 $validate = false;
             }
             if (!$validate) {
-                $_module = Framework::$app->default_module;
-                $_controller = Framework::$app->default_controller;
-                $_action = Framework::$app->default_action;
+                $_module = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_module;
+                $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
+                $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
             } else {
                 $pathInfoParams = array_slice($pathInfo, $offset); //参数数组
                 for ($i = 0; $i < count($pathInfoParams); $i += 2) { //过滤掉一些不正确的参数key
@@ -277,30 +281,31 @@ class Route
             }
 
             if (!$validate) {
-                $_module = Framework::$app->default_module;
-                $_controller = Framework::$app->default_controller;
-                $_action = Framework::$app->default_action;
+                $_module = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_module;
+                $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
+                $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
             }
             $_module = $module ? $module : false;
             $_controller = $controller ? $controller : false;
             $_action = $action ? $action : false;
             if ($projectType == 1) { //模块化
                 if (!$_module || !$_controller || !$_action) {
-                    $_module = Framework::$app->default_module;
-                    $_controller = Framework::$app->default_controller;
-                    $_action = Framework::$app->default_action;
+                    $_module = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_module;
+                    $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
+                    $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
                 }
             } else {
                 if (!$_controller || !$_action) {
-                    $_controller = Framework::$app->default_controller;
-                    $_action = Framework::$app->default_action;
+                    $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
+                    $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
                 }
             }
+            $coroutineId=ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->coroutine_id;
             $_module && $_module = ucfirst($_module);
-            $_module && Framework::$app->current_module = $_module;
+            $_module && ServerManager::$app[$coroutineId]->current_module = $_module;
             $_controller && $_controller = ucfirst($_controller);
-            $_controller && Framework::$app->current_controller = $_controller;
-            $_action && Framework::$app->current_action = $_action;
+            $_controller && ServerManager::$app[$coroutineId]->current_controller = $_controller;
+            $_action && ServerManager::$app[$coroutineId]->current_action = $_action;
             $_module && $urlModule = $_module;
             $urlController = $_controller . "Controller";
             $urlAction = $_action . "Action";
@@ -311,7 +316,6 @@ class Route
             }
             $classObject = new $classNameSpacePath();
             $controllerInstance = new \ReflectionClass($classNameSpacePath);
-
             if ($controllerInstance->hasMethod($urlAction)) {
                 $method = new \ReflectionMethod($classNameSpacePath, $urlAction);
                 if ($method->isPublic() && !$method->isStatic()) {
@@ -358,7 +362,7 @@ class Route
                 throw new \Exception("404");
             }
         } catch (\Exception $e) {
-            $response->end($msg);
+            $response->end($e->getMessage());
             throw new \Exception($e->getMessage(), 1);
         } catch (\Throwable $t) {
             $response->end($msg);
