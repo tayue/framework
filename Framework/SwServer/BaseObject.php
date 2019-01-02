@@ -12,8 +12,6 @@ use Framework\SwServer\Base\Objects;
 
 abstract class BaseObject implements Objects
 {
-
-
     public static function className()
     {
         return get_called_class();
@@ -22,8 +20,11 @@ abstract class BaseObject implements Objects
 
     public function __get($name)
     {
-        if($this->$name){
+        $getter = 'get' . ucfirst($name);
+        if ($this->$name) {
             return $this->$name;
+        } else if (method_exists($this, $getter)) {
+            return $this->$getter();
         }
         if (isset($this->_components[$name])) {
             $componentObject = $this->getComponent($name);
@@ -44,6 +45,8 @@ abstract class BaseObject implements Objects
         }
 
     }
+
+
 
 
     public function __isset($name)

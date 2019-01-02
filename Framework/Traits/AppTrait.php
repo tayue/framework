@@ -74,9 +74,9 @@ trait AppTrait
         self::removeApp();
     }
 
-    public function __set($name, $value)
-    {
-        $currentApp = self::getApp();
-        $currentApp->$name = $value;
-    }
+//    public function __set($name, $value)
+//    {
+//        $currentApp = self::getApp();
+//        $currentApp->$name = $value;
+//    }
 }

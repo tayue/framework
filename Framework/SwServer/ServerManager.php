@@ -189,4 +189,25 @@ class ServerManager extends BaseServerManager
     }
 
 
+    public static function getModule()
+    {
+        return self::getApp()->current_module;
+    }
+
+    public static function getController()
+    {
+        return self::getApp()->current_controller;
+    }
+
+    public static function getAction()
+    {
+        return self::getApp()->current_action;
+    }
+
+    public static function getProjectType()
+    {
+        return self::getApp()->project_type;
+    }
+
+
 }

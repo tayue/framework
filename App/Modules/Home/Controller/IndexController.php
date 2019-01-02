@@ -19,14 +19,15 @@ use Swoole\Coroutine as co;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
 use Framework\SwServer\Inotify\Daemon;
+use Framework\SwServer\ServerController;
 
-class IndexController extends Controller
+class IndexController extends ServerController
 {
     public function indexAction()
     {
         var_dump($_POST);
         ServerManager::getApp();
-        $this->assign('name', 'My Name Is Server !!!');
+        $this->assign('name', 'My Name Is Swoole Http Server !!!');
         $this->display('index.html');
 
     }
