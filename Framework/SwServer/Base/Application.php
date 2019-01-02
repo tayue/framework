@@ -21,6 +21,4 @@ class Application extends \Framework\SwServer\Base\BaseApplication
         Db::setConfig(ServerManager::$config['components']['db']['config']);
         $this->parseRoute($messageData);
     }
-
-
 }

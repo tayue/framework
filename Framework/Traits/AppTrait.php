@@ -17,6 +17,7 @@ trait AppTrait
 {
     public static $app;
 
+
     /**
      * getApp
      * @param  int|null $coroutine_id

@@ -21,12 +21,12 @@ class CheckService extends BaseServerEvent
 
         $user = CoroutineModel::getInstance('App/WebSocket/Model/User', []);
 
-        var_dump(count(WST::$app));
-        var_dump(WST::getApp()->coroutine_id);
-        var_dump(CoroutineModel::$_model_instances);
+        var_dump(count(WST::getInstance()->getApp()));
+        var_dump(WST::getInstance()->getApp()->coroutine_id);
+       // var_dump(CoroutineModel::$_model_instances);
         echo "websocket message \r\n";
-        var_dump("coroutine_id:" . WST::getApp()->coroutine_id . ",fd:" . WST::getApp()->fd);
-        $db = WST::getApp()->db;
+        var_dump("coroutine_id:" . WST::getInstance()->getApp()->coroutine_id . ",fd:" . WST::getInstance()->getApp()->fd);
+
 
         return ['test'];
     }

@@ -26,6 +26,8 @@ class BaseApplication extends BaseObject
     {
         $this->config = $config;
         $this->coroutine_id = CoroutineManager::getInstance()->getCoroutineId();
+        WST::getInstance()->coroutine_id = $this->coroutine_id;
+        WST::getInstance()->fd = $this->fd;
         $this->preInit();
         $this->setApp();
 
@@ -107,7 +109,7 @@ class BaseApplication extends BaseObject
         if ($callable && $params) {
             Route::parseServiceMessageRouteUrl($callable, $params);
         }
-        WST::destroy();
+        WST::getInstance()->destroy();
     }
 
     public function setApp()
@@ -123,8 +125,9 @@ class BaseApplication extends BaseObject
         } else {
             WST::$app = $this;
         }
-
     }
 
-    use \Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait;
+
+
+    use \Framework\Traits\ContainerTrait,\Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait;
 }
