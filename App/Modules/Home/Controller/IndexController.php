@@ -25,9 +25,9 @@ class IndexController extends ServerController
 {
     public function indexAction()
     {
-        var_dump($_POST);
-        ServerManager::getApp();
-        $this->assign('name', 'My Name Is Swoole Http Server !!!');
+        $userData=ServerManager::getApp()->userService->findUser();
+        print_r($userData);
+        $this->assign('name', 'Swoole Http Server !!!');
         $this->display('index.html');
 
     }

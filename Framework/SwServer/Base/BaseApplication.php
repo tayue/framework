@@ -15,31 +15,37 @@ use Framework\SwServer\WebSocket\WST;
 use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\SwServer\ServerManager;
 use Framework\Core\Route;
+use Framework\Core\Db;
 
 class BaseApplication extends BaseObject
 {
     public $fd;
     public $coroutine_id;
-    public $config;
 
-    public function __construct($config)
+
+    public function __construct()
     {
-        $this->config = $config;
+        $this->preInit();
+    }
+
+    public function init()
+    {
         $this->coroutine_id = CoroutineManager::getInstance()->getCoroutineId();
         WST::getInstance()->coroutine_id = $this->coroutine_id;
         WST::getInstance()->fd = $this->fd;
-        $this->preInit();
+        $this->setTimeZone(ServerManager::$config['timeZone']);
+        (isset(ServerManager::$config['log']) && ServerManager::$config['log']) && Log::getInstance()->setConfig(ServerManager::$config['log']);
+        Db::setConfig(ServerManager::$config['components']['db']['config']);
         $this->setApp();
-
+        WST::configure(WST::$app[$this->coroutine_id], ServerManager::$config);
+        $this->initComponents();
+        $this->initServices();
     }
 
     public function preInit()
     {
-        $this->setTimeZone($this->config['timeZone']);
-        (isset($this->config['log']) && $this->config['log']) && Log::getInstance()->setConfig($this->config['log']);
         $this->setErrorObject();
         $this->registerErrorHandler();
-        $this->initComponents();
     }
 
     public function setTimeZone($value)
@@ -84,7 +90,6 @@ class BaseApplication extends BaseObject
 
     public function parseRoute($messageData)
     {
-
         // worker进程
         if ($this->isWorkerProcess()) {
             $recv = array_values(json_decode($messageData, true));
@@ -127,7 +132,27 @@ class BaseApplication extends BaseObject
         }
     }
 
+    public function __get($name)
+    {
+        if (isset($this->_components[$name])) {
+            $componentObject = $this->getComponent($name);
+            if ($componentObject) {
+                return $componentObject;
+            } else {
+                $this->clearComponent($name);
+                return false;
+            }
+        } else if (isset($this->_services[$name])) {
+            $serviceObject = $this->getService($name);
+            if ($serviceObject) {
+                return $serviceObject;
+            } else {
+                $this->clearService($name);
+                return false;
+            }
+        }
+        parent::__get($name);
+    }
 
-
-    use \Framework\Traits\ContainerTrait,\Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait;
+    use \Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait, \Framework\Traits\ServiceTrait, \Framework\Traits\ContainerTrait;
 }

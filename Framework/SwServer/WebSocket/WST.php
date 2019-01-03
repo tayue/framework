@@ -79,5 +79,12 @@ class WST
         return $this->fd;
     }
 
+    public static function configure(&$object, $properties)
+    {
+        foreach ($properties as $name => $value) {
+            $object->$name = $value;
+        }
+        return $object;
+    }
 
 }

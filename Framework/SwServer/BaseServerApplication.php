@@ -14,6 +14,7 @@ use Framework\Core\error\CustomerError;
 use Framework\Core\log\Log;
 use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\Core\Db;
+use Framework\SwServer\Base\BaseObject;
 
 class BaseServerApplication extends BaseObject
 {
@@ -91,6 +92,28 @@ class BaseServerApplication extends BaseObject
     public function parseUrl(\swoole_http_request $request, \swoole_http_response $response)
     {
         Route::parseSwooleRouteUrl($request, $response);
+    }
+
+    public function __get($name)
+    {
+        if (isset($this->_components[$name])) {
+            $componentObject = $this->getComponent($name);
+            if ($componentObject) {
+                return $componentObject;
+            } else {
+                $this->clearComponent($name);
+                return false;
+            }
+        } else if (isset($this->_services[$name])) {
+            $serviceObject = $this->getService($name);
+            if ($serviceObject) {
+                return $serviceObject;
+            } else {
+                $this->clearService($name);
+                return false;
+            }
+        }
+        parent::__get($name);
     }
 
     use \Framework\Traits\ComponentTrait, \Framework\Traits\ServerTrait, \Framework\Traits\ServiceTrait, \Framework\Traits\ContainerTrait;

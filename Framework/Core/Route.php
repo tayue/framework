@@ -386,20 +386,20 @@ class Route
                     $serviceInstance->$operate($params);
                 } else {
                     $errorMessage = "Service:{$service},Operate:{$operate},Is Not Found !!";
-                    ProtocolCommon::sender(WST::getApp()->fd, $errorMessage);
+                    ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $errorMessage);
                 }
 
             } else {
                 throw new \Exception("404");
                 $errorMessage = "Service:{$service} Class Is Not Found !!";
-                ProtocolCommon::sender(WST::getApp()->fd, $errorMessage, 0);
+                ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $errorMessage, 0);
             }
 
         } catch (\Exception $e) {
-            ProtocolCommon::sender(WST::getApp()->fd, $e->getMessage(), $e->getCode());
+            ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $e->getMessage(), $e->getCode());
             throw new \Exception($e->getMessage(), 1);
         } catch (\Throwable $t) {
-            ProtocolCommon::sender(WST::getApp()->fd, $t->getMessage(), $t->getCode());
+            ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $t->getMessage(), $t->getCode());
             throw new \Exception($t->getMessage(), 1);
         }
 

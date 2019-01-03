@@ -5,15 +5,21 @@
  * Date: 2018/11/14
  * Time: 13:40
  */
+
 namespace App\Service;
-use Framework\Framework;
+
+
+use Framework\SwServer\ServerManager;
+use Framework\SwServer\WebSocket\WST;
+
 class User
 {
-    public $arr=[];
-    public function display(){
-        $a=Framework::getApp()->db->table('user')->find();
-        var_dump($a);
+    public $arr = [];
 
+    public function findUser()
+    {
+        $userData = ServerManager::getApp()->db->table('user')->find();
+        return $userData;
     }
 
 }

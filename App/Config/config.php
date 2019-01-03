@@ -94,10 +94,9 @@ return [
         ],
     ],
     'services'=>[
-        'user' => [
+        'userService' => [
             'class' => 'App\Service\User',
             'arr' => [1, 2, 3,4],
-
-        ],
+       ],
     ]
 ];

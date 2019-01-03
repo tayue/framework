@@ -17,15 +17,14 @@ abstract class BaseObject implements Objects
         return get_called_class();
     }
 
-    public function init()
-    {
-
-    }
 
     public function __get($name)
     {
+        $getter = 'get' . ucfirst($name);
         if (isset($this->$name)) {
             return $this->$name;
+        } else if (method_exists($this, $getter)) {
+            return $this->$getter();
         }
     }
 

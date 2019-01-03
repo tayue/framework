@@ -18,17 +18,18 @@ class CheckService extends BaseServerEvent
 {
     public function test($params)
     {
-
-        $user = CoroutineModel::getInstance('App/WebSocket/Model/User', []);
-
-        var_dump(count(WST::getInstance()->getApp()));
-        var_dump(WST::getInstance()->getApp()->coroutine_id);
-       // var_dump(CoroutineModel::$_model_instances);
-        echo "websocket message \r\n";
-        var_dump("coroutine_id:" . WST::getInstance()->getApp()->coroutine_id . ",fd:" . WST::getInstance()->getApp()->fd);
-
-
-        return ['test'];
+        $flag = false;
+        $userData = WST::getInstance()->getApp()->userService->findUser();
+        $datas = [
+            'flag' => true,
+            'coroutine_id' => WST::getInstance()->getApp()->coroutine_id,
+            'fd' => WST::getInstance()->getApp()->fd,
+            'time' => date("Y-m-d H:i:s"),
+            'params' => $params,
+            'datas'=>$userData
+        ];
+        $this->push($datas);
+        return;
     }
 
     public function testPool()

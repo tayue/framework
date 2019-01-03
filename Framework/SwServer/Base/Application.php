@@ -18,7 +18,7 @@ class Application extends \Framework\SwServer\Base\BaseApplication
     public function run($fd, $messageData)
     {
         $this->fd = $fd;
-        Db::setConfig(ServerManager::$config['components']['db']['config']);
+        $this->init();
         $this->parseRoute($messageData);
     }
 }
