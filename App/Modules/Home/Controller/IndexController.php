@@ -25,16 +25,78 @@ class IndexController extends ServerController
 {
     public function indexAction()
     {
-        $userData=ServerManager::getApp()->userService->findUser();
+        $userData = ServerManager::getApp()->userService->findUser();
         print_r($userData);
         $this->assign('name', 'Swoole Http Server !!!');
         $this->display('index.html');
 
     }
 
-    public function indexsAction()
+    public function packAction()
     {
-      go(function () {
+        $len = 10;
+        $data = ['code' => 200, 'data' => "hello world !!!"];
+        $body = self::encode($data, 1);
+        $header = ['length'=>'N',  'name'=>'a30'];
+        $bin_header_data = '';
+        foreach ($header as $key => $value) {
+            if (isset($header[$key])) {
+                // 计算包体长度
+                if ($key == 'length') {
+                    $bin_header_data .= pack($value, strlen($body));
+
+                } else {
+                    // 其他的包头
+                    $bin_header_data .= pack($value, $header[$key]);
+                }
+            }
+        }
+
+        $resData=$bin_header_data.$body;
+        $unpack_length_type = '';
+        if($header) {
+            foreach($header as $key=>$value) {
+                $unpack_length_type .= ($value.$key).'/';
+            }
+        }
+        $unpack_length_type = trim($unpack_length_type, '/');
+        $header = unpack($unpack_length_type, mb_strcut($resData, 0, 45, 'UTF-8'));
+        $pack_body = mb_strcut($resData, 45, null, 'UTF-8');
+
+        var_dump($header,$pack_body);
+
+
+    }
+
+    /**
+     * encode 数据序列化
+     * @param   mixed $data
+     * @param   int $serialize_type
+     * @return  string
+     */
+
+    public static function encode($data, $serialize_type = 1)
+    {
+
+        switch ($serialize_type) {
+            // json
+            case 1:
+                return json_encode($data);
+            // serialize
+            case 2:
+                return serialize($data);
+            case 3;
+            default:
+                // swoole
+                return \Swoole\Serialize::pack($data);
+        }
+    }
+
+
+    public
+    function indexsAction()
+    {
+        go(function () {
             //从池子中获取一个实例
             try {
                 $resourceData = MysqlPoolManager::getInstance()->get(5);
@@ -44,7 +106,7 @@ class IndexController extends ServerController
                     //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($resourceData);
                 }
-                echo "[".date('Y-m-d H:i:s')."] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength().",currentNum:".MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
 
             } catch (\Exception $e) {
                 echo $e->getMessage();
@@ -116,7 +178,8 @@ class IndexController extends ServerController
         // $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
     }
 
-    public function taskAction()
+    public
+    function taskAction()
     {
 
         // $res=PluginManager::getInstance()->getListeners();
@@ -136,11 +199,14 @@ class IndexController extends ServerController
         $this->echo2br("syncTaskId:{$taskId1} Finished!\r\n");
     }
 
-    public function dateAction(){
+    public
+    function dateAction()
+    {
         echo date("Y-m-d H:i:s");
     }
 
-    public function ddAction()
+    public
+    function ddAction()
     {
 //        $s = new \SphinxClient;
 //        $s->setServer("localhost", 9312);
@@ -158,42 +224,46 @@ class IndexController extends ServerController
         $sphinx->ResetFilters();
         //$sphinx->SetFilter('product_id', array(14001949));
         $query = " @amazon_item_name 'Universal'"; //@amazon_item_name  备注（amazon_item_name） 是索引列的字段
-        $result = $sphinx->query($query,"blog");	//星号为所有索引源
+        $result = $sphinx->query($query, "blog");    //星号为所有索引源
         var_dump($result);
         echo '<pre>';
         print_r($result);
-        $count=$result['total'];		//查到的结果条数
-        $time=$result['time'];			//耗时
-        $arr=$result['matches'];		//结果集
-        $id='';
-        for($i=0;$i<$count;$i++){
-            $id.=$arr[$i]['id'].',';
+        $count = $result['total'];        //查到的结果条数
+        $time = $result['time'];            //耗时
+        $arr = $result['matches'];        //结果集
+        $id = '';
+        for ($i = 0; $i < $count; $i++) {
+            $id .= $arr[$i]['id'] . ',';
         }
-        $id=substr($id,0,-1);			//结果集的id字符串
+        $id = substr($id, 0, -1);            //结果集的id字符串
 
 
-echo '<pre>';
+        echo '<pre>';
         print_r($arr);
         echo $id;
     }
 
-    public function init()
+    public
+    function init()
     {
         $this->echo2br("init\r\n");
     }
 
-    public function __beforeAction()
+    public
+    function __beforeAction()
     {
         $this->echo2br("__beforeAction\r\n");
     }
 
-    public function __afterAction()
+    public
+    function __afterAction()
     {
         $this->echo2br("__afterAction\r\n");
     }
 
 
-    protected function echo2br($str)
+    protected
+    function echo2br($str)
     {
         echo nl2br($str);
     }

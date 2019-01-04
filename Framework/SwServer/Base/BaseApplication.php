@@ -21,6 +21,7 @@ class BaseApplication extends BaseObject
 {
     public $fd;
     public $coroutine_id;
+    public $header = null;
 
 
     public function __construct()
@@ -78,10 +79,15 @@ class BaseApplication extends BaseObject
         }
     }
 
-
-    public function ping(string $operate)
+    /**
+     * ping 心跳检测
+     * @return
+     */
+    public function ping(string $operate = '')
     {
-        if (strtolower($operate) == 'ping') {
+        if (isset($this->header['ping']) && $this->header['ping'] == 'ping') {
+            return true;
+        } else if (strtolower($operate) == 'ping') {
             return true;
         }
         return false;
@@ -109,6 +115,39 @@ class BaseApplication extends BaseObject
         } else {
             // 任务task进程
             list($callable, $params) = $messageData;
+        }
+        // 控制器实例
+        if ($callable && $params) {
+            Route::parseServiceMessageRouteUrl($callable, $params);
+        }
+        WST::getInstance()->destroy();
+    }
+
+    public function parseTcpRoute($receiveData)
+    {
+        // worker进程
+        if ($this->isWorkerProcess()) {
+            list($header, $body) = $receiveData;
+            $header && $this->header = $header;
+            $body=array_values($body);
+            if (is_array($body) && count($body) == 3) {
+                list($service, $operate, $params) = $body;
+                var_dump($service,$operate,$params);
+            }
+
+            if ($this->ping()) {
+                $args = ['pong', $this->header];
+                $data = \Framework\SwServer\Protocol\TcpServer::pack($args);
+                ServerManager::getSwooleServer()->send($this->fd, $data);
+                return;
+            }
+            if ($service && $operate) {
+                $callable = [$service, $operate];
+            }
+
+        } else {
+            // 任务task进程
+            list($callable, $params) = $receiveData;
         }
         // 控制器实例
         if ($callable && $params) {

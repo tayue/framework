@@ -47,7 +47,7 @@ class WebSocketServer extends WebServer implements WebsocketProtocol
             // utf-8文本数据
             if ($opcode == WEBSOCKET_OPCODE_TEXT) {
                 $app = new Application();
-                $app->run($fd, $messageData);
+                $app->run($fd, $messageData,false);
             } else if ($opcode == WEBSOCKET_OPCODE_BINARY) {
                 // TODO 二进制数据
 

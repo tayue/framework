@@ -22,6 +22,12 @@ abstract class BaseServerManager
     public static $config;
     public $coroutine_id;
 
+    protected static $pack_check_type = 'length';
+
+    const PACK_CHECK_EOF = SWOOLE_PACK_CHECK_EOF;
+
+    const PACK_CHECK_LENGTH = SWOOLE_PACK_CHECK_LENGTH;
+
     /**
      * 设置进程的名称
      * @param $name
@@ -230,8 +236,33 @@ abstract class BaseServerManager
         return $object;
     }
 
+    /**
+     * usePackEof 是否是pack的eof
+     * @return boolean
+     */
+    protected static function isPackEof()
+    {
+        if (self::$pack_check_type == self::PACK_CHECK_EOF) {
+            return true;
+        }
+        return false;
+    }
 
+    /**
+     * isPackLength 是否是pack的length
+     * @return boolean
+     */
+    public static function isPackLength()
+    {
+        if (self::$pack_check_type == self::PACK_CHECK_LENGTH) {
+            if (!isset(static::$config['packet']['server'])) {
+                throw new \Exception("you must set ['packet']['server'] in the config", 1);
 
+            }
+            return true;
+        }
+        return false;
+    }
 
 
 }

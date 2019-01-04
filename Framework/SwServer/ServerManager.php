@@ -18,6 +18,7 @@ use App\Crontab\TaskOne;
 use Framework\SwServer\Process\ProcessManager;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
+use Framework\SwServer\Protocol\TcpServer;
 
 class ServerManager extends BaseServerManager
 {
@@ -65,6 +66,8 @@ class ServerManager extends BaseServerManager
 
         switch (self::$serviceType) {
             case self::TYPE_SERVER;
+                self::$isWebServer = false;
+                $this->protocol = new TcpServer(self::$config);
                 break;
             case self::TYPE_WEB_SERVER;
                 self::$isWebServer = true;
@@ -72,7 +75,7 @@ class ServerManager extends BaseServerManager
                 break;
             case self::TYPE_WEB_SOCKET_SERVER;
                 self::$isWebServer = true;
-                self::$isWebSocketServer=true;
+                self::$isWebSocketServer = true;
                 $this->protocol = new WebSocketServer(self::$config);
                 break;
         }
@@ -93,7 +96,7 @@ class ServerManager extends BaseServerManager
         } else {
             $this->swoole_server->on('Receive', array($this->protocol, 'onReceive'));
         }
-        if(self::$isWebSocketServer){
+        if (self::$isWebSocketServer) {
             $this->swoole_server->on('Message', array($this->protocol, 'onMessage'));
         }
         $this->swoole_server->on('Start', array($this, 'onMasterStart'));

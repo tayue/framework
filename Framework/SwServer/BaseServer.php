@@ -47,6 +47,7 @@ abstract class BaseServer implements Protocol
      */
     protected static $swoole_socket_type = SWOOLE_SOCK_TCP;
 
+
     /**
      * $server swoole服务器是否是web
      * @var null

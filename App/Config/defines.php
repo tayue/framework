@@ -12,6 +12,9 @@ defined('SWOOLE_WEBSOCKET') or define('SWOOLE_WEBSOCKET', 'websocket');
 defined('SWOOLE_TCP') or define('SWOOLE_TCP', 'tcp');
 defined('SWOOLE_UDP') or define('SWOOLE_UDP', 'udp');
 
+// 定义打包检查类型
+defined('SWOOLE_PACK_CHECK_LENGTH') or define('SWOOLE_PACK_CHECK_LENGTH', 'length');
+defined('SWOOLE_PACK_CHECK_EOF') or define('SWOOLE_PACK_CHECK_EOF', 'eof');
 
 // 日志目录
 define('LOG_PATH',APP_PATH.'/Log');

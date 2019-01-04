@@ -15,10 +15,16 @@ use Framework\SwServer\ServerManager;
 class Application extends \Framework\SwServer\Base\BaseApplication
 {
 
-    public function run($fd, $messageData)
+    public function run($fd, $messageData, $isTcpApp = true)
     {
         $this->fd = $fd;
         $this->init();
-        $this->parseRoute($messageData);
+        if ($isTcpApp) {
+            $this->parseTcpRoute($messageData);
+        } else {
+            $this->parseRoute($messageData);
+        }
     }
+
+
 }
