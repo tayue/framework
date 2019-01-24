@@ -28,5 +28,18 @@ class BaseServerEvent
         ServerManager::getSwooleServer()->push($currentFd, $data);
     }
 
+    public function send($data = [], $fd = 0)
+    {
+        $currentFd = WST::getInstance()->getApp()->fd;
+        if ($fd) {
+            $currentFd = $fd;
+        }
+        if ($data) {
+            $data = json_encode($data);
+        }
+        var_dump($currentFd, $data);
+        ServerManager::getSwooleServer()->send($currentFd, $data);
+    }
+
 
 }

@@ -28,6 +28,8 @@ abstract class BaseServerManager
 
     const PACK_CHECK_LENGTH = SWOOLE_PACK_CHECK_LENGTH;
 
+    protected static $swoole_socket_type = SWOOLE_SOCK_TCP;
+
     /**
      * 设置进程的名称
      * @param $name

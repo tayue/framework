@@ -61,4 +61,20 @@ class CheckService extends BaseServerEvent
         var_dump($taskId1);
     }
 
+    public function tcp($params)
+    {
+        $flag = false;
+        $userData = WST::getInstance()->getApp()->userService->findUser();
+        $datas = [
+            'flag' => true,
+            'coroutine_id' => WST::getInstance()->getApp()->coroutine_id,
+            'fd' => WST::getInstance()->getApp()->fd,
+            'time' => date("Y-m-d H:i:s"),
+            'params' => $params,
+            'datas'=>$userData
+        ];
+        $this->send($datas);
+        return;
+    }
+
 }

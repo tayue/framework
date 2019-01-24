@@ -8,7 +8,7 @@
 
 namespace Framework\SwServer\Protocol;
 
-use ezswoole\Exception;
+
 use Framework\SwServer\BaseServer;
 use Framework\Tool\Log;
 use Framework\Core\Route;
@@ -69,7 +69,7 @@ class TcpServer extends BaseServer
 
     function onConnect($server, $client_id, $from_id)
     {
-        // TODO: Implement onConnect() method.
+
     }
 
     function onReceive($server, $fd, $reactor_id, $data)
@@ -88,7 +88,7 @@ class TcpServer extends BaseServer
             }
             return;
         } catch (\Throwable $e) {
-            throw new Exception($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
     }
 

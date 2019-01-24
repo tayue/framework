@@ -16,6 +16,8 @@ for ($l = 0; $l < 1; $l++) {
     sleep(1);
 }
 
+echo "Recv #{$client->sock}: " . $client->recv() . "\n";
+
 function send_test3($client, $len)
 {
     $data = pack('N', $len + 4);
@@ -59,7 +61,7 @@ function send_demo($client, $len)
 {
     $time=date("Y-m-d H:i:s");
     $params=['time'=>$time];
-    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'test', 'params' => 'ss'];
+    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'tcp', 'params' => 'ss'];
     $body = encode($data, 1);
     $header = ['length' => 'N', 'name' => 'a30'];
     $bin_header_data = '';
