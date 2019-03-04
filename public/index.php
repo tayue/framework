@@ -79,6 +79,5 @@ $config = include_once '../App/Config/config.php';
 $serverConfig = include_once '../App/Config/server.php';
 $config = array_merge($config, $serverConfig);
 include_once VENDOR_PATH . '/autoload.php';
-
 (new Application($config))->run($config);
 

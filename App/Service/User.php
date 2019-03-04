@@ -18,7 +18,7 @@ class User
 
     public function findUser()
     {
-        $userData = WST::getInstance()->getApp()->db->table('user')->find();
+        $userData = ServerManager::getApp()->db->table('user')->find();
         return $userData;
     }
 
