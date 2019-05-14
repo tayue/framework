@@ -13,6 +13,7 @@ use Framework\SwServer\Common\ProtocolCommon;
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\WebSocket\WST;
 use Framework\SwServer\Coroutine\CoroutineManager;
+use Framework\Core\DependencyInjection;
 
 class Route
 {
@@ -224,7 +225,7 @@ class Route
     public static function parseSwooleRouteUrl(\swoole_http_request $request, \swoole_http_response $response)
     {
         try {
-            $msg='';
+            $msg = '';
             $request_uri = $request->server['request_uri'];
             $validate = true;
             $projectType = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->project_type;
@@ -300,7 +301,7 @@ class Route
                     $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
                 }
             }
-            $coroutineId=ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->coroutine_id;
+            $coroutineId = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->coroutine_id;
             $_module && $_module = ucfirst($_module);
             $_module && ServerManager::$app[$coroutineId]->current_module = $_module;
             $_controller && $_controller = ucfirst($_controller);
@@ -335,7 +336,8 @@ class Route
                                 $beforeActionMethod->invoke($classObject);
                             }
                         }
-                        $method->invoke($classObject);
+                        var_dump(ServerManager::getInstance()->coroutine_id,$coroutineId);
+                        DependencyInjection::getInstance()->run($classNameSpacePath, $urlAction);
                         //后置Action初始化方法
                         if ($controllerInstance->hasMethod('__afterAction')) {
                             $afterActionMethod = new \ReflectionMethod($classNameSpacePath, '__afterAction');
@@ -422,6 +424,5 @@ class Route
         }
         return false;
     }
-
 
 }

@@ -12,15 +12,10 @@ namespace App\Service;
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\WebSocket\WST;
 
-class User
+class Crypt
 {
-    public $arr = [];
 
-    public function findUser()
-    {
-        $userData = ServerManager::getApp()->db->table('user')->find();
-        return $userData;
-    }
+
 
     public function display(){
         echo __CLASS__."==".__METHOD__;

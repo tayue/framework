@@ -8,8 +8,10 @@
 
 namespace App\Modules\Home\Controller;
 
+use App\Service\Util;
 use Framework\Core\Controller;
-use App\Service\UserService;
+use App\Service\User;
+use App\Service\Crypt;
 use Framework\SwServer\Task\TaskManager;
 use Framework\Tool\PluginManager;
 use Framework\SwServer\ServerManager;
@@ -23,10 +25,21 @@ use Framework\SwServer\ServerController;
 
 class IndexController extends ServerController
 {
-    public function indexAction()
+    public function indexAction(User $userService,Util $util,Crypt $crypt)
     {
-        $userData = ServerManager::getApp()->userService->findUser();
-        print_r($userData);
+        echo 'hello ';
+       // $userService->display();
+        $util->display();
+
+        $util->display();
+       // $userData1 = ServerManager::getApp()->userService->findUser();
+       // $userData2 = ServerManager::getApp()->userService->findUser();
+        $userData1=$userService->findUser();
+        $userData2=$userService->findUser();
+         print_r(ServerManager::getApp());
+
+        print_r($userData1);
+        print_r($userData2);
         $this->assign('name', 'Swoole Http Server !!!');
         $this->display('index.html');
 
@@ -37,7 +50,7 @@ class IndexController extends ServerController
         $len = 10;
         $data = ['code' => 200, 'data' => "hello world !!!"];
         $body = self::encode($data, 1);
-        $header = ['length'=>'N',  'name'=>'a30'];
+        $header = ['length' => 'N', 'name' => 'a30'];
         $bin_header_data = '';
         foreach ($header as $key => $value) {
             if (isset($header[$key])) {
@@ -52,18 +65,18 @@ class IndexController extends ServerController
             }
         }
 
-        $resData=$bin_header_data.$body;
+        $resData = $bin_header_data . $body;
         $unpack_length_type = '';
-        if($header) {
-            foreach($header as $key=>$value) {
-                $unpack_length_type .= ($value.$key).'/';
+        if ($header) {
+            foreach ($header as $key => $value) {
+                $unpack_length_type .= ($value . $key) . '/';
             }
         }
         $unpack_length_type = trim($unpack_length_type, '/');
         $header = unpack($unpack_length_type, mb_strcut($resData, 0, 45, 'UTF-8'));
         $pack_body = mb_strcut($resData, 45, null, 'UTF-8');
 
-        var_dump($header,$pack_body);
+        var_dump($header, $pack_body);
 
 
     }

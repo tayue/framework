@@ -7,9 +7,9 @@
  */
 
 namespace Framework\Traits;
-use Framework\Di\Instance;
 
-trait ContainerTrait
+
+trait ContainerStaticTrait
 {
     /**
      * @var array singleton objects indexed by their types
@@ -43,14 +43,14 @@ trait ContainerTrait
         }
 
         $definition = $this->_definitions[$class];
-        if (\is_callable($definition, true)) {
+        if (is_callable($definition, true)) {
             $params = $this->resolveDependencies($this->mergeParams($class, $params));
-            $object = \call_user_func($definition, $this, $params, $config);
-        } elseif (\is_array($definition)) {
+            $object = call_user_func($definition, $this, $params, $config);
+        } elseif (is_array($definition)) {
             $concrete = $definition['class'];
             unset($definition['class']);
 
-            $config = \array_merge($definition, $config);
+            $config = array_merge($definition, $config);
             $params = $this->mergeParams($class, $params);
 
             if ($concrete === $class) {
@@ -58,13 +58,13 @@ trait ContainerTrait
             } else {
                 $object = $this->get($concrete, $params, $config);
             }
-        } elseif (\is_object($definition)) {
+        } elseif (is_object($definition)) {
             return $this->_singletons[$class] = $definition;
         } else {
-            throw new \Exception('Unexpected object definition type: ' . \gettype($definition));
+            throw new Exception('Unexpected object definition type: ' . gettype($definition));
         }
 
-        if (\array_key_exists($class, $this->_singletons)) {
+        if (array_key_exists($class, $this->_singletons)) {
             // singleton
             $this->_singletons[$class] = $object;
         }
@@ -93,7 +93,7 @@ trait ContainerTrait
 
         $dependencies = $this->resolveDependencies($dependencies, $reflection);
         if (!$reflection->isInstantiable()) {
-            throw new \Exception($reflection->name);
+            throw new NotInstantiableException($reflection->name);
         }
         if (empty($config)) {
             return $reflection->newInstanceArgs($dependencies);
@@ -161,7 +161,7 @@ trait ContainerTrait
                 } elseif ($reflection !== null) {
                     $name = $reflection->getConstructor()->getParameters()[$index]->getName();
                     $class = $reflection->getName();
-                    throw new \Exception("Missing required parameter \"$name\" when instantiating \"$class\".");
+                    throw new InvalidConfigException("Missing required parameter \"$name\" when instantiating \"$class\".");
                 }
             }
         }
@@ -189,14 +189,14 @@ trait ContainerTrait
                 if (strpos($class, '\\') !== false) {
                     $definition['class'] = $class;
                 } else {
-                    throw new \Exception('A class definition requires a "class" member.');
+                    throw new InvalidConfigException('A class definition requires a "class" member.');
                 }
             }
 
             return $definition;
         }
 
-        throw new \Exception("Unsupported definition type for \"$class\": " . gettype($definition));
+        throw new InvalidConfigException("Unsupported definition type for \"$class\": " . gettype($definition));
     }
 
     public function createObject($type, array $params = [])
@@ -208,10 +208,10 @@ trait ContainerTrait
             unset($type['class']);
             return $this->get($class, $params, $type);
         } elseif (is_array($type)) {
-            throw new \Exception('Object configuration must be an array containing a "class" element.');
+            throw new Exception('Object configuration must be an array containing a "class" element.');
         }
 
-        throw new \Exception('Unsupported configuration type: ' . gettype($type));
+        throw new Exception('Unsupported configuration type: ' . gettype($type));
     }
 
     public function registerObject(string $com_alias_name, $definition = [], array $params = [])
@@ -221,7 +221,7 @@ trait ContainerTrait
             unset($definition['class']);
             return $this->setSingleton($class, $definition, $params);
         }
-        throw new \Exception('No registerObject');
+        throw new Exception('No registerObject');
     }
 
     public function setSingleton($class, $definition = [], array $params = [])
@@ -231,7 +231,6 @@ trait ContainerTrait
         unset($this->_singletons[$class]);
         $object = $this->build($class, $params, $definition);
         $this->_singletons[$class] = $object;
-        return $object;
     }
 
 
@@ -239,30 +238,6 @@ trait ContainerTrait
     {
         return $this->_singletons;
     }
-
-
-    /**
-     * Merges the user-specified constructor parameters with the ones registered via [[set()]].
-     * @param string $class class name, interface name or alias name
-     * @param array $params the constructor parameters
-     * @return array the merged parameters
-     */
-    protected function mergeParams($class, $params)
-    {
-        if (empty($this->_params[$class])) {
-            return $params;
-        } elseif (empty($params)) {
-            return $this->_params[$class];
-        }
-
-        $ps = $this->_params[$class];
-        foreach ($params as $index => $value) {
-            $ps[$index] = $value;
-        }
-
-        return $ps;
-    }
-
 
 
 }

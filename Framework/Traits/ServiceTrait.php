@@ -12,8 +12,9 @@ use Framework\SwServer\ServerManager;
 
 trait ServiceTrait
 {
-   private $_services = [];
-   public function setServices($services)
+    private $_services = [];
+
+    public function setServices($services)
     {
         foreach ($services as $id => $service) {
             $this->createServiceObject($id, $service);
@@ -124,8 +125,6 @@ trait ServiceTrait
         }
         return false;
     }
-
-
 
 
 }
