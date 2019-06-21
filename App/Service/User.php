@@ -11,10 +11,18 @@ namespace App\Service;
 
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\WebSocket\WST;
+use App\Service\Crypt;
 
 class User
 {
     public $arr = [];
+
+    public $crypt;
+
+    public function __construct(Crypt $crypt)
+    {
+        $this->crypt=$crypt;
+    }
 
     public function findUser()
     {
@@ -23,6 +31,7 @@ class User
     }
 
     public function display(){
+        $this->crypt->display();
         echo __CLASS__."==".__METHOD__;
     }
 

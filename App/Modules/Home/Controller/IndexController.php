@@ -45,6 +45,8 @@ class IndexController extends ServerController
         $this->util->display();
 
         $crypt->display();
+
+        $this->userService->display();
        // $userData1 = ServerManager::getApp()->userService->findUser();
        // $userData2 = ServerManager::getApp()->userService->findUser();
         $userData1=$this->userService->findUser();
