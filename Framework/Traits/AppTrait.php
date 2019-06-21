@@ -27,7 +27,7 @@ trait AppTrait
     {
         if ($coroutine_id) {
             $cid = $coroutine_id;
-        } else { 
+        } else {
             $cid = ServerManager::getInstance()->coroutine_id;
         }
         if (!$cid) {
@@ -56,8 +56,9 @@ trait AppTrait
             return true;
         } else {
             self::$app = NULL;
+            return false;
         }
-        return true;
+        return false;
     }
 
     public static function destroy($coroutine_id = null)
@@ -72,12 +73,7 @@ trait AppTrait
             $cid = CoroutineManager::getInstance()->getCoroutineId();
         }
         CoroutineModel::removeInstance($cid);
-        self::removeApp();
+        return self::removeApp();
     }
 
-//    public function __set($name, $value)
-//    {
-//        $currentApp = self::getApp();
-//        $currentApp->$name = $value;
-//    }
 }

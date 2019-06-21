@@ -51,12 +51,13 @@ class IndexController extends ServerController
        // $userData2 = ServerManager::getApp()->userService->findUser();
         $userData1=$this->userService->findUser();
         $userData2=$this->userService->findUser();
-         print_r(ServerManager::getApp());
+
+        // print_r(ServerManager::getApp('cid_4'));
 
         print_r($userData1);
         print_r($userData2);
-       // $this->assign('name', 'Swoole Http Server !!!');
-        //$this->display('index.html');
+        $this->assign('name', 'Swoole Http Server !!!');
+        $this->display('index.html');
 
     }
 

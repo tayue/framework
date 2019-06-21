@@ -95,13 +95,17 @@ class WebServer extends BaseServer
                 $response->end('');
                 return;
             }
+            ob_start();
             $this->fd = $request->fd;
             if ($request->server['request_uri']) { //请求地址
                 $serverApp=\swoole_serialize::unpack(ServerManager::$serverApp);
                 $serverApp->run($request,$response);
 
             }
-            ServerManager::destroy();
+            ServerManager::destroy(); //销毁应用实例
+            $out1 = ob_get_contents();
+            ob_end_clean();
+            $response->end($out1);
         } catch (\Throwable $t) {
             CustomerError::writeErrorLog($t);
         }

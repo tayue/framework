@@ -321,11 +321,7 @@ class Route
                 $method = new \ReflectionMethod($classNameSpacePath, $urlAction);
                 if ($method->isPublic() && !$method->isStatic()) {
                     try {
-                        ob_start();
                         DependencyInjection::make($classNameSpacePath, $urlAction);
-                        $out1 = ob_get_contents();
-                        ob_end_clean();
-                        $response->end($out1);
                     } catch (\ReflectionException $e) {
                         // 方法调用发生异常后 引导到__call方法处理
                         $method = new \ReflectionMethod($classNameSpacePath, '__call');
