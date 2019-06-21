@@ -41,7 +41,7 @@ class BaseServerApplication extends BaseObject
         $this->setApp();
         ServerManager::configure(ServerManager::$app[$this->coroutine_id], ServerManager::$config);
         $this->initComponents();
-        //$this->initServices();
+        $this->initServices();
     }
 
     public function setTimeZone($value)

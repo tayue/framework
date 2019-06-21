@@ -25,23 +25,36 @@ use Framework\SwServer\ServerController;
 
 class IndexController extends ServerController
 {
-    public function indexAction(User $userService,Util $util,Crypt $crypt)
-    {
-        echo 'hello ';
-       // $userService->display();
-        $util->display();
+    public $userService;
+    public $util;
 
-        $util->display();
+
+    public function __construct(User $userService,Util $util)
+    {  //依赖注入
+        parent::__construct();
+        $this->userService=$userService;
+        $this->util=$util;
+
+    }
+
+    public function indexAction(Crypt $crypt)
+    {
+        var_dump($this->userService);
+
+       // $userService->display();
+        $this->util->display();
+
+        $crypt->display();
        // $userData1 = ServerManager::getApp()->userService->findUser();
        // $userData2 = ServerManager::getApp()->userService->findUser();
-        $userData1=$userService->findUser();
-        $userData2=$userService->findUser();
+        $userData1=$this->userService->findUser();
+        $userData2=$this->userService->findUser();
          print_r(ServerManager::getApp());
 
         print_r($userData1);
         print_r($userData2);
-        $this->assign('name', 'Swoole Http Server !!!');
-        $this->display('index.html');
+       // $this->assign('name', 'Swoole Http Server !!!');
+        //$this->display('index.html');
 
     }
 

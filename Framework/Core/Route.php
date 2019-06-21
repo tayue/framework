@@ -30,6 +30,7 @@ class Route
             $paramsValPattern = '/[^0-9a-zA-Z]/'; //验证地址参数值(除了字符以外的任意参数)
             $appNameSpace = Framework::$app->project_namespace;
             $_module = $_controller = $_action = '';
+            self::filter();
             //如果使用了pathinfo的模式的话用pathinfo模式去解析url地址的参数
             if (isset($_SERVER['PATH_INFO'])) {
                 if (Framework::$app->routeRule != 1) {
@@ -315,36 +316,13 @@ class Route
             } else {
                 $classNameSpacePath = sprintf("\\%s\\Controller\\%s", $appNameSpace, $urlController);
             }
-            $classObject = new $classNameSpacePath();
-            $controllerInstance = new \ReflectionClass($classNameSpacePath);
-            if ($controllerInstance->hasMethod($urlAction)) {
+
+            if (\method_exists($classNameSpacePath, $urlAction)) {
                 $method = new \ReflectionMethod($classNameSpacePath, $urlAction);
                 if ($method->isPublic() && !$method->isStatic()) {
                     try {
                         ob_start();
-                        //检测控制器初始化方法
-                        if ($controllerInstance->hasMethod('init')) {
-                            $initMethod = new \ReflectionMethod($classNameSpacePath, 'init');
-                            if ($initMethod->isPublic()) {
-                                $initMethod->invoke($classObject);
-                            }
-                        }
-                        //前置Action初始化方法
-                        if ($controllerInstance->hasMethod('__beforeAction')) {
-                            $beforeActionMethod = new \ReflectionMethod($classNameSpacePath, '__beforeAction');
-                            if ($beforeActionMethod->isPublic()) {
-                                $beforeActionMethod->invoke($classObject);
-                            }
-                        }
-                        var_dump(ServerManager::getInstance()->coroutine_id,$coroutineId);
-                        DependencyInjection::getInstance()->run($classNameSpacePath, $urlAction);
-                        //后置Action初始化方法
-                        if ($controllerInstance->hasMethod('__afterAction')) {
-                            $afterActionMethod = new \ReflectionMethod($classNameSpacePath, '__afterAction');
-                            if ($afterActionMethod->isPublic()) {
-                                $afterActionMethod->invoke($classObject);
-                            }
-                        }
+                        DependencyInjection::make($classNameSpacePath, $urlAction);
                         $out1 = ob_get_contents();
                         ob_end_clean();
                         $response->end($out1);
@@ -423,6 +401,42 @@ class Route
             return true;
         }
         return false;
+    }
+
+    //安全过滤函数防止XSS
+    public static function filter()
+    {
+        if (is_array($_SERVER)) {
+            foreach ($_SERVER as $k => $v) {
+                if (isset($_SERVER[$k])) {
+                    $_SERVER[$k] = str_replace(array('<', '>', '"', "'", '%3C', '%3E', '%22', '%27', '%3c', '%3e'), '', $v);
+                }
+            }
+        }
+        unset($_ENV, $HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_COOKIE_VARS, $HTTP_SERVER_VARS, $HTTP_ENV_VARS);
+        self::filter_slashes($_GET);
+        self::filter_slashes($_POST);
+        self::filter_slashes($_COOKIE);
+        self::filter_slashes($_FILES);
+        self::filter_slashes($_REQUEST);
+    }
+
+    /**
+     * 安全过滤类-加反斜杠，放置SQL注入
+     * @param  string $value 需要过滤的值
+     * @return string
+     */
+    public static function filter_slashes(&$value)
+    {
+        if (get_magic_quotes_gpc()) return false; //开启魔术变量
+        $value = (array)$value;
+        foreach ($value as $key => $val) {
+            if (is_array($val)) {
+                self::filter_slashes($value[$key]);
+            } else {
+                $value[$key] = addslashes($val);
+            }
+        }
     }
 
 }
