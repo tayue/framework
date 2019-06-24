@@ -229,7 +229,7 @@ abstract class BaseServer implements Protocol
     function onTask(\swoole_server $server, $taskId, $fromWorkerId, $taskObj)
     {
         if ($taskObj) {
-            $taskObj = \Swoole\Serialize::unpack($taskObj);
+            $taskObj = \unserialize($taskObj);
             if (is_array($taskObj)) {
                 list($classData, $params) = $taskObj;
                 list($class, $action) = $classData;
@@ -247,7 +247,7 @@ abstract class BaseServer implements Protocol
     {
         //processAsync
         if ($taskObj) {
-            $taskObj = \Swoole\Serialize::unpack($taskObj);
+            $taskObj = \unserialize($taskObj);
             $ref = new \ReflectionClass(get_class($taskObj));
             if ($ref->implementsInterface(ProcessMessageInterface::class)) {
                 try {

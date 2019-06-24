@@ -18,7 +18,7 @@ class TaskDelivery implements TaskDeliveryInterface
     public static function asyncTask($callback, ...$params)
     {
         $callback = self::commonValidate($callback);
-        $task_id = ServerManager::getSwooleServer()->task(\Swoole\Serialize::pack([$callback, $params]));
+        $task_id = ServerManager::getSwooleServer()->task(\serialize([$callback, $params]));
         unset($callback, $params);
         return $task_id;
     }
@@ -26,7 +26,7 @@ class TaskDelivery implements TaskDeliveryInterface
     public static function syncTask($callback, $timeout, ...$params)
     {
         $callback = self::commonValidate($callback);
-        $task_id = ServerManager::getSwooleServer()->taskwait(\Swoole\Serialize::pack([$callback, $params]), $timeout);
+        $task_id = ServerManager::getSwooleServer()->taskwait(\serialize([$callback, $params]), $timeout);
         unset($callback, $params);
         return $task_id;
     }
@@ -34,7 +34,7 @@ class TaskDelivery implements TaskDeliveryInterface
     public static function coTask($callback, $timeout, ...$params)
     {
         $callback = self::commonValidate($callback);
-        $task_id = ServerManager::getSwooleServer()->taskCo(array(\Swoole\Serialize::pack([$callback, $params])), $timeout);
+        $task_id = ServerManager::getSwooleServer()->taskCo(array(\serialize([$callback, $params])), $timeout);
         unset($callback, $params);
         return $task_id;
     }
@@ -99,7 +99,7 @@ class TaskDelivery implements TaskDeliveryInterface
         $message->setMessageParams(...$params);
         mt_srand();
         $workerId = mt_rand($workerNum, ($workerNum + $taskNum) - 1);
-        $res = ServerManager::getSwooleServer()->sendMessage(\Swoole\Serialize::pack($message), $workerId);
+        $res = ServerManager::getSwooleServer()->sendMessage(\serialize($message), $workerId);
         unset($callback, $params);
         return $res;
     }

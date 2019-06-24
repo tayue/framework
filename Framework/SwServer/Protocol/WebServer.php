@@ -59,7 +59,7 @@ class WebServer extends BaseServer
     {
         //初始化应用层
         $app=new ServerApplication($this->config);
-        ServerManager::$serverApp=\swoole_serialize::pack($app);
+        ServerManager::$serverApp=\serialize($app);
     }
 
     function onConnect($server, $client_id, $from_id)
@@ -98,7 +98,7 @@ class WebServer extends BaseServer
             ob_start();
             $this->fd = $request->fd;
             if ($request->server['request_uri']) { //请求地址
-                $serverApp=\swoole_serialize::unpack(ServerManager::$serverApp);
+                $serverApp=\unserialize(ServerManager::$serverApp);
                 $serverApp->run($request,$response);
 
             }

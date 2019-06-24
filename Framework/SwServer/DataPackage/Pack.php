@@ -14,7 +14,7 @@ namespace Framework\SwServer\DataPackage;
 class Pack {
 
 	/**
-	 * $server 
+	 * $server
 	 * @var null
 	 */
 	public $server = null;
@@ -63,7 +63,7 @@ class Pack {
 	public static $pack_length_key = 'length';
 
 	/**
-	 * $serialize_type 设置数据序列化的方式 
+	 * $serialize_type 设置数据序列化的方式
 	 * @var [type]
 	 */
 	public $serialize_type = 'json';
@@ -84,7 +84,7 @@ class Pack {
     const ERR_HEADER            = 9001;   //错误的包头
     const ERR_TOOBIG            = 9002;   //请求包体长度超过允许的范围
     const ERR_SERVER_BUSY       = 9003;   //服务器繁忙，超过处理能力
-    
+
 	/**
 	 * $header_length 包头固定长度，单位字节,等于package_body_offset设置的值
 	 * @var integer
@@ -98,7 +98,7 @@ class Pack {
 	public static $pack_eof = "\r\n\r\n";
 
 	/**
-	 * __construct 
+	 * __construct
 	 * @param    \Swoole\Server $server
 	 */
 	public function __construct(\Swoole\Server $server) {
@@ -112,13 +112,13 @@ class Pack {
 	 *	Pack::$pack_length_key = 'length'   包头的记录包体长度的key,要与$header_struct的key一致
 	 *	Pack::$header_length = 34            固定包头字节大小，与package_body_offset一致
 	 *
-	 * 
+	 *
 	 *  $Pack = new Pack();
 	 *  又或者先这样设置
 	 *  $Pack->header_struct = ['length'=>'N','name'=>'a30']
 	 *  $Pack->pack_length_key = 'length'
 	 *  $Pack->header_length = 34
-	 *  
+	 *
 	 *	$Pack->serialize_type = Pack::DECODE_SWOOLE;
 	 * 	$Pack->packet_maxlen = 2 * 1024 * 1024 包的最大长度，与package_max_length设置保持一致
 	 *  $res = $Pack->depack($server, $fd, $reactor_id, $data);
@@ -184,12 +184,12 @@ class Pack {
 				return false;
 			}
 		}
-		
+
 	}
 
 	/**
 	 * setPackLengthType  设置pack头的类型
-	 * @return   string 
+	 * @return   string
 	 */
 	public function setPackLengthType(array $struct=[]) {
 		if(self::$pack_length_type) {
@@ -209,7 +209,7 @@ class Pack {
 
 	/**
 	 * setPackLengthType  设置unpack头的类型
-	 * @return   string 
+	 * @return   string
 	 */
 	public function setUnpackLengthType(array $struct=[]) {
 		if(self::$unpack_length_type) {
@@ -229,7 +229,7 @@ class Pack {
 	}
 
 	/**
-	 * sendErrorMessage 
+	 * sendErrorMessage
 	 * @param    int  $fd
 	 * @param    mixed  $errno
 	 * @return   boolean
@@ -240,7 +240,7 @@ class Pack {
 
     /**
      * filterHeader  去掉头部空格|null
-     * @param    &$header 
+     * @param    &$header
      * @return   array
      */
 	public function filterHeader(&$header) {
@@ -282,7 +282,7 @@ class Pack {
 	        		// 其他的包头
 	        		$bin_header_data .= pack($value, $header[$key]);
 	        	}
-        	} 
+        	}
         }
 
         return $bin_header_data . $body;
@@ -301,14 +301,14 @@ class Pack {
         switch($serialize_type) {
         		// json
             case 1:
-                return json_encode($data);
+                return \json_encode($data);
                 // serialize
             case 2:
-            	return serialize($data);
+            	return \serialize($data);
             case 3;
             default:
             	// swoole
-            	return \Swoole\Serialize::pack($data);  
+            	return \serialize($data);
         }
 	}
 
@@ -325,14 +325,14 @@ class Pack {
         switch($unserialize_type) {
         		// json
             case 1:
-                return json_decode($data, true);
+                return \json_decode($data, true);
                 // serialize
             case 2:
-            	return unserialize($data);
+            	return \unserialize($data);
             case 3;
             default:
             	// swoole
-            	return \Swoole\Serialize::unpack($data);   
+            	return \unserialize($data);
         }
     }
 
@@ -355,7 +355,7 @@ class Pack {
     			$this->server->close($fd, true);
     			unset($this->_buffers[$fd], $this->_headers[$fd]);
     		}
-    		return;	
+    		return;
     	}
     }
 
@@ -364,7 +364,7 @@ class Pack {
      * usages:
      *	Pack::$pack_eof = "\r\n\r\n";
 	 *	$Pack = new Pack();
-	 *	$sendData = $Pack->enpackeof($data, Pack::DECODE_JSON);				
+	 *	$sendData = $Pack->enpackeof($data, Pack::DECODE_JSON);
      * @param  mixed $data
      * @param  int   $seralize_type
      * @param  string $eof
@@ -375,7 +375,7 @@ class Pack {
     		$eof = self::$pack_eof;
     	}
     	$data = self::encode($data, $serialize_type).$eof;
-    	
+
     	return $data;
     }
 
@@ -387,7 +387,7 @@ class Pack {
 	 *	$res = $Pack->depackeof($data, Pack::DECODE_JSON);
      * @param   string  $data
      * @param   int     $unseralize_type
-     * @return  mixed 
+     * @return  mixed
      */
     public function depackeof($data, $unserialize_type = '') {
     	if($unserialize_type) {
@@ -402,8 +402,8 @@ class Pack {
 	 *  $Pack->header_struct = ['length'=>'N','name'=>'a30']
 	 *  $Pack->pack_length_key = 'length'
 	 *  $Pack->header_length = 34
-	 *  
-     * @param  $name 
+	 *
+     * @param  $name
      * @param  $value
      */
     public function __set($name, $value) {
