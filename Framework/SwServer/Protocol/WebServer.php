@@ -58,8 +58,8 @@ class WebServer extends BaseServer
     function onWorkerStart($server, $worker_id)
     {
         //初始化应用层
-        $app=new ServerApplication($this->config);
-        ServerManager::$serverApp=\serialize($app);
+        $app = new ServerApplication($this->config);
+        ServerManager::$serverApp = \serialize($app);
     }
 
     function onConnect($server, $client_id, $from_id)
@@ -98,9 +98,8 @@ class WebServer extends BaseServer
             ob_start();
             $this->fd = $request->fd;
             if ($request->server['request_uri']) { //请求地址
-                $serverApp=\unserialize(ServerManager::$serverApp);
-                $serverApp->run($request,$response);
-
+                $serverApp = \unserialize(ServerManager::$serverApp);
+                $serverApp->run($request, $response);
             }
             ServerManager::destroy(); //销毁应用实例
             $out1 = ob_get_contents();
