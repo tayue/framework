@@ -38,10 +38,11 @@ class IndexController extends ServerController
     }
 
     public function indexAction(Crypt $crypt)
-    {
+    {  
 
         $context = new Co\Context(); //swoole 协程上下文管理器注册上下文环境后协程执行完成后自动回收
-        $context['crypt'] = $crypt;
+        $context['crypt'] = $crypt; 
+		
         defer(function () {
             var_dump("defer execute clear");
         });
