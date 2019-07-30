@@ -39,6 +39,14 @@ class IndexController extends ServerController
 
     public function indexAction(Crypt $crypt)
     {
+
+        $context = new Co\Context(); //swoole 协程上下文管理器注册上下文环境后协程执行完成后自动回收
+        $context['crypt'] = $crypt;
+        defer(function () {
+            var_dump("defer execute clear");
+        });
+
+        var_dump($context);
         var_dump($this->userService);
 
        // $userService->display();
@@ -150,6 +158,7 @@ class IndexController extends ServerController
                 if ($resourceData) {
                     $result = $resourceData['resource']->set('name', 'tayue');
                     $result1 = $resourceData['resource']->get('name');
+                    print_r($result1);
                     //\Swoole\Coroutine::sleep(4);
                     RedisPoolManager::getInstance()->put($resourceData);
                 }
@@ -223,7 +232,7 @@ class IndexController extends ServerController
         // $taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
         $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 2, $a, $b, $c);
         var_dump($taskId1);
-        //TaskManager::processAsyncTask(["Server/Task/TestTask","asyncTaskTest"],$a,$b,$c);
+        TaskManager::processAsyncTask(["Server/Task/TestTask","asyncTaskTest"],$a,$b,$c);
         // $taskId=TaskManager::syncTask(["Server/Task/TestTask","syncTaskTest"],[$time],13);
         $this->echo2br("syncTaskId:{$taskId1} Finished!\r\n");
     }
