@@ -24,6 +24,9 @@ class CoroutineModel
      */
     public static function getInstance(string $class = '', ...$args)
     {
+        if(!$class){
+            return null;
+        }
         $cid = CoroutineManager::getInstance()->getCoroutineId();
         $class = str_replace('/', '\\', $class);
         $class = trim($class, '\\');

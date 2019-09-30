@@ -323,9 +323,7 @@ class Route
                     try {
                         DependencyInjection::make($classNameSpacePath, $urlAction);
                     } catch (\ReflectionException $e) {
-                        // 方法调用发生异常后 引导到__call方法处理
-                        $method = new \ReflectionMethod($classNameSpacePath, '__call');
-                        $method->invokeArgs($classObject, array($urlAction, ''));
+                        throw new \Exception($e->getMessage(), 1);
                     } catch (\Throwable $t) { //将致命错误捕捉到进行错误类型转换
                         $msg = 'Fatal error: ' . $t->getMessage() . ' on ' . $t->getFile() . ' on line ' . $t->getLine();
                         throw new \Exception($msg, 1);

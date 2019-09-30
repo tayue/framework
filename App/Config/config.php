@@ -87,6 +87,9 @@ return [
             'config' => [
              ],
         ],
+        'eventmanager'=>[
+            'class' => 'Framework\SwServer\Event\EventManager',
+        ],
         'user' => [
             'class' => 'App\Component\User',
             'arr' => [1, 2, 3],

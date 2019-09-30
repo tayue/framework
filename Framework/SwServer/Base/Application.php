@@ -10,9 +10,9 @@ namespace Framework\SwServer\Base;
 
 use Framework\Core\Db;
 use Framework\SwServer\ServerManager;
+use Framework\SwServer\Base\BaseApplication;
 
-
-class Application extends \Framework\SwServer\Base\BaseApplication
+class Application extends BaseApplication
 {
 
     public function run($fd, $messageData, $isTcpApp = true)

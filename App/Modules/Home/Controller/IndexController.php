@@ -9,6 +9,8 @@
 namespace App\Modules\Home\Controller;
 
 use App\Service\Util;
+use App\Listener\SendSmsListener;
+use App\Listener\SendEmailsListener;
 use Framework\Core\Controller;
 use App\Service\User;
 use App\Service\Crypt;
@@ -22,11 +24,13 @@ use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
 use Framework\SwServer\Inotify\Daemon;
 use Framework\SwServer\ServerController;
-
+use Framework\SwServer\Event\Event;
+use Framework\SwServer\Event\EventManager;
 class IndexController extends ServerController
 {
     public $userService;
     public $util;
+    private $event;
 
 
     public function __construct(User $userService,Util $util)
@@ -37,15 +41,18 @@ class IndexController extends ServerController
 
     }
 
-    public function indexAction(Crypt $crypt)
-    {  
+    public function indexAction(Crypt $crypt,Event $e,SendSmsListener $smlistener,SendEmailsListener $semaillistener)
+    {
+        $em=ServerManager::getApp()->eventmanager;
 
+        $e->setName("createorder");
+        $em->addListener($smlistener,["createorder"=>1]);
+        $em->addListener($semaillistener,["createorder"=>2]);
+        $em->trigger("createorder",null,['test','test1']);
         $context = new Co\Context(); //swoole 协程上下文管理器注册上下文环境后协程执行完成后自动回收
         $context['crypt'] = $crypt; 
 		
-        defer(function () {
-            var_dump("defer execute clear");
-        });
+
 
         var_dump($context);
         var_dump($this->userService);
@@ -55,16 +62,16 @@ class IndexController extends ServerController
 
         $crypt->display();
 
-        $this->userService->display();
-       // $userData1 = ServerManager::getApp()->userService->findUser();
-       // $userData2 = ServerManager::getApp()->userService->findUser();
-        $userData1=$this->userService->findUser();
-        $userData2=$this->userService->findUser();
+//        $this->userService->display();
+//       // $userData1 = ServerManager::getApp()->userService->findUser();
+//       // $userData2 = ServerManager::getApp()->userService->findUser();
+//        $userData1=$this->userService->findUser();
+//        $userData2=$this->userService->findUser();
 
         // print_r(ServerManager::getApp('cid_4'));
 
-        print_r($userData1);
-        print_r($userData2);
+//        print_r($userData1);
+//        print_r($userData2);
         $this->assign('name', 'Swoole Http Server !!!');
         $this->display('index.html');
 

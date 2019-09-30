@@ -69,7 +69,7 @@ class CustomerError
         Log::getInstance()->put($outMessage, Log::TRACE);
     }
 
-    public static function writeErrorLog(\Exception $e)
+    public static function writeErrorLog(\Throwable $e)
     {
         $outMessage = "文件:{$e->getFile()},第{$e->getLine()}行出错:{$e->getMessage()}\r\n";
         Log::getInstance()->put($outMessage, Log::ERROR);
