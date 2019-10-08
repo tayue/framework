@@ -8,7 +8,7 @@
 
 namespace Framework\SwServer;
 
-class ServerApplication extends BaseServerApplication
+class ServerApplication extends AbstractServerApplication
 {
     public function run(\swoole_http_request $request, \swoole_http_response $response)
     {

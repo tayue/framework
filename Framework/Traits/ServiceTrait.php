@@ -118,8 +118,8 @@ trait ServiceTrait
 
     public function getService($alias_name)
     {
-        if (isset($this->_components[$alias_name])) {
-            return $this->_singletons[$this->_components[$alias_name]];
+        if (isset($this->_services[$alias_name])) {
+            return $this->_singletons[$this->_services[$alias_name]];
         } else if (in_array($alias_name, array_keys(ServerManager::$config['services']))) {
             return $this->createServiceObject($alias_name, ServerManager::$config['services'][$alias_name]);
         }
