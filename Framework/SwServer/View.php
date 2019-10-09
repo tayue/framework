@@ -65,7 +65,6 @@ class View extends BaseObject
         if (!$template_file) {
             $template_file = $action . $fileType;
         }
-        echo date("Y-m-d H:i:s");
         $filePath = SMARTY_TEMPLATE_PATH . '/' . $controller . '/' . $template_file;
         $fetchFile = $controller . '/' . $template_file;
         if ($projectType) {

@@ -70,7 +70,7 @@ class IndexController extends ServerController
 
 //        print_r($userData1);
 //        print_r($userData2);
-        $this->assign('name', 'Swoole Http Server !!!');
+        $this->assign('name', 'Http Server !!!');
         $this->display('index.html');
 
     }
@@ -178,7 +178,7 @@ class IndexController extends ServerController
         $services=DiPool::getInstance()->getServices();
         $comments=DiPool::getInstance()->getComponents();
         $this->util->display();
-        echo ServerManager::getApp()->userService->display();
+        echo ServerManager::getApp()->userService->display()."_____________######\r\n";
         // $a=new MysqlPoolManager(array());
         // var_dump($a);
 //       $cid= CoroutineManager::getInstance()->getCoroutineId();

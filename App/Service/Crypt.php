@@ -15,7 +15,7 @@ use Framework\SwServer\WebSocket\WST;
 class Crypt
 {
     public function display(){
-        echo __CLASS__."==".__METHOD__;
+        echo __CLASS__."==".__METHOD__."__ssdddddd\r\n";
     }
 
 }

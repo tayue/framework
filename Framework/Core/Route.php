@@ -229,13 +229,13 @@ class Route
             $msg = '';
             $request_uri = $request->server['request_uri'];
             $validate = true;
-            $projectType = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->project_type;
+            $projectType = ServerManager::getApp()->project_type;
             $pattern = '/^[0-9a-zA-Z]+$/'; //验证一些参数
             $paramsValPattern = '/[^0-9a-zA-Z]/'; //验证地址参数值(除了字符以外的任意参数)
-            $appNameSpace = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->project_namespace;
+            $appNameSpace = ServerManager::getApp()->project_namespace;
             $_module = $_controller = $_action = '';
             //如果使用了pathinfo的模式的话用pathinfo模式去解析url地址的参数
-            if (ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->routeRule != 1) {
+            if (ServerManager::getApp()->routeRule != 1) {
                 $validate = false;
             }
             $pathInfo = explode('/', trim($request_uri, '/'));
@@ -264,9 +264,9 @@ class Route
                 $validate = false;
             }
             if (!$validate) {
-                $_module = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_module;
-                $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
-                $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
+                $_module = ServerManager::getApp()->default_module;
+                $_controller = ServerManager::getApp()->default_controller;
+                $_action = ServerManager::getApp()->default_action;
             } else {
                 $pathInfoParams = array_slice($pathInfo, $offset); //参数数组
                 for ($i = 0; $i < count($pathInfoParams); $i += 2) { //过滤掉一些不正确的参数key
@@ -283,26 +283,27 @@ class Route
             }
 
             if (!$validate) {
-                $_module = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_module;
-                $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
-                $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
+                $_module = ServerManager::getApp()->default_module;
+                $_controller = ServerManager::getApp()->default_controller;
+                $_action = ServerManager::getApp()->default_action;
             }
             $_module = $module ? $module : false;
             $_controller = $controller ? $controller : false;
             $_action = $action ? $action : false;
             if ($projectType == 1) { //模块化
                 if (!$_module || !$_controller || !$_action) {
-                    $_module = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_module;
-                    $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
-                    $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
+                    $_module = ServerManager::getApp()->default_module;
+                    $_controller = ServerManager::getApp()->default_controller;
+                    $_action = ServerManager::getApp()->default_action;
                 }
             } else {
                 if (!$_controller || !$_action) {
-                    $_controller = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_controller;
-                    $_action = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->default_action;
+                    $_controller = ServerManager::getApp()->default_controller;
+                    $_action = ServerManager::getApp()->default_action;
                 }
             }
-            $coroutineId = ServerManager::getApp(ServerManager::getInstance()->coroutine_id)->coroutine_id;
+
+            $coroutineId = ServerManager::getApp()->coroutine_id;
             $_module && $_module = ucfirst($_module);
             $_module && ServerManager::$app[$coroutineId]->current_module = $_module;
             $_controller && $_controller = ucfirst($_controller);

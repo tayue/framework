@@ -16,11 +16,10 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\Core\Db;
 use Framework\SwServer\Base\BaseObject;
 use Framework\SwServer\Pool\DiPool;
-
+use \Framework\Traits\ServerTrait;
 abstract class AbstractServerApplication extends BaseObject
 {
-    protected $coroutine_id;
-
+    public $coroutine_id;
     public function __construct()
     {
         $this->preInit();
@@ -103,5 +102,5 @@ abstract class AbstractServerApplication extends BaseObject
             parent::__get($name);
         }
     }
-    use \Framework\Traits\ServerTrait;
+    use ServerTrait;
 }
