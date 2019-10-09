@@ -157,7 +157,7 @@ trait ContainerTrait
         foreach ($dependencies as $index => $dependency) {
             if ($dependency instanceof Instance) {
                 if ($dependency->id !== null) {
-                    $dependencies[$index] = $this->get($dependency->id);
+                    $dependencies[$index] = $this->registerObject($dependency->id,['class' => $dependency->id]);
                 } elseif ($reflection !== null) {
                     $name = $reflection->getConstructor()->getParameters()[$index]->getName();
                     $class = $reflection->getName();

@@ -26,6 +26,7 @@ use Framework\SwServer\Inotify\Daemon;
 use Framework\SwServer\ServerController;
 use Framework\SwServer\Event\Event;
 use Framework\SwServer\Event\EventManager;
+use Framework\SwServer\Pool\DiPool;
 class IndexController extends ServerController
 {
     public $userService;
@@ -43,25 +44,22 @@ class IndexController extends ServerController
 
     public function indexAction(Crypt $crypt,Event $e,SendSmsListener $smlistener,SendEmailsListener $semaillistener)
     {
-        $em=ServerManager::getApp()->eventmanager;
-
-        $e->setName("createorder");
-        $em->addListener($smlistener,["createorder"=>1]);
-        $em->addListener($semaillistener,["createorder"=>2]);
-        $em->trigger("createorder",null,['test','test1']);
-        $context = new Co\Context(); //swoole 协程上下文管理器注册上下文环境后协程执行完成后自动回收
-        $context['crypt'] = $crypt; 
-		
-
-
-        var_dump($context);
-        var_dump($this->userService);
-
-       // $userService->display();
-        $this->util->display();
-
-        $crypt->display();
-
+//        $em=ServerManager::getApp()->eventmanager;
+//        $services=DiPool::getInstance()->getServices();
+//        $comments=DiPool::getInstance()->getComponents();
+//        $e->setName("createorder");
+//        $em->addListener($smlistener,["createorder"=>1]);
+//        $em->addListener($semaillistener,["createorder"=>2]);
+//        $em->trigger("createorder",null,['test','test1']);
+//        $context = new Co\Context(); //swoole 协程上下文管理器注册上下文环境后协程执行完成后自动回收
+//        $context['crypt'] = $crypt;
+//
+//
+//       // $userService->display();
+//
+//
+//        $crypt->display();
+//
 //        $this->userService->display();
 //       // $userData1 = ServerManager::getApp()->userService->findUser();
 //       // $userData2 = ServerManager::getApp()->userService->findUser();
@@ -141,43 +139,46 @@ class IndexController extends ServerController
     public
     function indexsAction()
     {
-        go(function () {
-            //从池子中获取一个实例
-            try {
-                $resourceData = MysqlPoolManager::getInstance()->get(5);
-                if ($resourceData) {
-                    $result = $resourceData['resource']->query("select * from user", 2);
-                    print_r($result);
-                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
-                    MysqlPoolManager::getInstance()->put($resourceData);
-                }
-                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//        go(function () {
+//            //从池子中获取一个实例
+//            try {
+//                $resourceData = MysqlPoolManager::getInstance()->get(5);
+//                if ($resourceData) {
+//                    $result = $resourceData['resource']->query("select * from user", 2);
+//                    print_r($result);
+//                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
+//                    MysqlPoolManager::getInstance()->put($resourceData);
+//                }
+//                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//
+//            } catch (\Exception $e) {
+//                echo $e->getMessage();
+//            }
+//        });
+//
+//
+//        go(function () {
+//            //从池子中获取一个实例
+//            try {
+//                $resourceData = RedisPoolManager::getInstance()->get(5);
+//                if ($resourceData) {
+//                    $result = $resourceData['resource']->set('name', 'tayue');
+//                    $result1 = $resourceData['resource']->get('name');
+//                    print_r($result1);
+//                    //\Swoole\Coroutine::sleep(4);
+//                    RedisPoolManager::getInstance()->put($resourceData);
+//                }
+//                echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//
+//            } catch (\Exception $e) {
+//                echo $e->getMessage();
+//            }
+//        });
 
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
-        });
-
-
-        go(function () {
-            //从池子中获取一个实例
-            try {
-                $resourceData = RedisPoolManager::getInstance()->get(5);
-                if ($resourceData) {
-                    $result = $resourceData['resource']->set('name', 'tayue');
-                    $result1 = $resourceData['resource']->get('name');
-                    print_r($result1);
-                    //\Swoole\Coroutine::sleep(4);
-                    RedisPoolManager::getInstance()->put($resourceData);
-                }
-                echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
-
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
-        });
-
-
+        $services=DiPool::getInstance()->getServices();
+        $comments=DiPool::getInstance()->getComponents();
+        $this->util->display();
+        echo ServerManager::getApp()->userService->display();
         // $a=new MysqlPoolManager(array());
         // var_dump($a);
 //       $cid= CoroutineManager::getInstance()->getCoroutineId();

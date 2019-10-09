@@ -5,9 +5,7 @@
 
 namespace Framework\Core;
 
-use Framework\Traits\ContainerTrait;
-use Framework\Traits\SingletonTrait;
-use Framework\SwServer\ServerManager;
+use Framework\SwServer\Pool\DiPool;
 
 class DependencyInjection
 {
@@ -23,7 +21,7 @@ class DependencyInjection
     public static function getInstance($className)
     {
         $paramArr = self::resolveClassMethodDependencies($className);
-        return ServerManager::getApp()->registerObject($className, ['class' => $className], $paramArr);
+        return DiPool::getInstance()->registerObject($className, ['class' => $className], $paramArr);
     }
 
     public static function resolveClassMethodDependencies($className, $method = '__construct')
@@ -43,7 +41,7 @@ class DependencyInjection
                 // 获得参数类型名称
                 $paramClassName = $currentParamsReflectionClass->getName();
                 $paramClassParams = self::resolveClassMethodDependencies($paramClassName);
-                $parameters[] = ServerManager::getApp()->registerObject($paramClassName, ['class' => $paramClassName], $paramClassParams);
+                $parameters[] = DiPool::getInstance()->registerObject($paramClassName, ['class' => $paramClassName], $paramClassParams);
             }
 
         }
