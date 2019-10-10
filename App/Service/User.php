@@ -19,9 +19,11 @@ class User
 
     public $crypt;
 
+    public $name="userService";
     public function __construct(Crypt $crypt)
     {
         $this->crypt=$crypt;
+        $this->name=$this->name."=>".date("Y-m-d H:i:s");
     }
 
     public function findUser()

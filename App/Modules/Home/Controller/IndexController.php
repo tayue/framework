@@ -70,7 +70,8 @@ class IndexController extends ServerController
 
 //        print_r($userData1);
 //        print_r($userData2);
-        $this->assign('name', 'Http Server !!!');
+        print_r(ServerManager::getApp());
+        $this->assign('name', 'Http Server  sssss !!!');
         $this->display('index.html');
 
     }

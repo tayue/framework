@@ -19,7 +19,7 @@ abstract class BaseServerManager
     public static $pidFile;
     public static $server;
     public $swoole_server;
-    public static $config;
+    public static $config = [];
     public $coroutine_id;
 
     protected static $pack_check_type = 'length';
@@ -152,7 +152,7 @@ abstract class BaseServerManager
 
     /**
      * setWorkerUserGroup 设置worker进程的工作组，默认是root
-     * @param  string $worker_user
+     * @param string $worker_user
      */
     public static function setWorkerUserGroup($worker_user = null)
     {
@@ -167,7 +167,7 @@ abstract class BaseServerManager
 
     /**
      * getIncludeFiles 获取woker启动前已经加载的文件
-     * @param   string $dir
+     * @param string $dir
      * @return   void
      */
     public static function getIncludeFiles($dir = 'Http')
@@ -192,15 +192,17 @@ abstract class BaseServerManager
 
     /**
      * startInclude 设置需要在workerstart启动时加载的配置文件
-     * @param  array $includes
+     * @param array $includes
      * @return   void
      */
     public static function startInclude()
     {
         $includeFiles = isset(static::$config['include_files']) ? static::$config['include_files'] : [];
+        self::$config = [];
         if ($includeFiles) {
             foreach ($includeFiles as $filePath) {
-                include_once $filePath;
+                $currentIncludeConfigs = include $filePath;
+                self::$config = array_merge(self::$config, $currentIncludeConfigs);
             }
         }
     }

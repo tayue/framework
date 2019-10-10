@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * 方法回调超时抛异常
  * User: hdeng
  * Date: 2018/12/7
  * Time: 9:05

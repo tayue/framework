@@ -62,6 +62,10 @@ class WebServer extends BaseServer
         ServerManager::$serverApp = \serialize($app);
     }
 
+    function onWorkerStop($server, $worker_id){
+
+    }
+
     function onConnect($server, $client_id, $from_id)
     {
         // TODO: Implement onConnect() method.

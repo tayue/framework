@@ -1,5 +1,7 @@
 <?php
-//容器池
+/**
+ * 容器对象池
+ */
 
 namespace Framework\SwServer\Pool;
 use \Framework\Traits\ComponentTrait;
@@ -52,6 +54,5 @@ class DiPool
             }
         }
     }
-
     use ComponentTrait, ServiceTrait, ContainerTrait;
 }

@@ -14,11 +14,13 @@ return [
     'default_module' => 'Home', //1:PATHINFO 2:QUERY
     'default_controller' => 'Index',
     'timeZone'=>'PRC',
+    'test_mark'=>"cc",
     'default_action' => 'index',
     'current_module' => '',
     'current_controller' => '',
     'current_action' => '',
     'basePath' => dirname(__DIR__),
+    'include_files'=>[__DIR__.DIRECTORY_SEPARATOR.'config.php',__DIR__.DIRECTORY_SEPARATOR.'server.php'], //重启工作进程时需要重新载入的配置文件
     'log'=>[
         'log_dir'=>dirname(__DIR__).DIRECTORY_SEPARATOR.'Log',
         'is_display'=>true

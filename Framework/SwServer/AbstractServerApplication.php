@@ -40,7 +40,7 @@ abstract class AbstractServerApplication extends BaseObject
         (isset(ServerManager::$config['log']) && ServerManager::$config['log']) && Log::getInstance()->setConfig(ServerManager::$config['log']);
         Db::setConfig(ServerManager::$config['components']['db']['config']);
         $this->setApp();
-        ServerManager::configure(ServerManager::$app[$this->coroutine_id], ServerManager::$config);
+        //ServerManager::configure(ServerManager::$app[$this->coroutine_id], ServerManager::$config);
     }
 
     public function setTimeZone($value)
@@ -99,7 +99,11 @@ abstract class AbstractServerApplication extends BaseObject
         if ($res) {
             return $res;
         } else {
-            parent::__get($name);
+            if(isset(ServerManager::$config[$name])){
+                return ServerManager::$config[$name];
+            }else{
+                parent::__get($name);
+            }
         }
     }
     use ServerTrait;
