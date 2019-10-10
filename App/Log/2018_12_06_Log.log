@@ -1,0 +1,77 @@
+[2018-12-06 17:37:40]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:37:40]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第209行出错:Uncaught Exception: Fatal error: Class 'App\Modules\Home\Controller\sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30 in /home/wwwroot/default/framework/Framework/Core/Route.php:209
+Stack trace:
+#0 /home/wwwroot/default/framework/Framework/Web/Application.php(24): Framework\Core\Route::parseRouteUrl()
+#1 /home/wwwroot/default/framework/public/index.php(83): Framework\Web\Application->run(Array)
+#2 {main}
+  thrown
+
+[2018-12-06 17:38:04]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:38:04]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第362行出错:Fatal error: Class 'sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30
+
+[2018-12-06 17:38:04]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 1
+
+[2018-12-06 17:38:04]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 2
+
+[2018-12-06 17:41:20]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:20]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第362行出错:Fatal error: Class 'sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30
+
+[2018-12-06 17:41:20]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 1
+
+[2018-12-06 17:41:20]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 2
+
+[2018-12-06 17:41:21]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:21]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第362行出错:Fatal error: Class 'sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30
+
+[2018-12-06 17:41:21]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 1
+
+[2018-12-06 17:41:21]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 2
+
+[2018-12-06 17:41:21]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:21]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第362行出错:Fatal error: Class 'sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30
+
+[2018-12-06 17:41:21]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 1
+
+[2018-12-06 17:41:21]	TRACE	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第242行出错:Undefined offset: 2
+
+[2018-12-06 17:41:23]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:23]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第209行出错:Uncaught Exception: Fatal error: Class 'App\Modules\Home\Controller\sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30 in /home/wwwroot/default/framework/Framework/Core/Route.php:209
+Stack trace:
+#0 /home/wwwroot/default/framework/Framework/Web/Application.php(24): Framework\Core\Route::parseRouteUrl()
+#1 /home/wwwroot/default/framework/public/index.php(83): Framework\Web\Application->run(Array)
+#2 {main}
+  thrown
+
+[2018-12-06 17:41:23]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:23]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第209行出错:Uncaught Exception: Fatal error: Class 'App\Modules\Home\Controller\sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30 in /home/wwwroot/default/framework/Framework/Core/Route.php:209
+Stack trace:
+#0 /home/wwwroot/default/framework/Framework/Web/Application.php(24): Framework\Core\Route::parseRouteUrl()
+#1 /home/wwwroot/default/framework/public/index.php(83): Framework\Web\Application->run(Array)
+#2 {main}
+  thrown
+
+[2018-12-06 17:41:23]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:23]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第209行出错:Uncaught Exception: Fatal error: Class 'App\Modules\Home\Controller\sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30 in /home/wwwroot/default/framework/Framework/Core/Route.php:209
+Stack trace:
+#0 /home/wwwroot/default/framework/Framework/Web/Application.php(24): Framework\Core\Route::parseRouteUrl()
+#1 /home/wwwroot/default/framework/public/index.php(83): Framework\Web\Application->run(Array)
+#2 {main}
+  thrown
+
+[2018-12-06 17:41:23]	TRACE	文件:/home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php,第29行出错:Undefined variable: a
+
+[2018-12-06 17:41:23]	ERROR	文件:/home/wwwroot/default/framework/Framework/Core/Route.php,第209行出错:Uncaught Exception: Fatal error: Class 'App\Modules\Home\Controller\sss' not found on /home/wwwroot/default/framework/App/Modules/Home/Controller/IndexController.php on line 30 in /home/wwwroot/default/framework/Framework/Core/Route.php:209
+Stack trace:
+#0 /home/wwwroot/default/framework/Framework/Web/Application.php(24): Framework\Core\Route::parseRouteUrl()
+#1 /home/wwwroot/default/framework/public/index.php(83): Framework\Web\Application->run(Array)
+#2 {main}
+  thrown
+

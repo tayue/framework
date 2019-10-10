@@ -42,8 +42,21 @@ class IndexController extends ServerController
 
     }
 
+    protected function testcoro(){
+        $context = Co::getContext(); //携程中的上下文资源管理器，携程退出自动清理上下文资源
+        $context["test"]="haha1";
+        $context["dd"]="dd1";
+        var_dump($context);
+    }
+
     public function indexAction(Crypt $crypt,Event $e,SendSmsListener $smlistener,SendEmailsListener $semaillistener)
     {
+        $context = Co::getContext();
+        $context["test"]="haha";
+        $context["dd"]="dd";
+        $this->testcoro();
+        var_dump($context["test"],$context["dd"]);
+
 //        $em=ServerManager::getApp()->eventmanager;
 //        $services=DiPool::getInstance()->getServices();
 //        $comments=DiPool::getInstance()->getComponents();
@@ -140,6 +153,9 @@ class IndexController extends ServerController
     public
     function indexsAction()
     {
+        $context = Co::getContext();
+        var_dump($context);
+        print_r(ServerManager::getApp());
 //        go(function () {
 //            //从池子中获取一个实例
 //            try {

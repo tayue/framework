@@ -1,53 +1,5 @@
 [
     {
-        "name": "eaglewu/swoole-ide-helper",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/wudi/swoole-ide-helper.git",
-            "reference": "51672c1ea0c1a029b07f19113b2d84182647af8d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/wudi/swoole-ide-helper/zipball/51672c1ea0c1a029b07f19113b2d84182647af8d",
-            "reference": "51672c1ea0c1a029b07f19113b2d84182647af8d",
-            "shasum": "",
-            "mirrors": [
-                {
-                    "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                    "preferred": true
-                }
-            ]
-        },
-        "time": "2018-12-16T07:18:40+00:00",
-        "type": "library",
-        "installation-source": "source",
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "eagle",
-                "email": "eaglewudi@gmail.com",
-                "role": "lead"
-            }
-        ],
-        "description": "Swoole IDE Helper, to improve auto-completion",
-        "keywords": [
-            "autocomplete",
-            "codeintel",
-            "helper",
-            "ide",
-            "netbeans",
-            "phpdoc",
-            "phpstorm",
-            "sublime",
-            "swoole"
-        ]
-    },
-    {
         "name": "mtdowling/cron-expression",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -60,13 +12,7 @@
             "type": "zip",
             "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/37faa61b1ad8d19037753f893f97da927c787de0",
             "reference": "37faa61b1ad8d19037753f893f97da927c787de0",
-            "shasum": "",
-            "mirrors": [
-                {
-                    "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                    "preferred": true
-                }
-            ]
+            "shasum": ""
         },
         "require": {
             "php": ">=7.0.0"
@@ -101,39 +47,36 @@
     },
     {
         "name": "smarty/smarty",
-        "version": "v3.1.33",
-        "version_normalized": "3.1.33.0",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f"
+            "reference": "c9f0de05f41b9e52798b268ab1e625fac3b8578c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/dd55b23121e55a3b4f1af90a707a6c4e5969530f",
-            "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f",
-            "shasum": "",
-            "mirrors": [
-                {
-                    "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                    "preferred": true
-                }
-            ]
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/c9f0de05f41b9e52798b268ab1e625fac3b8578c",
+            "reference": "c9f0de05f41b9e52798b268ab1e625fac3b8578c",
+            "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2018-09-12T20:54:16+00:00",
+        "require-dev": {
+            "phpunit/phpunit": "6.4.1"
+        },
+        "time": "2019-02-28T06:42:20+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
                 "dev-master": "3.1.x-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
-            "files": [
-                "libs/bootstrap.php"
+            "classmap": [
+                "libs/"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -159,5 +102,40 @@
         "keywords": [
             "templating"
         ]
+    },
+    {
+        "name": "swoole/ide-helper",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/swoole/ide-helper.git",
+            "reference": "f1d314b440d03dacc2b4a473db3ae97d2af5cdfd"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/swoole/ide-helper/zipball/f1d314b440d03dacc2b4a473db3ae97d2af5cdfd",
+            "reference": "f1d314b440d03dacc2b4a473db3ae97d2af5cdfd",
+            "shasum": ""
+        },
+        "require-dev": {
+            "squizlabs/php_codesniffer": "~3.4.0",
+            "symfony/filesystem": "~4.3.0",
+            "zendframework/zend-code": "~3.3.0"
+        },
+        "time": "2019-10-05T04:09:48+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Team Swoole",
+                "email": "team@swoole.com"
+            }
+        ],
+        "description": "IDE help files for Swoole."
     }
 ]
