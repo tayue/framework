@@ -7,10 +7,7 @@
  */
 
 namespace Framework\Web;
-
-
 use Framework\Core\Db;
-
 use Framework\Core\Route;
 
 
