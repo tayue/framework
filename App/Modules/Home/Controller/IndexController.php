@@ -94,14 +94,14 @@ class IndexController extends ServerController
 //        $crypt->display();
 //
         $this->userService->display();
-        Runtime::enableStrictMode();
+        //Runtime::enableStrictMode();
 
             //从池子中获取一个实例
             try {
                 $resourceData = MysqlPoolManager::getInstance()->get(5);
                 if ($resourceData) {
                     print_r($resourceData);
-                    $result = $resourceData['resource']->query("select * from user", 2);
+                    $result = $resourceData['resource']->query("select * from user");
                     print_r($result);
                     //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($resourceData);

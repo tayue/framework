@@ -7,9 +7,6 @@
  */
 
 namespace Framework\SwServer\Pool;
-
-use Framework\Core\Exception;
- 
 use Framework\Traits\SingletonTrait;
 use Framework\Core\Mysql;
 use Framework\SwServer\ServerManager;
@@ -37,7 +34,7 @@ class MysqlPoolManager extends PoolBase
     {
         try {
             $mysql = new Mysql($this->config);
-            if(ServerManager::$isEnableRuntimeCoroutine){ //没有开启运行时协程那么自动切换到协程mysql客户端
+            if(!ServerManager::$isEnableRuntimeCoroutine){ //没有开启运行时协程那么自动切换到协程mysql客户端
                 $mysql =$mysql->selectMysql();
             }
             if (!$mysql) {
