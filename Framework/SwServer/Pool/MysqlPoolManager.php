@@ -9,11 +9,14 @@
 namespace Framework\SwServer\Pool;
 
 use Framework\Core\Exception;
-use \Swoole\Coroutine\MySQL;
+ 
+use Framework\Traits\SingletonTrait;
+use Framework\Core\Mysql;
+use Framework\SwServer\ServerManager;
 
 class MysqlPoolManager extends PoolBase
 {
-    use \Framework\Traits\SingletonTrait;
+    use SingletonTrait;
     public $poolObject = '';
     public $default_config = [
         'host' => '192.168.99.88',   //数据库ip
@@ -33,20 +36,22 @@ class MysqlPoolManager extends PoolBase
     public function checkConnection()
     {
         try {
-            $mysql = new MySQL();
-            $res = $mysql->connect($this->config);
-            if ($res == false) {
-                //连接失败，抛弃常
-                throw new Exception("failed to connect mysql server.");
+            $mysql = new Mysql($this->config);
+            if(ServerManager::$isEnableRuntimeCoroutine){ //没有开启运行时协程那么自动切换到协程mysql客户端
+                $mysql =$mysql->selectMysql();
             }
-        } catch (Exception $e) {
+            if (!$mysql) {
+                //连接失败，抛弃常
+                throw new \Exception("failed to connect mysql server.");
+            }
+        } catch (\Exception $e) {
             echo $e->getMessage() . "\r\n";
             return false;
         }
         return $mysql;
     }
 
-    private function __construct($config = [])
+    public function __construct($config = [])
     {
         if ($config) {
             $this->config = array_merge($this->default_config, $config);

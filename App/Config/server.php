@@ -55,13 +55,69 @@ return [
         // ]
     ],
     'mysql_pool' => [
+        // 数据库类型
+        'type' => 'mysql',
+        // 服务器地址
+        'hostname' => 'localhost',
+        // 数据库名
+        'database' => 'test',
+        // 用户名
+        'username' => 'root',
+        // 密码
+        'password' => 'root',
+        // 端口
+        'hostport' => '3306',
+        // 连接dsn
+        // 'dsn'             => '',
+        // 数据库连接参数
+        // 'params'          => [],
+        // 数据库编码默认采用utf8
+        'charset' => 'utf8',
+        // 数据库表前缀
+        // 'prefix'          => '',
+        // 数据库调试模式
+        'debug' => true,
+        // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
+        // 'deploy'          => 0,
+        // 数据库读写是否分离 主从式有效
+        // 'rw_separate'     => false,
+        // 读写分离后 主服务器数量
+        // 'master_num'      => 1,
+        // 指定从服务器序号
+        // 'slave_no'        => '',
+        // 是否严格检查字段是否存在
+        // 'fields_strict'   => true,
+        // 数据集返回类型
+        'resultset_type' => 'collection',
+        // 自动写入时间戳字段
+        // 'auto_timestamp'  => false,
+        // 时间字段取出后的默认时间格式
+        // 'datetime_format' => 'Y-m-d H:i:s',
+        // 是否需要进行SQL性能分析
+        // 'sql_explain'     => false,
+        // Builder类
+        // 'builder'         => '',
+        // Query类
+        'query' => '\\Framework\Core\\db\\Query',
+        // 是否需要断线重连
+        'break_reconnect' => true,
+        'timeout' => 0.5,       //数据库连接超时时间
+        'charset' => 'utf8', //默认字符集
+        'strict_type' => true,  //ture，会自动表数字转为int类型
+        'space_time' => 10 * 3600,
+        'mix_pool_size' => 2,     //最小连接池大小
+        'max_pool_size' => 10,    //最大连接池大小
+        'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
+    ],
+    'coro_mysql_pool' => [
         'host' => '192.168.99.88',   //数据库ip
         'port' => 3306,          //数据库端口
         'user' => 'root',        //数据库用户名
+        'username' => 'root',        //数据库用户名
         'password' => 'root', //数据库密码
         'database' => 'test',   //默认数据库名
         'timeout' => 0.5,       //数据库连接超时时间
-        'charset' => 'utf8mb4', //默认字符集
+        'charset' => 'utf8', //默认字符集
         'strict_type' => true,  //ture，会自动表数字转为int类型
         'space_time' => 10 * 3600,
         'mix_pool_size' => 2,     //最小连接池大小

@@ -11,10 +11,6 @@
 
 namespace Framework\Core;
 
-use Framework\Core\Db;
-use Swoolefy\Core\Application;
-use Swoolefy\Core\Db\MysqlCoroutine;
-
 class Mysql
 {
 
@@ -111,7 +107,7 @@ class Mysql
 
     /**
      * getConfig 获取某个配置项
-     * @param  string $name
+     * @param string $name
      * @return mixed
      */
     public function getConfig(string $name = null)
@@ -185,7 +181,7 @@ class Mysql
 
     /**
      * table 设置查询表
-     * @param  string $table
+     * @param string $table
      * @return object
      */
     public function table($table)
@@ -198,10 +194,10 @@ class Mysql
 
     /**
      * query sql查询类
-     * @param  string $sql
-     * @param  array $bind
-     * @param  boolean $master
-     * @param  boolean $class
+     * @param string $sql
+     * @param array $bind
+     * @param boolean $master
+     * @param boolean $class
      * @return object
      */
     public function query($sql, $bind = [], $master = false, $class = false)
@@ -213,8 +209,8 @@ class Mysql
 
     /**
      * execute sql插入数据
-     * @param  string $sql
-     * @param  array $bind
+     * @param string $sql
+     * @param array $bind
      * @return object
      */
     public function execute($sql, $bind = [])
@@ -226,8 +222,8 @@ class Mysql
 
     /**
      * connect 创建一个新的数据连接实例
-     * @param  array $config
-     * @param  boolean $name
+     * @param array $config
+     * @param boolean $name
      * @return object
      */
     public function connect($config = [], $name = false)
@@ -237,7 +233,7 @@ class Mysql
 
     /**
      * CorMysql 切换至mysql协程客户端
-     * @param    array $extension
+     * @param array $extension
      * @return   CMysql
      */
     public function selectMysql(array $extension = [])
@@ -246,13 +242,14 @@ class Mysql
             return $this->CMysql;
         }
         $this->CMysql = new MysqlCoroutine($this->getConfig(), $extension);
+        $this->CMysql && $this->CMysql=$this->CMysql->getConnection();
         return $this->CMysql;
     }
 
     /**
      * __call
-     * @param  string $method
-     * @param  mixed $args
+     * @param string $method
+     * @param mixed $args
      * @return mixed
      */
     public function __call($method, $args)

@@ -19,6 +19,8 @@ use Framework\Tool\PluginManager;
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\Process\ProcessManager;
 use Framework\SwServer\Coroutine\CoroutineManager;
+use mysqli;
+use PDO;
 use Swoole\Coroutine as co;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
@@ -27,6 +29,7 @@ use Framework\SwServer\ServerController;
 use Framework\SwServer\Event\Event;
 use Framework\SwServer\Event\EventManager;
 use Framework\SwServer\Pool\DiPool;
+use Swoole\Runtime;
 class IndexController extends ServerController
 {
     public $userService;
@@ -34,28 +37,45 @@ class IndexController extends ServerController
     private $event;
 
 
-    public function __construct(User $userService,Util $util)
+    public function __construct(User $userService, Util $util)
     {  //依赖注入
         parent::__construct();
-        $this->userService=$userService;
-        $this->util=$util;
-
+        $this->userService = $userService;
+        $this->util = $util;
     }
 
-    protected function testcoro(){
+    protected function testcoro()
+    {
         $context = Co::getContext(); //携程中的上下文资源管理器，携程退出自动清理上下文资源
-        $context["test"]="haha1";
-        $context["dd"]="dd1";
+        $context["test"] = "haha1";
+        $context["dd"] = "dd1";
         var_dump($context);
     }
 
-    public function indexAction(Crypt $crypt,Event $e,SendSmsListener $smlistener,SendEmailsListener $semaillistener)
+    public function indexAction(Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
     {
         $context = Co::getContext();
-        $context["test"]="haha";
-        $context["dd"]="dd";
+        $context["test"] = "haha";
+        $context["dd"] = "dd";
         $this->testcoro();
-        var_dump($context["test"],$context["dd"]);
+        var_dump($context["test"], $context["dd"]);
+
+
+
+
+//            $db = new \mysqli;
+//            $db->connect('127.0.0.1', 'root', 'root', 'test');
+//
+//            $result = $db->query("show databases");
+//            var_dump($result->fetch_all());
+//
+//            $db = new \PDO("mysql:host=127.0.0.1;dbname=test;charset=utf8", "root", "root");
+//            $query = $db->prepare("select * from userinfo where id=?");
+//            $rs = $query->execute(array(1));
+//            var_dump($rs);
+//            echo count($query->fetchAll());
+//
+//            echo '------------------------------------';
 
 //        $em=ServerManager::getApp()->eventmanager;
 //        $services=DiPool::getInstance()->getServices();
@@ -73,15 +93,33 @@ class IndexController extends ServerController
 //
 //        $crypt->display();
 //
-//        $this->userService->display();
-//       // $userData1 = ServerManager::getApp()->userService->findUser();
+        $this->userService->display();
+        Runtime::enableStrictMode();
+
+            //从池子中获取一个实例
+            try {
+                $resourceData = MysqlPoolManager::getInstance()->get(5);
+                if ($resourceData) {
+                    print_r($resourceData);
+                    $result = $resourceData['resource']->query("select * from user", 2);
+                    print_r($result);
+                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
+                    MysqlPoolManager::getInstance()->put($resourceData);
+                }
+                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+
+        //$userData1 = ServerManager::getApp()->userService->findUser();
 //       // $userData2 = ServerManager::getApp()->userService->findUser();
 //        $userData1=$this->userService->findUser();
 //        $userData2=$this->userService->findUser();
 
         // print_r(ServerManager::getApp('cid_4'));
 
-//        print_r($userData1);
+       // print_r($userData1);
 //        print_r($userData2);
         print_r(ServerManager::getApp());
         $this->assign('name', 'Http Server  sssss !!!');
@@ -127,8 +165,8 @@ class IndexController extends ServerController
 
     /**
      * encode 数据序列化
-     * @param   mixed $data
-     * @param   int $serialize_type
+     * @param mixed $data
+     * @param int $serialize_type
      * @return  string
      */
 
@@ -156,22 +194,22 @@ class IndexController extends ServerController
         $context = Co::getContext();
         var_dump($context);
         print_r(ServerManager::getApp());
-//        go(function () {
-//            //从池子中获取一个实例
-//            try {
-//                $resourceData = MysqlPoolManager::getInstance()->get(5);
-//                if ($resourceData) {
-//                    $result = $resourceData['resource']->query("select * from user", 2);
-//                    print_r($result);
-//                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
-//                    MysqlPoolManager::getInstance()->put($resourceData);
-//                }
-//                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
-//
-//            } catch (\Exception $e) {
-//                echo $e->getMessage();
-//            }
-//        });
+        go(function () {
+            //从池子中获取一个实例
+            try {
+                $resourceData = MysqlPoolManager::getInstance()->get(5);
+                if ($resourceData) {
+                    $result = $resourceData['resource']->query("select * from user", 2);
+                    print_r($result);
+                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
+                    MysqlPoolManager::getInstance()->put($resourceData);
+                }
+                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        });
 //
 //
 //        go(function () {
@@ -192,10 +230,10 @@ class IndexController extends ServerController
 //            }
 //        });
 
-        $services=DiPool::getInstance()->getServices();
-        $comments=DiPool::getInstance()->getComponents();
+        $services = DiPool::getInstance()->getServices();
+        $comments = DiPool::getInstance()->getComponents();
         $this->util->display();
-        echo ServerManager::getApp()->userService->display()."_____________######\r\n";
+        echo ServerManager::getApp()->userService->display() . "_____________######\r\n";
         // $a=new MysqlPoolManager(array());
         // var_dump($a);
 //       $cid= CoroutineManager::getInstance()->getCoroutineId();
@@ -240,6 +278,8 @@ class IndexController extends ServerController
 //
 //         var_dump(ServerManager::$app);
         // $this->echo2br("App\\Modules\\Home\\Controller\\IndexController\\indexsAction\r\n");
+
+
     }
 
     public
@@ -258,7 +298,7 @@ class IndexController extends ServerController
         // $taskId=TaskManager::asyncTask(["Server/Task/TestTask","asyncTaskTest"],5,$a,$b,$c);
         $taskId1 = TaskManager::coTask(["Server/Task/TestTask", "asyncTaskTest"], 2, $a, $b, $c);
         var_dump($taskId1);
-        TaskManager::processAsyncTask(["Server/Task/TestTask","asyncTaskTest"],$a,$b,$c);
+        TaskManager::processAsyncTask(["Server/Task/TestTask", "asyncTaskTest"], $a, $b, $c);
         // $taskId=TaskManager::syncTask(["Server/Task/TestTask","syncTaskTest"],[$time],13);
         $this->echo2br("syncTaskId:{$taskId1} Finished!\r\n");
     }

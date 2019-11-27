@@ -62,7 +62,8 @@ class WebServer extends BaseServer
         ServerManager::$serverApp = \serialize($app);
     }
 
-    function onWorkerStop($server, $worker_id){
+    function onWorkerStop($server, $worker_id)
+    {
 
     }
 

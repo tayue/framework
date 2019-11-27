@@ -13,6 +13,7 @@ use Framework\SwServer\Protocol\Protocol;
 use Framework\SwServer\Process\Interfaces\ProcessMessageInterface;
 use Framework\Tool\PluginManager;
 use Framework\SwServer\Table\TableManager;
+use Swoole\Runtime;
 
 abstract class BaseServer implements Protocol
 {
@@ -65,6 +66,12 @@ abstract class BaseServer implements Protocol
      * @var boolean
      */
     public static $isEnableCoroutine = false;
+
+    /**
+     * $isEnableRuntimeCoroutine 是否开启运行时协程
+     * @var boolean
+     */
+    public static $isEnableRuntimeCoroutine = false;
 
     /**
      * $_tasks 实时内存表保存数据,所有worker共享
@@ -156,6 +163,15 @@ abstract class BaseServer implements Protocol
     public static function enableCoroutine()
     {
         if (version_compare(swoole_version(), '4.0.0', '>')) {
+            //从4.1.0版本开始支持了对PHP原生Redis、PDO、MySQLi协程化的支持。可使用Swoole\Runtime::enableCorotuine()将普通的同步阻塞Redis、PDO、MySQLi操作变为协程调度的异步非阻塞IO
+            if (version_compare(swoole_version(), '4.1.0', '>')){
+                echo "\e[32m" . str_pad("Swoole\Runtime::enableCorotuine ", 20, ' ', STR_PAD_RIGHT) . "\e[34m" . "enableCorotuine" . "\e[0m\n";
+                self::$isEnableRuntimeCoroutine=true;
+                Runtime::enableCoroutine();
+            }else{
+                echo "\e[32m" . str_pad("Swoole\Runtime::enableStrictMode ", 20, ' ', STR_PAD_RIGHT) . "\e[34m" . "enableStrictMode" . "\e[0m\n";
+                Runtime::enableStrictMode();
+            }
             self::$isEnableCoroutine = true;
             return;
         } else {
@@ -212,6 +228,15 @@ abstract class BaseServer implements Protocol
     public static function canEnableCoroutine()
     {
         return self::$isEnableCoroutine;
+    }
+
+    /**
+     * isEnableRuntimeCoroutine
+     * @return boolean
+     */
+    public static function canEnableRuntimeCoroutine()
+    {
+        return self::$isEnableRuntimeCoroutine;
     }
 
     public function setTimeZone()

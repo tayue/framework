@@ -7,6 +7,7 @@
  */
 
 namespace Framework\SwServer;
+use Framework\SwServer\Base\BaseObject;
 
 class View extends BaseObject
 {

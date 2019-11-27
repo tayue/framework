@@ -19,16 +19,20 @@ use Framework\SwServer\Process\ProcessManager;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
 use Framework\SwServer\Protocol\TcpServer;
+use Framework\Traits\SingletonTrait;
+use Framework\Traits\AppTrait;
+use Framework\SwServer\Protocol\Protocol;
 
 class ServerManager extends BaseServerManager
 {
-    use \Framework\Traits\SingletonTrait, \Framework\Traits\AppTrait;
+    use SingletonTrait, AppTrait;
     const TYPE_SERVER = 'SERVER';
     const TYPE_WEB_SERVER = 'WEB_SERVER';
     const TYPE_WEB_SOCKET_SERVER = 'WEB_SOCKET_SERVER';
     public $protocol;
     public static $isWebServer = false;
     public static $isWebSocketServer = false;
+    public static $isEnableRuntimeCoroutine = false;
     public static $serviceType;
     public static $tables = [];
     public static $serverApp;
@@ -39,7 +43,7 @@ class ServerManager extends BaseServerManager
 
     }
 
-    public function setProtocol(\Framework\SwServer\Protocol\Protocol $protocol)
+    public function setProtocol(Protocol $protocol)
     {
         $this->protocol = $protocol;
     }
@@ -80,6 +84,7 @@ class ServerManager extends BaseServerManager
                 break;
         }
         $this->swoole_server = $this->protocol->createServer();
+        self::$isEnableRuntimeCoroutine = $this->protocol::canEnableRuntimeCoroutine();
         self::$server = $this->swoole_server;
         Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
@@ -173,7 +178,8 @@ class ServerManager extends BaseServerManager
             $this->setProcessName($this->getProcessName() . ': task');
         } else {
             $this->setProcessName($this->getProcessName() . ': worker');
-            MysqlPoolManager::getInstance()->clearSpaceResources();
+            print_r(self::$config['mysql_pool']);
+            MysqlPoolManager::getInstance(self::$config['mysql_pool'])->clearSpaceResources();
             RedisPoolManager::getInstance()->clearSpaceResources();
         }
         if (method_exists($this->protocol, 'onStart')) {

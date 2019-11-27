@@ -7,6 +7,7 @@
  */
 
 namespace Framework\SwServer\Pool;
+use Swoole\Coroutine\Channel;
 
 class PoolBase implements Pool
 {
@@ -29,7 +30,7 @@ class PoolBase implements Pool
             (isset($this->config['mix_pool_size']) && $this->config['mix_pool_size']) && $this->min = $this->config['mix_pool_size'];
             (isset($this->config['max_pool_size']) && $this->config['max_pool_size']) && $this->max = $this->config['max_pool_size'];
             (isset($this->config['space_time']) && $this->config['space_time']) && $this->spaceTime = $this->config['space_time'];
-            $this->pool = new \Swoole\Coroutine\Channel($this->max + 1); //最大+1预留多一个空间
+            $this->pool = new Channel($this->max + 1); //最大+1预留多一个空间
             $this->initPool();
         }
     }
