@@ -256,20 +256,8 @@ class Mysql
     {
         $this->setConfig();
         $this->setCacheHandler();
-        // set hook call
-        Application::getApp()->afterRequest([$this, 'clear']);
         return Db::$method($args);
     }
-
-    /**
-     * clear 清空静态变量
-     * @return void
-     */
-    public function clear()
-    {
-        Db::$queryTimes = 0;
-        Db::$executeTimes = 0;
-        Db::clear();
-    }
+ 
 
 }

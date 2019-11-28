@@ -1,12 +1,11 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: zhjx
+ * User: dengh
  * Date: 2018/11/5
  * Time: 11:19
  */
 
-use Framework\Web\Application;
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\Inotify\Daemon;
 

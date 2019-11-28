@@ -22,6 +22,7 @@ use Framework\SwServer\Protocol\TcpServer;
 use Framework\Traits\SingletonTrait;
 use Framework\Traits\AppTrait;
 use Framework\SwServer\Protocol\Protocol;
+use Framework\SwServer\Crontab\CronRunner;
 
 class ServerManager extends BaseServerManager
 {
@@ -88,7 +89,7 @@ class ServerManager extends BaseServerManager
         self::$server = $this->swoole_server;
         Sw::$server = self::$server;
         $this->registerDefaultEventCallback();
-        ProcessManager::getInstance()->addProcess('CronRunner', \Framework\SwServer\Crontab\CronRunner::class, true, Crontab::getInstance()->getTasks());
+        ProcessManager::getInstance()->addProcess('CronRunner', CronRunner::class, true, Crontab::getInstance()->getTasks());
         (isset(self::$config['log']) && self::$config['log']) && Log::getInstance()->setConfig(self::$config['log']);
 
     }
@@ -178,9 +179,8 @@ class ServerManager extends BaseServerManager
             $this->setProcessName($this->getProcessName() . ': task');
         } else {
             $this->setProcessName($this->getProcessName() . ': worker');
-            print_r(self::$config['mysql_pool']);
             MysqlPoolManager::getInstance(self::$config['mysql_pool'])->clearSpaceResources();
-            RedisPoolManager::getInstance()->clearSpaceResources();
+            RedisPoolManager::getInstance(self::$config['redis_pool'])->clearSpaceResources();
         }
         if (method_exists($this->protocol, 'onStart')) {
             $this->protocol->onStart($server, $worker_id);
