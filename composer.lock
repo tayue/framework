@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59924b944e5f01bbba48f5178519db0e",
+    "content-hash": "b54741768a7b593b6c352b5ceb513333",
     "packages": [
         {
             "name": "mtdowling/cron-expression",
@@ -18,13 +18,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/37faa61b1ad8d19037753f893f97da927c787de0",
                 "reference": "37faa61b1ad8d19037753f893f97da927c787de0",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.0.0"
@@ -57,6 +51,61 @@
             "time": "2017-10-12T15:50:39+00:00"
         },
         {
+            "name": "predis/predis",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nrk/predis.git",
+                "reference": "d72f0678bade78af953605622760fe262d82eb58"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/d72f0678bade78af953605622760fe262d82eb58",
+                "reference": "d72f0678bade78af953605622760fe262d82eb58",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "ext-curl": "Allows access to Webdis when paired with phpiredis",
+                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniele Alessandri",
+                    "email": "suppakilla@gmail.com",
+                    "homepage": "http://clorophilla.net"
+                }
+            ],
+            "description": "Flexible and feature-complete Redis client for PHP and HHVM",
+            "homepage": "http://github.com/nrk/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "time": "2017-07-12T14:44:10+00:00"
+        },
+        {
             "name": "smarty/smarty",
             "version": "v3.1.33",
             "source": {
@@ -68,13 +117,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/smarty-php/smarty/zipball/dd55b23121e55a3b4f1af90a707a6c4e5969530f",
                 "reference": "dd55b23121e55a3b4f1af90a707a6c4e5969530f",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.2"
@@ -120,7 +163,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "mtdowling/cron-expression": 20
+        "mtdowling/cron-expression": 20,
+        "predis/predis": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
