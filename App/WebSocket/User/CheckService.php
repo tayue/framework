@@ -8,8 +8,8 @@
 
 namespace App\WebSocket\User;
 
-use Framework\SwServer\Coroutine\CoroutineModel;
-use Framework\SwServer\WebSocket\WST;
+use Framework\SwServer\Pool\DiPool;
+use Framework\SwServer\ServerManager;
 use Framework\SwServer\Base\BaseServerEvent;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Task\TaskManager;
@@ -19,11 +19,11 @@ class CheckService extends BaseServerEvent
     public function test($params)
     {
         $flag = false;
-        $userData = WST::getInstance()->getApp()->userService->findUser();
+        $userData = ServerManager::getInstance()->getApp()->userService->findUser();
         $datas = [
             'flag' => true,
-            'coroutine_id' => WST::getInstance()->getApp()->coroutine_id,
-            'fd' => WST::getInstance()->getApp()->fd,
+            'coroutine_id' => ServerManager::getInstance()->getApp()->coroutine_id,
+            'fd' => ServerManager::getInstance()->getApp()->fd,
             'time' => date("Y-m-d H:i:s"),
             'params' => $params,
             'datas'=>$userData
@@ -64,11 +64,12 @@ class CheckService extends BaseServerEvent
     public function tcp($params)
     {
         $flag = false;
-        $userData = WST::getInstance()->getApp()->userService->findUser();
+
+        $userData = ServerManager::getInstance()->getApp()->userService->findUser();
         $datas = [
             'flag' => true,
-            'coroutine_id' => WST::getInstance()->getApp()->coroutine_id,
-            'fd' => WST::getInstance()->getApp()->fd,
+            'coroutine_id' => ServerManager::getInstance()->getApp()->coroutine_id,
+            'fd' => ServerManager::getInstance()->getApp()->fd,
             'time' => date("Y-m-d H:i:s"),
             'params' => $params,
             'datas'=>$userData

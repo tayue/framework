@@ -14,6 +14,7 @@ use App\Listener\SendEmailsListener;
 use Framework\Core\Controller;
 use App\Service\User;
 use App\Service\Crypt;
+use Framework\Tool\Tool;
 use Framework\SwServer\Task\TaskManager;
 use Framework\Tool\PluginManager;
 use Framework\SwServer\ServerManager;
@@ -37,6 +38,7 @@ class IndexController extends ServerController
     public $userService;
     public $util;
     private $event;
+    public $tool;
 
 
     public function __construct(User $userService, Util $util)
@@ -54,12 +56,13 @@ class IndexController extends ServerController
         var_dump($context);
     }
 
-    public function indexAction(Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
+    public function indexAction(Tool $tool,Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
     {
         $context = Co::getContext();
         $context["test"] = "haha";
         $context["dd"] = "dd";
         $this->testcoro();
+        $this->tool=$tool;
         var_dump($context["test"], $context["dd"]);
 
         try {
@@ -67,10 +70,10 @@ class IndexController extends ServerController
             if ($resourceData) {
                 $result = $resourceData['resource']->set('name', 'tayue');
                 $result1 = $resourceData['resource']->get('library');
-                $result1 = $resourceData['resource']->get('name');
+                $result2 = $resourceData['resource']->get('name');
 
-                print_r($resourceData);
-                var_dump($result1);
+
+                var_dump($result1,$result2);
                 //\Swoole\Coroutine::sleep(4);
                 RedisPoolManager::getInstance()->put($resourceData);
             }

@@ -7,6 +7,7 @@
  */
 
 namespace Framework\Traits;
+
 use Framework\Di\Instance;
 
 trait ContainerTrait
@@ -33,43 +34,34 @@ trait ContainerTrait
      */
     private $_dependencies = [];
 
-    public function get($class, $params = [], $config = [])
+    public function make($class, $params = [], $config = [])
     {
         if (isset($this->_singletons[$class])) {
-            // singleton
             return $this->_singletons[$class];
         } elseif (!isset($this->_definitions[$class])) {
-            return $this->build($class, $params, $config);
+            return $this->setSingleton($class, $config, $params);
         }
-
         $definition = $this->_definitions[$class];
-        if (\is_callable($definition, true)) {
+        if (is_callable($definition, true)) {
             $params = $this->resolveDependencies($this->mergeParams($class, $params));
-            $object = \call_user_func($definition, $this, $params, $config);
-        } elseif (\is_array($definition)) {
+            $object = call_user_func($definition, $this, $params, $config);
+        } elseif (is_array($definition)) {
             $concrete = $definition['class'];
             unset($definition['class']);
-
-            $config = \array_merge($definition, $config);
+            $config = array_merge($definition, $config);
             $params = $this->mergeParams($class, $params);
-
             if ($concrete === $class) {
-                $object = $this->build($class, $params, $config);
+                $object = $this->build($class, $config, $params);
             } else {
-                $object = $this->get($concrete, $params, $config);
+                $object = $this->make($concrete, $params, $config);
             }
-        } elseif (\is_object($definition)) {
+        } elseif (is_object($definition)) {
             return $this->_singletons[$class] = $definition;
         } else {
             throw new \Exception('Unexpected object definition type: ' . \gettype($definition));
         }
-
-        if (\array_key_exists($class, $this->_singletons)) {
-            // singleton
-            $this->_singletons[$class] = $object;
-        }
-
-        return $object;
+        $this->_singletons[$class] = $object;
+        return $this->_singletons[$class];
     }
 
     /**
@@ -157,7 +149,7 @@ trait ContainerTrait
         foreach ($dependencies as $index => $dependency) {
             if ($dependency instanceof Instance) {
                 if ($dependency->id !== null) {
-                    $dependencies[$index] = $this->registerObject($dependency->id,['class' => $dependency->id]);
+                    $dependencies[$index] = $this->registerObject($dependency->id, ['class' => $dependency->id]);
                 } elseif ($reflection !== null) {
                     $name = $reflection->getConstructor()->getParameters()[$index]->getName();
                     $class = $reflection->getName();
@@ -165,7 +157,6 @@ trait ContainerTrait
                 }
             }
         }
-
         return $dependencies;
     }
 
@@ -202,11 +193,11 @@ trait ContainerTrait
     public function createObject($type, array $params = [])
     {
         if (is_string($type)) {
-            return $this->get($type, $params);
+            return $this->make($type, $params);
         } elseif (is_array($type) && isset($type['class'])) {
             $class = $type['class'];
             unset($type['class']);
-            return $this->get($class, $params, $type);
+            return $this->make($class, $params, $type);
         } elseif (is_array($type)) {
             throw new \Exception('Object configuration must be an array containing a "class" element.');
         }
@@ -214,12 +205,16 @@ trait ContainerTrait
         throw new \Exception('Unsupported configuration type: ' . gettype($type));
     }
 
-    public function registerObject(string $com_alias_name, $definition = [], array $params = [])
+    public function registerObject(string $com_alias_name, $definition = [], array $params = [], $isForceInstance = false)
     {
         if ($com_alias_name && is_array($definition) && isset($definition['class'])) {
             $class = $definition['class'];
             unset($definition['class']);
-            return $this->setSingleton($class, $definition, $params);
+            if (!$isForceInstance) { //如果不重新获取实例那么引用容器里的单例对象
+                return $this->make($class, $params, $definition);
+            } else { //如果暴力重新获取对象那么重新实例化
+                return $this->setSingleton($class, $definition, $params);
+            }
         }
         throw new \Exception('No registerObject');
     }
@@ -262,7 +257,6 @@ trait ContainerTrait
 
         return $ps;
     }
-
 
 
 }

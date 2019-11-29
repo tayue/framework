@@ -29,8 +29,7 @@ return [
         'tool' => [
             'class' => 'Framework\Tool\Tool',
             'arr' => [1, 2, 3],
-
-        ],
+         ],
         'db' => [
             'is_destroy' => 0,//每次请求后是否销毁对象
             'is_delay' => true,//延迟创建实例，请求时候再创建
@@ -102,6 +101,9 @@ return [
         'userService' => [
             'class' => 'App\Service\User',
             'arr' => [1, 2, 3,4],
+       ],
+        'cryptService' => [
+            'class' => 'App\Service\Crypt'
        ],
     ]
 ];

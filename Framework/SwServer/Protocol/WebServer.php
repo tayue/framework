@@ -10,11 +10,10 @@ namespace Framework\SwServer\Protocol;
 
 use Framework\SwServer\BaseServer;
 use Framework\Tool\Log;
-use Framework\Core\Route;
 use Framework\SwServer\ServerApplication;
 use Framework\SwServer\ServerManager;
 use Framework\Core\error\CustomerError;
-use Framework\SwServer\Coroutine\CoroutineManager;
+
 
 class WebServer extends BaseServer
 {
@@ -104,7 +103,7 @@ class WebServer extends BaseServer
             $this->fd = $request->fd;
             if ($request->server['request_uri']) { //请求地址
                 $serverApp = \unserialize(ServerManager::$serverApp);
-                $serverApp->run($request, $response);
+                $serverApp->run($this->fd,$request, $response);
             }
             ServerManager::destroy(); //销毁应用实例
             $out1 = ob_get_contents();

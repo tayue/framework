@@ -16,10 +16,16 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\Core\Db;
 use Framework\SwServer\Base\BaseObject;
 use Framework\SwServer\Pool\DiPool;
-use \Framework\Traits\ServerTrait;
+
+use Framework\Traits\ServerTrait;
+use Framework\SwServer\ServerManager;
+
 abstract class AbstractServerApplication extends BaseObject
 {
     public $coroutine_id;
+    public $fd;
+    public $header = null;
+
     public function __construct()
     {
         $this->preInit();
@@ -93,18 +99,65 @@ abstract class AbstractServerApplication extends BaseObject
         Route::parseSwooleRouteUrl($request, $response);
     }
 
+    /**
+     * ping 心跳检测
+     * @return
+     */
+    public function ping($operate = 'null')
+    {
+        if (isset($this->header['ping']) && $this->header['ping'] == 'ping') {
+            return true;
+        } else if (strtolower($operate) == 'ping') {
+            return true;
+        }
+        return false;
+    }
+
+
+    public function parseTcpRoute($messageData)
+    {
+
+        list($messageHeader,$messageBody)=$messageData;
+        echo "Tcp Receive: ".json_encode($messageHeader)."\r\n";
+        // worker进程
+        if ($this->isWorkerProcess()) {
+            $recv = array_values($messageBody);
+            if (is_array($recv) && count($recv) == 3) {
+                list($service, $operate, $params) = $recv;
+            }
+            if ($this->ping($operate)) {
+                $data = 'pong';
+                ServerManager::getSwooleServer()->push($this->fd, $data, $opcode = 1, $finish = true);
+                return;
+            }
+
+            if ($service && $operate) {
+                $callable = [$service, $operate];
+            }
+
+        } else {
+            // 任务task进程
+            list($callable, $params) = $messageData;
+        }
+        // 控制器实例
+        if ($callable && $params) {
+            Route::parseServiceMessageRouteUrl($callable, $params);
+        }
+    }
+
     public function __get($name)
     {
         $res = DiPool::getInstance()->get($name);
         if ($res) {
             return $res;
         } else {
-            if(isset(ServerManager::$config[$name])){
+            if (isset(ServerManager::$config[$name])) {
                 return ServerManager::$config[$name];
-            }else{
+            } else {
                 parent::__get($name);
             }
         }
     }
+
     use ServerTrait;
 }

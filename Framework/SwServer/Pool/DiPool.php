@@ -4,9 +4,9 @@
  */
 
 namespace Framework\SwServer\Pool;
-use \Framework\Traits\ComponentTrait;
-use \Framework\Traits\ContainerTrait;
-use \Framework\Traits\ServiceTrait;
+use Framework\Traits\ComponentTrait;
+use Framework\Traits\ContainerTrait;
+use Framework\Traits\ServiceTrait;
 
 class DiPool
 {
@@ -32,6 +32,8 @@ class DiPool
     {
         $this->initComponents();
         $this->initServices();
+        print_r($this->getSingletons());
+        echo "*******************************************";
     }
 
     public function get($name)

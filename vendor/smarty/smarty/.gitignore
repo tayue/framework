@@ -6,8 +6,3 @@ lexer/*.php
 lexer/*.php.bak
 lexer/*.out
 utilies/*.php
-
-# Dev
-phpunit*
-vendor/*
-composer.lock

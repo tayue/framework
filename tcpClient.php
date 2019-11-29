@@ -61,7 +61,7 @@ function send_demo($client, $len)
 {
     $time=date("Y-m-d H:i:s");
     $params=['time'=>$time];
-    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'tcp', 'params' => 'ss'];
+    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'tcp', 'params' => 'sddddds'];
     $body = encode($data, 1);
     $header = ['length' => 'N', 'name' => 'a30'];
     $bin_header_data = '';

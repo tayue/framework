@@ -13,7 +13,6 @@ class DependencyInjection
     {
         // 获取类的实例
         $instance = self::getInstance($className);
-        var_dump($instance);
         // 获取该方法所需要依赖注入的参数
         $paramArr = self::resolveClassMethodDependencies($className, $methodName);
         return $instance->{$methodName}(...array_merge($paramArr, $params));

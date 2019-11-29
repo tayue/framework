@@ -20,7 +20,7 @@ class CustomerError
             $message = $error['message'];
             $file = $error['file'];
             $line = $error['line'];
-            $outMessage = "文件:{$file},第{$line}行出错:{$message}\r\n";
+            $outMessage = "file:{$file},line {$line} throw error:{$message}\r\n";
             if (isset($error['type'])) {
                 switch ($error['type']) {
                     case E_ERROR :
@@ -65,13 +65,13 @@ class CustomerError
 
     public static function generalError($errorCode, $description, $file = null, $line = null)
     {
-        $outMessage = "文件:{$file},第{$line}行出错:{$description}\r\n";
+        $outMessage = "file:{$file},line {$line} throw error:{$description}\r\n";
         Log::getInstance()->put($outMessage, Log::TRACE);
     }
 
     public static function writeErrorLog(\Throwable $e)
     {
-        $outMessage = "文件:{$e->getFile()},第{$e->getLine()}行出错:{$e->getMessage()}\r\n";
+        $outMessage = "file:{$e->getFile()},line {$e->getLine()} throw error:{$e->getMessage()}\r\n";
         Log::getInstance()->put($outMessage, Log::ERROR);
     }
 

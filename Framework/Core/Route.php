@@ -8,12 +8,13 @@
 
 namespace Framework\Core;
 
+use Framework\Core\DependencyInjection;
 use Framework\Framework;
 use Framework\SwServer\Common\ProtocolCommon;
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\WebSocket\WST;
 use Framework\SwServer\Coroutine\CoroutineManager;
-use Framework\Core\DependencyInjection;
+
 
 class Route
 {
@@ -353,28 +354,20 @@ class Route
             $errorMessage = '';
             list($service, $operate) = $callable;
             $service = str_replace('/', '\\', $service);
-            $serviceInstance = new $service();
-            $serviceInstance->mixedParams = $params;
             $isExists = self::checkClass($service);
             if ($isExists) {
-                if (method_exists($serviceInstance, $operate)) {
-                    $serviceInstance->$operate($params);
-                } else {
-                    $errorMessage = "Service:{$service},Operate:{$operate},Is Not Found !!";
-                    ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $errorMessage);
-                }
-
+                DependencyInjection::make($service, $operate, [$params]);
             } else {
                 throw new \Exception("404");
                 $errorMessage = "Service:{$service} Class Is Not Found !!";
-                ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $errorMessage, 0);
+                ProtocolCommon::sender(ServerManager::getInstance()->getApp()->fd, $errorMessage, 0);
             }
 
         } catch (\Exception $e) {
-            ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $e->getMessage(), $e->getCode());
+            ProtocolCommon::sender(ServerManager::getInstance()->getApp()->fd, $e->getMessage(), $e->getCode());
             throw new \Exception($e->getMessage(), 1);
         } catch (\Throwable $t) {
-            ProtocolCommon::sender(WST::getInstance()->getApp()->fd, $t->getMessage(), $t->getCode());
+            ProtocolCommon::sender(ServerManager::getInstance()->getApp()->fd, $t->getMessage(), $t->getCode());
             throw new \Exception($t->getMessage(), 1);
         }
 
@@ -383,7 +376,7 @@ class Route
 
     /**
      * checkClass 检查请求实例文件是否存在
-     * @param  string $class
+     * @param string $class
      * @return boolean
      */
     public static function checkClass($class)
@@ -418,7 +411,7 @@ class Route
 
     /**
      * 安全过滤类-加反斜杠，放置SQL注入
-     * @param  string $value 需要过滤的值
+     * @param string $value 需要过滤的值
      * @return string
      */
     public static function filter_slashes(&$value)

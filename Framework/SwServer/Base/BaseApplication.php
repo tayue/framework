@@ -83,7 +83,7 @@ class BaseApplication extends BaseObject
      * ping 心跳检测
      * @return
      */
-    public function ping(string $operate = 'null')
+    public function ping($operate = 'null')
     {
         if (isset($this->header['ping']) && $this->header['ping'] == 'ping') {
             return true;

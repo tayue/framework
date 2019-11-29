@@ -7,16 +7,12 @@
  */
 
 namespace Framework\SwServer\Protocol;
-
-
 use Framework\SwServer\BaseServer;
 use Framework\Tool\Log;
-use Framework\Core\Route;
-use Framework\SwServer\Base\Application;
+use Framework\SwServer\ServerApplication;
 use Framework\SwServer\ServerManager;
 use Framework\SwServer\DataPackage\Pack;
-use Framework\Core\error\CustomerError;
-use Framework\SwServer\Coroutine\CoroutineManager;
+
 
 class TcpServer extends BaseServer
 {
@@ -63,8 +59,9 @@ class TcpServer extends BaseServer
 
     function onWorkerStart($server, $worker_id)
     {
-        $app = new Application();
-        ServerManager::$serverApp = \swoole_serialize::pack($app);
+        //初始化应用层
+        $app = new ServerApplication($this->config);
+        ServerManager::$serverApp = \serialize($app);
     }
 
     function onConnect($server, $client_id, $from_id)
@@ -83,8 +80,8 @@ class TcpServer extends BaseServer
                 $recv = $this->pack->depackeof($data);
             }
             if ($recv) {
-                $serverApp = \swoole_serialize::unpack(ServerManager::$serverApp);
-                $serverApp->run($fd, $recv);
+                $serverApp = \unserialize(ServerManager::$serverApp);
+                $serverApp->tcpRun($fd, $recv);
             }
             return;
         } catch (\Throwable $e) {
