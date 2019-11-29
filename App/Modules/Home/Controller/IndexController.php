@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: zhjx
+ * User: dengh
  * Date: 2018/11/8
  * Time: 15:53
  */
@@ -56,13 +56,13 @@ class IndexController extends ServerController
         var_dump($context);
     }
 
-    public function indexAction(Tool $tool,Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
+    public function indexAction(Tool $tool, Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
     {
         $context = Co::getContext();
         $context["test"] = "haha";
         $context["dd"] = "dd";
         $this->testcoro();
-        $this->tool=$tool;
+        $this->tool = $tool;
         var_dump($context["test"], $context["dd"]);
 
         try {
@@ -71,9 +71,7 @@ class IndexController extends ServerController
                 $result = $resourceData['resource']->set('name', 'tayue');
                 $result1 = $resourceData['resource']->get('library');
                 $result2 = $resourceData['resource']->get('name');
-
-
-                var_dump($result1,$result2);
+                var_dump($result1, $result2);
                 //\Swoole\Coroutine::sleep(4);
                 RedisPoolManager::getInstance()->put($resourceData);
             }
@@ -82,9 +80,6 @@ class IndexController extends ServerController
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
-
-
-
 
 
 //            $db = new \mysqli;
@@ -144,7 +139,7 @@ class IndexController extends ServerController
 
         // print_r(ServerManager::getApp('cid_4'));
 
-       // print_r($userData1);
+        // print_r($userData1);
 //        print_r($userData2);
         print_r(ServerManager::getApp());
         $this->assign('name', 'Http Server  sssss !!!');
@@ -239,20 +234,20 @@ class IndexController extends ServerController
 //
 //        go(function () {
 //            //从池子中获取一个实例
-            try {
-                $resourceData = RedisPoolManager::getInstance()->get(5);
-                if ($resourceData) {
-                    $result = $resourceData['resource']->set('name', 'tayue');
-                    $result1 = $resourceData['resource']->get('name');
-                    print_r($result1);
-                    //\Swoole\Coroutine::sleep(4);
-                    RedisPoolManager::getInstance()->put($resourceData);
-                }
-                echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
-
-            } catch (\Exception $e) {
-                echo $e->getMessage();
+        try {
+            $resourceData = RedisPoolManager::getInstance()->get(5);
+            if ($resourceData) {
+                $result = $resourceData['resource']->set('name', 'tayue');
+                $result1 = $resourceData['resource']->get('name');
+                print_r($result1);
+                //\Swoole\Coroutine::sleep(4);
+                RedisPoolManager::getInstance()->put($resourceData);
             }
+            echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
 //        });
 
         $services = DiPool::getInstance()->getServices();
