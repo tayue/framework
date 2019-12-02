@@ -7,11 +7,9 @@
  */
 
 namespace Framework\SwServer\Protocol;
-
 use Framework\SwServer\ServerManager;
 use Framework\Tool\Log;
 use Swoole\WebSocket\Server as websocket_server;
-use Framework\SwServer\Base\Application;
 
 class WebSocketServer extends WebServer implements WebsocketProtocol
 {
@@ -32,8 +30,8 @@ class WebSocketServer extends WebServer implements WebsocketProtocol
 
     /**
      * onMessage 接受信息并处理信息
-     * @param    object $server
-     * @param    object $frame
+     * @param object $server
+     * @param object $frame
      * @return   void
      */
     public function onMessage($server, $frame)
@@ -46,7 +44,6 @@ class WebSocketServer extends WebServer implements WebsocketProtocol
         if ($finish) {
             // utf-8文本数据
             if ($opcode == WEBSOCKET_OPCODE_TEXT) {
-
                 $serverApp = \unserialize(ServerManager::$serverApp);
                 $serverApp->webSocketRun($fd, $messageData);
 

@@ -7,8 +7,6 @@
  */
 
 namespace Framework\SwServer\Base;
-
-
 use Framework\SwServer\ServerManager;
 
 
@@ -35,7 +33,6 @@ class BaseServerEvent
         if ($data) {
             $data = json_encode($data);
         }
-        var_dump($currentFd, $data);
         ServerManager::getSwooleServer()->send($currentFd, $data);
     }
 

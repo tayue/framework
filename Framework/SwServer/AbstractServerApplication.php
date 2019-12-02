@@ -17,7 +17,6 @@ use Framework\Core\Db;
 use Framework\SwServer\Base\BaseObject;
 use Framework\SwServer\Pool\DiPool;
 use Framework\SwServer\ServerManager;
-use Framework\SwServer\WebSocket\WST;
 use Framework\Traits\ServerTrait;
 use Framework\SwServer\Protocol\TcpServer;
 
