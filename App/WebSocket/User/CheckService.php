@@ -61,17 +61,19 @@ class CheckService extends BaseServerEvent
         var_dump($taskId1);
     }
 
-    public function tcp($params)
+    public function tcp($a,$b)
     {
         $flag = false;
 
+        $result=$a*$b;
         $userData = ServerManager::getInstance()->getApp()->userService->findUser();
         $datas = [
             'flag' => true,
             'coroutine_id' => ServerManager::getInstance()->getApp()->coroutine_id,
             'fd' => ServerManager::getInstance()->getApp()->fd,
             'time' => date("Y-m-d H:i:s"),
-            'params' => $params,
+            'params' => [$a,$b],
+            'result' =>$result,
             'datas'=>$userData
         ];
         $this->send($datas);

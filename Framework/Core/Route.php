@@ -356,7 +356,7 @@ class Route
             $service = str_replace('/', '\\', $service);
             $isExists = self::checkClass($service);
             if ($isExists) {
-                DependencyInjection::make($service, $operate, [$params]);
+                DependencyInjection::make($service, $operate, $params);
             } else {
                 throw new \Exception("404");
                 $errorMessage = "Service:{$service} Class Is Not Found !!";

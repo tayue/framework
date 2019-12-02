@@ -16,9 +16,10 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\Core\Db;
 use Framework\SwServer\Base\BaseObject;
 use Framework\SwServer\Pool\DiPool;
-
-use Framework\Traits\ServerTrait;
 use Framework\SwServer\ServerManager;
+use Framework\SwServer\WebSocket\WST;
+use Framework\Traits\ServerTrait;
+use Framework\SwServer\Protocol\TcpServer;
 
 abstract class AbstractServerApplication extends BaseObject
 {
@@ -35,6 +36,9 @@ abstract class AbstractServerApplication extends BaseObject
     {
         $this->setErrorObject();
         $this->registerErrorHandler();
+        $this->setTimeZone(ServerManager::$config['timeZone']);
+        (isset(ServerManager::$config['log']) && ServerManager::$config['log']) && Log::getInstance()->setConfig(ServerManager::$config['log']);
+        Db::setConfig(ServerManager::$config['components']['db']['config']);
         DiPool::getInstance();
     }
 
@@ -42,11 +46,7 @@ abstract class AbstractServerApplication extends BaseObject
     {
         $this->coroutine_id = CoroutineManager::getInstance()->getCoroutineId();
         ServerManager::getInstance()->coroutine_id = $this->coroutine_id;
-        $this->setTimeZone(ServerManager::$config['timeZone']);
-        (isset(ServerManager::$config['log']) && ServerManager::$config['log']) && Log::getInstance()->setConfig(ServerManager::$config['log']);
-        Db::setConfig(ServerManager::$config['components']['db']['config']);
         $this->setApp();
-        //ServerManager::configure(ServerManager::$app[$this->coroutine_id], ServerManager::$config);
     }
 
     public function setTimeZone($value)
@@ -113,15 +113,11 @@ abstract class AbstractServerApplication extends BaseObject
         return false;
     }
 
-
-    public function parseTcpRoute($messageData)
+    public function parseRoute($messageData)
     {
-
-        list($messageHeader,$messageBody)=$messageData;
-        echo "Tcp Receive: ".json_encode($messageHeader)."\r\n";
         // worker进程
         if ($this->isWorkerProcess()) {
-            $recv = array_values($messageBody);
+            $recv = array_values(json_decode($messageData, true));
             if (is_array($recv) && count($recv) == 3) {
                 list($service, $operate, $params) = $recv;
             }
@@ -138,6 +134,41 @@ abstract class AbstractServerApplication extends BaseObject
         } else {
             // 任务task进程
             list($callable, $params) = $messageData;
+        }
+        // 控制器实例
+        if ($callable && $params) {
+            Route::parseServiceMessageRouteUrl($callable, $params);
+        }
+    }
+
+
+    public function parseTcpRoute($receiveData)
+    {
+        // worker进程
+        if ($this->isWorkerProcess()) {
+            list($header, $body) = $receiveData;
+            $header && $this->header = $header;
+            $body = array_values($body);
+            if (is_array($body) && count($body) == 3) {
+                list($service, $operate, $params) = $body;
+            }
+            if (!is_array($params)) {
+                $params = [$params];
+            }
+            $params = array_values($params);
+            if ($this->ping()) {
+                $args = ['pong', $this->header];
+                $data = TcpServer::pack($args);
+                ServerManager::getSwooleServer()->send($this->fd, $data);
+                return;
+            }
+            if ($service && $operate) {
+                $callable = [$service, $operate];
+            }
+
+        } else {
+            // 任务task进程
+            list($callable, $params) = $receiveData;
         }
         // 控制器实例
         if ($callable && $params) {

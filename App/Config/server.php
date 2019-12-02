@@ -9,7 +9,7 @@ return [
     'open_table_tick_task' => true,
     'server' => [
         'pid_file' => ROOT_PATH . '/Data/pid.pid',
-        'server_type' => 'WEB_SERVER',
+        'server_type' => 'SERVER',
         'listen_address' => '192.168.99.88',
         'listen_port' => 9501,
         'www_user' => 'root',

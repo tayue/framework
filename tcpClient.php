@@ -7,13 +7,13 @@ if (!$client->connect('192.168.99.88', 9501)) {
 for ($l = 0; $l < 1; $l++) {
     $data = '';
     for ($i = 0; $i < 1; $i++) {
-        $len = rand(10000, 20000);
-        echo "package length=" . ($len + 4) . "\n";
-        send_demo($client, $len);
+//        $len = rand(10000, 20000);
+//        echo "package length=" . ($len + 4) . "\n";
+        send_demo($client);
     }
     //echo 'total send size:', strlen($data),"\n";
     //$client->send($data);
-    sleep(1);
+
 }
 
 echo "Recv #{$client->sock}: " . $client->recv() . "\n";
@@ -57,11 +57,11 @@ function send_tests($client, $len)
 
 }
 
-function send_demo($client, $len)
+function send_demo($client)
 {
     $time=date("Y-m-d H:i:s");
     $params=['time'=>$time];
-    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'tcp', 'params' => 'sddddds'];
+    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'tcp', 'params' => ['a'=>1,'b'=>2]];
     $body = encode($data, 1);
     $header = ['length' => 'N', 'name' => 'a30'];
     $bin_header_data = '';

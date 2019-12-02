@@ -120,7 +120,7 @@ class BaseApplication extends BaseObject
         if ($callable && $params) {
             Route::parseServiceMessageRouteUrl($callable, $params);
         }
-        WST::getInstance()->destroy();
+        ServerManager::getInstance()->removeApp();
     }
 
     public function parseTcpRoute($receiveData)
@@ -132,7 +132,6 @@ class BaseApplication extends BaseObject
             $body=array_values($body);
             if (is_array($body) && count($body) == 3) {
                 list($service, $operate, $params) = $body;
-                var_dump($service,$operate,$params);
             }
 
             if ($this->ping()) {
@@ -153,8 +152,8 @@ class BaseApplication extends BaseObject
         if ($callable && $params) {
             Route::parseServiceMessageRouteUrl($callable, $params);
         }
-        WST::getInstance()->destroy();
-    }
+        ServerManager::getInstance()->removeApp();
+   }
 
     public function setApp()
     {

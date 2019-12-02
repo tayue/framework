@@ -22,7 +22,7 @@ class CoroutineModel
      * @param   string $class 类命名空间
      * @return  object
      */
-    public static function getInstance(string $class = '', ...$args)
+    public static function getInstance(string $class , ...$args)
     {
         if(!$class){
             return null;

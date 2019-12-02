@@ -24,10 +24,10 @@ class ServerApplication extends AbstractServerApplication
         $this->parseTcpRoute($recv);
     }
 
-    public function webSocketRun($fd, \swoole_http_request $request, \swoole_http_response $response)
+    public function webSocketRun($fd, $messageData)
     {
         $this->fd = $fd;
         $this->init();
-        $this->parseUrl($request, $response);
+        $this->parseRoute($messageData);
     }
 }

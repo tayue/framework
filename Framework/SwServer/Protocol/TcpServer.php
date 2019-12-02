@@ -83,6 +83,7 @@ class TcpServer extends BaseServer
                 $serverApp = \unserialize(ServerManager::$serverApp);
                 $serverApp->tcpRun($fd, $recv);
             }
+            ServerManager::destroy(); //销毁应用实例
             return;
         } catch (\Throwable $e) {
             throw new \Exception($e->getMessage());

@@ -8,9 +8,9 @@
 
 namespace Framework\SwServer\Protocol;
 
+use Framework\SwServer\ServerManager;
 use Framework\Tool\Log;
 use Swoole\WebSocket\Server as websocket_server;
-use Framework\Core\Route;
 use Framework\SwServer\Base\Application;
 
 class WebSocketServer extends WebServer implements WebsocketProtocol
@@ -46,8 +46,10 @@ class WebSocketServer extends WebServer implements WebsocketProtocol
         if ($finish) {
             // utf-8文本数据
             if ($opcode == WEBSOCKET_OPCODE_TEXT) {
-                $app = new Application();
-                $app->run($fd, $messageData,false);
+
+                $serverApp = \unserialize(ServerManager::$serverApp);
+                $serverApp->webSocketRun($fd, $messageData);
+
             } else if ($opcode == WEBSOCKET_OPCODE_BINARY) {
                 // TODO 二进制数据
 

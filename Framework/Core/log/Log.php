@@ -10,10 +10,11 @@ namespace Framework\Core\log;
 
 use Framework\Core\Exception;
 use Framework\Tool\Tool;
+use Framework\Traits\SingletonTrait;
 
 class Log
 {
-    use \Framework\Traits\SingletonTrait;
+    use SingletonTrait;
     public const INFO = 0;
     public const NOTICE = 1;
     public const TRACE = 2;
