@@ -80,4 +80,23 @@ class CheckService extends BaseServerEvent
         return;
     }
 
+    public function websocket($a,$b)
+    {
+        $flag = false;
+
+        $result=$a*$b;
+        $userData = ServerManager::getInstance()->getApp()->userService->findUser();
+        $datas = [
+            'flag' => true,
+            'coroutine_id' => ServerManager::getInstance()->getApp()->coroutine_id,
+            'fd' => ServerManager::getInstance()->getApp()->fd,
+            'time' => date("Y-m-d H:i:s"),
+            'params' => [$a,$b],
+            'result' =>$result,
+            'datas'=>$userData
+        ];
+        $this->push($datas);
+        return;
+    }
+
 }

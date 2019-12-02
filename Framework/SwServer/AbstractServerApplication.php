@@ -120,6 +120,10 @@ abstract class AbstractServerApplication extends BaseObject
             if (is_array($recv) && count($recv) == 3) {
                 list($service, $operate, $params) = $recv;
             }
+            if (!is_array($params) && $params) {
+                $params = [$params];
+            }
+            $params = array_values($params);
             if ($this->ping($operate)) {
                 $data = 'pong';
                 ServerManager::getSwooleServer()->push($this->fd, $data, $opcode = 1, $finish = true);
@@ -134,6 +138,7 @@ abstract class AbstractServerApplication extends BaseObject
             // 任务task进程
             list($callable, $params) = $messageData;
         }
+
         // 控制器实例
         if ($callable && $params) {
             Route::parseServiceMessageRouteUrl($callable, $params);
@@ -151,7 +156,7 @@ abstract class AbstractServerApplication extends BaseObject
             if (is_array($body) && count($body) == 3) {
                 list($service, $operate, $params) = $body;
             }
-            if (!is_array($params)) {
+            if (!is_array($params) && $params) {
                 $params = [$params];
             }
             $params = array_values($params);

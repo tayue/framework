@@ -83,6 +83,11 @@ function send_demo($client)
 
 }
 
+function websocket_demo(){
+    $data = ['service' => 'App/WebSocket/User/CheckService','operate'=>'tcp', 'params' => ['a'=>1,'b'=>2]];
+    $data=json_encode($data);
+}
+
 function encode($data, $serialize_type = 1)
 {
 
