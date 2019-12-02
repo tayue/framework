@@ -32,8 +32,6 @@ class DiPool
     {
         $this->initComponents();
         $this->initServices();
-        print_r($this->getSingletons());
-        echo "*******************************************";
     }
 
     public function get($name)

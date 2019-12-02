@@ -105,7 +105,7 @@ return [
         'charset' => 'utf8', //默认字符集
         'strict_type' => true,  //ture，会自动表数字转为int类型
         'space_time' => 10 * 3600,
-        'mix_pool_size' => 2,     //最小连接池大小
+        'mix_pool_size' => 4,     //最小连接池大小
         'max_pool_size' => 10,    //最大连接池大小
         'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
     ],
@@ -120,14 +120,19 @@ return [
         'charset' => 'utf8', //默认字符集
         'strict_type' => true,  //ture，会自动表数字转为int类型
         'space_time' => 10 * 3600,
-        'mix_pool_size' => 2,     //最小连接池大小
+        'mix_pool_size' => 4,     //最小连接池大小
         'max_pool_size' => 10,    //最大连接池大小
         'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
     ],
     'redis_pool' => [
         'host' => '127.0.0.1',
         'port' => 6379,
-        'database' => 0
+        'database' => 0,
+        'timeout' => 0.5,       //数据库连接超时时间
+        'space_time' => 10 * 3600,
+        'mix_pool_size' => 4,     //最小连接池大小
+        'max_pool_size' => 10,    //最大连接池大小
+        'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
     ],
     'inotify' => [
         'afterNSeconds' => 3,

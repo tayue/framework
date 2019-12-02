@@ -219,7 +219,7 @@ class IndexController extends ServerController
             try {
                 $resourceData = MysqlPoolManager::getInstance()->get(5);
                 if ($resourceData) {
-                    $result = $resourceData['resource']->query("select * from user", 2);
+                    $result = $resourceData['resource']->query("select * from user");
                     print_r($result);
                     //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
                     MysqlPoolManager::getInstance()->put($resourceData);
