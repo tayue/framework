@@ -5,10 +5,6 @@ namespace Framework\SwServer\Event;
 /**
  * Interface EventSubscriberInterface - 自定义配置多个相关的事件的监听器
  * @package Framework\SwServer\Event
- * @version   2017年08月30日
- * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 interface EventSubscriberInterface
 {

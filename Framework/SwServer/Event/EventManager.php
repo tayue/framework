@@ -5,7 +5,6 @@ namespace Framework\SwServer\Event;
 /**
  * Class EventManager
  * @package Framework\SwServer\Event
- * @author    inhere <in.798@qq.com>
  */
 class EventManager implements EventManagerInterface
 {

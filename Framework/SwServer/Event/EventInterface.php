@@ -5,8 +5,6 @@ namespace Framework\SwServer\Event;
 /**
  * Interface EventInterface - Representation of an event
  * @package Framework\SwServer\Event
- * @link https://github.com/php-fig/fig-standards/blob/master/proposed/event-manager.md
- * @author    inhere <in.798@qq.com>
  */
 interface EventInterface
 {

@@ -5,7 +5,6 @@ namespace Framework\SwServer\Event;
 /**
  * Class LazyListener - 将callable包装成对象
  * @package Framework\SwServer\Event
- * @author    inhere <in.798@qq.com>
  */
 class LazyListener implements EventHandlerInterface
 {

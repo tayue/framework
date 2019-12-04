@@ -6,7 +6,6 @@ namespace Framework\SwServer\Event;
  * Class ListenerQueue - 一个事件的监听器队列存储管理类
  * @package Framework\SwServer\Event
  * @link [windwalker framework](https://github.com/ventoviro/windwalker)
- * @author inhere <in.798@qq.com>
  */
 class ListenerQueue implements \IteratorAggregate, \Countable
 {
