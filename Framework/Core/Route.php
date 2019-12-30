@@ -240,22 +240,27 @@ class Route
             }
             $pathInfo = explode('/', trim($request_uri, '/'));
             $offset = 2;
+            $module = ServerManager::getApp()->default_module;
+            $controller = ServerManager::getApp()->default_controller;
+            $action = ServerManager::getApp()->default_action;
             //先检查项目模块化配置
             if ($projectType == 1) { //模块化
                 if (count($pathInfo) < 3) {
                     $validate = false;
-                }
-                @list($module, $controller, $action) = $pathInfo;
-                $moduleValidate = self::validate($pattern, $module);
-                if (!$moduleValidate || !$module) {
-                    $validate = false;
+                } else {
+                    @list($module, $controller, $action) = $pathInfo;
+                    $moduleValidate = self::validate($pattern, $module);
+                    if (!$moduleValidate || !$module) {
+                        $validate = false;
+                    }
                 }
                 $offset = 3;
             } else { //非模块化
                 if (count($pathInfo) < 2) {
                     $validate = false;
+                } else {
+                    list($controller, $action) = $pathInfo;
                 }
-                list($controller, $action) = $pathInfo;
             }
 
             $controllerValidate = self::validate($pattern, $controller);
