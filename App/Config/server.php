@@ -15,9 +15,9 @@ return [
         'www_user' => 'root',
         'setting' => [
             'reactor_num' => 1,
-            'worker_num' => 4,
-            'max_request' => 1000,
-            'task_worker_num' => 4,
+            'worker_num' => 8,
+            'max_request' => 10000,
+            'task_worker_num' => 8,
             'task_tmpdir' => '/dev/shm',
             'daemonize' => 0,
             // TCP使用固定的worker，使用2或4或7
@@ -105,8 +105,8 @@ return [
         'charset' => 'utf8', //默认字符集
         'strict_type' => true,  //ture，会自动表数字转为int类型
         'space_time' => 10 * 3600,
-        'mix_pool_size' => 4,     //最小连接池大小
-        'max_pool_size' => 10,    //最大连接池大小
+        'mix_pool_size' => 300,     //最小连接池大小
+        'max_pool_size' => 1000,    //最大连接池大小
         'pool_get_timeout' => 4, //当在此时间内未获得到一个连接，会立即返回。（表示所以的连接都已在使用中）
     ],
     'coro_mysql_pool' => [

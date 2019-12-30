@@ -58,28 +58,28 @@ class IndexController extends ServerController
 
     public function indexAction(Tool $tool, Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
     {
-        $context = Co::getContext();
-        $context["test"] = "haha";
-        $context["dd"] = "dd";
-        $this->testcoro();
-        $this->tool = $tool;
-        var_dump($context["test"], $context["dd"]);
-
-        try {
-            $resourceData = RedisPoolManager::getInstance()->get(5);
-            if ($resourceData) {
-                $result = $resourceData['resource']->set('name', 'tayue');
-                $result1 = $resourceData['resource']->get('library');
-                $result2 = $resourceData['resource']->get('name');
-                var_dump($result1, $result2);
-                //\Swoole\Coroutine::sleep(4);
-                RedisPoolManager::getInstance()->put($resourceData);
-            }
-            echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
-
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
+//        $context = Co::getContext();
+//        $context["test"] = "haha";
+//        $context["dd"] = "dd";
+//        $this->testcoro();
+//        $this->tool = $tool;
+//        var_dump($context["test"], $context["dd"]);
+//
+//        try {
+//            $resourceData = RedisPoolManager::getInstance()->get(5);
+//            if ($resourceData) {
+//                $result = $resourceData['resource']->set('name', 'tayue');
+//                $result1 = $resourceData['resource']->get('library');
+//                $result2 = $resourceData['resource']->get('name');
+//                var_dump($result1, $result2);
+//                //\Swoole\Coroutine::sleep(4);
+//                RedisPoolManager::getInstance()->put($resourceData);
+//            }
+//            echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//
+//        } catch (\Exception $e) {
+//            echo $e->getMessage();
+//        }
 
 
 //            $db = new \mysqli;
@@ -112,38 +112,42 @@ class IndexController extends ServerController
 //
 //        $crypt->display();
 //
-//        $this->userService->display();
+       // $this->userService->display();
 //        //Runtime::enableStrictMode();
 //
-//            //从池子中获取一个实例
-//            try {
-//                $resourceData = MysqlPoolManager::getInstance()->get(5);
-//                if ($resourceData) {
-//                    print_r($resourceData);
-//                    $result = $resourceData['resource']->query("select * from user");
-//                    echo $resourceData['resource']->getLastSql()."__\r\n";
-//                    print_r($result);
-//                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
-//                    MysqlPoolManager::getInstance()->put($resourceData);
-//                }
-//                echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
-//
-//            } catch (\Exception $e) {
-//                echo $e->getMessage();
-//            }
+        //ServerManager::$isEnableRuntimeCoroutine=false;
+            //从池子中获取一个实例
+            try {
+                $resourceData = MysqlPoolManager::getInstance()->get(0.1);
+                if ($resourceData) {
+                    //print_r($resourceData);
+                    MysqlPoolManager::getInstance()->put($resourceData);
+                    //print_r($resourceData);
+                    $result = $resourceData['resource']->query("select * from user");
+                    echo $resourceData['resource']->getLastSql()."__\r\n";
 
-        //$userData1 = ServerManager::getApp()->userService->findUser();
+                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
+
+                    echo json_encode($result);
+                }
+                //echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo "@@@@@@@@@@@@@@@@@@@@\r\n";
+                echo $e->getMessage();
+            }
+
+       // $userData1 = ServerManager::getApp()->userService->findUser();
 //       // $userData2 = ServerManager::getApp()->userService->findUser();
 //        $userData1=$this->userService->findUser();
 //        $userData2=$this->userService->findUser();
 
         // print_r(ServerManager::getApp('cid_4'));
 
-        // print_r($userData1);
 //        print_r($userData2);
-        print_r(ServerManager::getApp());
-        $this->assign('name', 'Http Server  sssss !!!');
-        $this->display('index.html');
+
+       // $this->assign('name', 'Http Server  sssss !!!');
+       //$this->display('index.html');
 
     }
 
