@@ -23,6 +23,7 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use mysqli;
 use PDO;
 use Predis\Client;
+
 use Swoole\Coroutine as co;
 use Framework\SwServer\Pool\MysqlPoolManager;
 use Framework\SwServer\Pool\RedisPoolManager;
@@ -32,6 +33,7 @@ use Framework\SwServer\Event\Event;
 use Framework\SwServer\Event\EventManager;
 use Framework\SwServer\Pool\DiPool;
 use Swoole\Runtime;
+use Framework\SwServer\Helper\Helper;
 
 class IndexController extends ServerController
 {
@@ -56,8 +58,20 @@ class IndexController extends ServerController
         var_dump($context);
     }
 
+    public function destroyAction(){
+        ServerManager::$eventManager->trigger("consulServiceDestroy");
+        echo "Destroy Success";
+    }
+
     public function indexAction(Tool $tool, Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
     {
+
+
+        //$serviceId = Helper::registerService('swoft',"192.168.99.88",9501);
+        //Helper::removeService($serviceId);
+        //var_dump($serviceId);
+       // $response = Agent::getInstance()->deregisterService($serviceId);
+       // print_r($response);
 //        $context = Co::getContext();
 //        $context["test"] = "haha";
 //        $context["dd"] = "dd";
@@ -96,13 +110,18 @@ class IndexController extends ServerController
 //
 //            echo '------------------------------------';
 
-//        $em=ServerManager::getApp()->eventmanager;
+        //$em=ServerManager::getApp()->eventmanager;
 //        $services=DiPool::getInstance()->getServices();
 //        $comments=DiPool::getInstance()->getComponents();
+
+
+          //$em->attach("consulRegister","App\Listener\SendSmsListener");
 //        $e->setName("createorder");
 //        $em->addListener($smlistener,["createorder"=>1]);
 //        $em->addListener($semaillistener,["createorder"=>2]);
-//        $em->trigger("createorder",null,['test','test1']);
+        //print_r(ServerManager::$eventManager);
+        //ServerManager::$eventManager->trigger("consulRegister",null,['test','test1']);
+        //ServerManager::$eventManager->attach("consulRegister","App\Listener\SendSmsListener");->trigger("consulRegister",null,['test','test1']);
 //        $context = new Co\Context(); //swoole 协程上下文管理器注册上下文环境后协程执行完成后自动回收
 //        $context['crypt'] = $crypt;
 //
@@ -112,32 +131,32 @@ class IndexController extends ServerController
 //
 //        $crypt->display();
 //
-       // $this->userService->display();
+        // $this->userService->display();
 //        //Runtime::enableStrictMode();
 //
         //ServerManager::$isEnableRuntimeCoroutine=false;
-            //从池子中获取一个实例
-            try {
-                $resourceData = MysqlPoolManager::getInstance()->get(0.1);
-                if ($resourceData) {
-                    //print_r($resourceData);
-                    MysqlPoolManager::getInstance()->put($resourceData);
-                    //print_r($resourceData);
-                    $result = $resourceData['resource']->query("select * from user");
-                    echo $resourceData['resource']->getLastSql()."__\r\n";
+        //从池子中获取一个实例
+//            try {
+//                $resourceData = MysqlPoolManager::getInstance()->get(0.1);
+//                if ($resourceData) {
+//                    //print_r($resourceData);
+//                    MysqlPoolManager::getInstance()->put($resourceData);
+//                    //print_r($resourceData);
+//                    $result = $resourceData['resource']->query("select * from user");
+//                    echo $resourceData['resource']->getLastSql()."__\r\n";
+//
+//                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
+//
+//                    echo json_encode($result);
+//                }
+//                //echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//
+//            } catch (\Exception $e) {
+//                echo "@@@@@@@@@@@@@@@@@@@@\r\n";
+//                echo $e->getMessage();
+//            }
 
-                    //\Swoole\Coroutine::sleep(4); //sleep 10秒,模拟耗时操作
-
-                    echo json_encode($result);
-                }
-                //echo "[" . date('Y-m-d H:i:s') . "] Current Use Mysql Connetction Look Nums:" . MysqlPoolManager::getInstance()->getLength() . ",currentNum:" . MysqlPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
-
-            } catch (\Exception $e) {
-                echo "@@@@@@@@@@@@@@@@@@@@\r\n";
-                echo $e->getMessage();
-            }
-
-       // $userData1 = ServerManager::getApp()->userService->findUser();
+        // $userData1 = ServerManager::getApp()->userService->findUser();
 //       // $userData2 = ServerManager::getApp()->userService->findUser();
 //        $userData1=$this->userService->findUser();
 //        $userData2=$this->userService->findUser();
@@ -146,8 +165,8 @@ class IndexController extends ServerController
 
 //        print_r($userData2);
 
-       // $this->assign('name', 'Http Server  sssss !!!');
-       //$this->display('index.html');
+         $this->assign('name', 'Http Server  sssss !!!');
+        $this->display('index.html');
 
     }
 

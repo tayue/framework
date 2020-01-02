@@ -23,6 +23,7 @@ use Framework\Traits\SingletonTrait;
 use Framework\Traits\AppTrait;
 use Framework\SwServer\Protocol\Protocol;
 use Framework\SwServer\Crontab\CronRunner;
+use Framework\SwServer\Event\EventManager;
 
 class ServerManager extends BaseServerManager
 {
@@ -35,13 +36,18 @@ class ServerManager extends BaseServerManager
     public static $isWebSocketServer = false;
     public static $isEnableRuntimeCoroutine = false;
     public static $serviceType;
+    public static $eventManager;
     public static $tables = [];
     public static $serverApp;
 
 
     private function __construct()
     {
-
+        self::$eventManager=new EventManager(); //全局的事件管理器
+        //注册consul 注册服务事件
+        self::$eventManager->attach("consulServiceRegister","App\Listener\RegisterConsulServiceListener");
+        //销毁consul 销毁服务事件
+        self::$eventManager->attach("consulServiceDestroy","App\Listener\DestroyConsulServiceListener");
     }
 
     public function setProtocol(Protocol $protocol)
@@ -151,6 +157,7 @@ class ServerManager extends BaseServerManager
         if (method_exists($this->protocol, 'onMasterStart')) {
             $this->protocol->onMasterStart($serv);
         }
+        ServerManager::$eventManager->trigger("consulServiceRegister");
     }
 
     function onMasterStop($serv)
@@ -158,6 +165,7 @@ class ServerManager extends BaseServerManager
         if (!empty(self::$config['server']['pid_file'])) {
             @unlink(self::$pidFile);
         }
+        ServerManager::$eventManager->trigger("consulServiceDestroy");
         if (method_exists($this->protocol, 'onMasterStop')) {
             $this->protocol->onMasterStop($serv);
         }

@@ -7,12 +7,12 @@
  */
 
 namespace Framework\Tool;
-
-use Framework\Tool\Tool;
+use Framework\Traits\SingletonTrait;
+use Exception;
 
 class Log
 {
-    use \Framework\Traits\SingletonTrait;
+    use SingletonTrait;
     const INFO = 0;
     const NOTICE = 1;
     const TRACE = 2;
