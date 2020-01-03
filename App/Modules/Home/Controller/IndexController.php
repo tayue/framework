@@ -45,8 +45,8 @@ class IndexController extends ServerController
 
 
     public function __construct(User $userService, Util $util)
-    {  //依赖注入
-        parent::__construct();
+    {
+
         $this->userService = $userService;
         $this->util = $util;
     }
@@ -179,9 +179,11 @@ class IndexController extends ServerController
         // print_r(ServerManager::getApp('cid_4'));
 
 //        print_r($userData2);
-
-         $this->assign('name', 'Http Server  sssss !!!');
-        $this->display('index.html');
+//        $components=DiPool::getInstance()->getComponents();
+//        print_r($components);
+//        print_r(ServerManager::getApp()->view);
+        ServerManager::getApp()->view->assign('name', 'Http Server  sssss !!!');
+        ServerManager::getApp()->view->display('index.html');
 
     }
 

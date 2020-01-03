@@ -7,11 +7,11 @@
  */
 
 namespace Framework\SwServer;
-use Framework\SwServer\Base\BaseObject;
 
-class View extends BaseObject
+
+class View
 {
-    private $config = [];
+    public $config = [];
     public $smarty;
 
     public function __construct($config = [])

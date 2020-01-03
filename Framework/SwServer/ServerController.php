@@ -7,9 +7,9 @@
  */
 
 namespace Framework\SwServer;
+use Framework\SwServer\Base\BaseObject;
 
-
-class ServerController extends View
+class ServerController extends BaseObject
 {
     public function init(){
 

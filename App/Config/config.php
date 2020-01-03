@@ -84,7 +84,7 @@ return [
             ]
         ],
         'view' => [
-            'class' => 'Framework\Core\View',
+            'class' => 'Framework\SwServer\View',
             'config' => [
              ],
         ],
