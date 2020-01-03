@@ -34,6 +34,7 @@ use Framework\SwServer\Event\EventManager;
 use Framework\SwServer\Pool\DiPool;
 use Swoole\Runtime;
 use Framework\SwServer\Helper\Helper;
+use Framework\SwServer\RateLimit\RateLimit;
 
 class IndexController extends ServerController
 {
@@ -65,7 +66,17 @@ class IndexController extends ServerController
 
     public function indexAction(Tool $tool, Crypt $crypt, Event $e, SendSmsListener $smlistener, SendEmailsListener $semaillistener)
     {
+        $res=RateLimit::getInstance()->minLimit('indexAction',function (){
+            echo "Rate Limit:".date("Y-m-d H:i:s")."\r\n";
+        }); //方法控制限流
+        if(!$res['flag']){
+            throw  new \Exception($res['msg']."\r\n");
+        }
 
+//        go(function () {
+//
+//             echo "this is go function\r\n";
+//        });
 
         //$serviceId = Helper::registerService('swoft',"192.168.99.88",9501);
         //Helper::removeService($serviceId);
@@ -87,9 +98,13 @@ class IndexController extends ServerController
 //                $result2 = $resourceData['resource']->get('name');
 //                var_dump($result1, $result2);
 //                //\Swoole\Coroutine::sleep(4);
-//                RedisPoolManager::getInstance()->put($resourceData);
+//                defer(function () use($resourceData) {
+//                    RedisPoolManager::getInstance()->put($resourceData);
+//                    echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//                });
+//
 //            }
-//            echo "[" . date('Y-m-d H:i:s') . "] Current Use Redis Connetction Look Nums:" . RedisPoolManager::getInstance()->getLength() . ",currentNum:" . RedisPoolManager::getInstance()->getCurrentConnectionNums() . PHP_EOL;
+//
 //
 //        } catch (\Exception $e) {
 //            echo $e->getMessage();

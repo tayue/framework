@@ -15,9 +15,9 @@ return [
         'www_user' => 'root',
         'setting' => [
             'reactor_num' => 1,
-            'worker_num' => 8,
+            'worker_num' => 4,
             'max_request' => 10000,
-            'task_worker_num' => 8,
+            'task_worker_num' => 4,
             'task_tmpdir' => '/dev/shm',
             'daemonize' => 0,
             // TCP使用固定的worker，使用2或4或7

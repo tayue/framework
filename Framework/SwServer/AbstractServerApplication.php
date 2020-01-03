@@ -8,7 +8,6 @@
 
 namespace Framework\SwServer;
 
-use Framework\Core\Route;
 use Framework\Di\ServerContainer;
 use Framework\Core\error\CustomerError;
 use Framework\Core\log\Log;
@@ -16,7 +15,6 @@ use Framework\SwServer\Coroutine\CoroutineManager;
 use Framework\Core\Db;
 use Framework\SwServer\Base\BaseObject;
 use Framework\SwServer\Pool\DiPool;
-use Framework\SwServer\ServerManager;
 use Framework\Traits\ServerTrait;
 use Framework\SwServer\Protocol\TcpServer;
 
